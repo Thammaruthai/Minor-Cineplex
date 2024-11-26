@@ -11,6 +11,9 @@ module.exports = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        sans: ["Roboto", "sans-serif"], // เพิ่ม Roboto เป็นฟอนต์หลัก
+      },
     },
   },
   plugins: [],
