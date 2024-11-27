@@ -9,12 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.2.4",
     "@chakra-ui/react": "^3.2.0",
     "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
     "@supabase/supabase-js": "^2.46.1",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
+    "framer-motion": "^11.11.17",
     "next": "15.0.3",
     "pg": "^8.13.1",
     "react": "^18.3.1",
@@ -23,6 +26,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
     "@types/swagger-ui-express": "^4.1.7",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
