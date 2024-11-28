@@ -1,11 +1,15 @@
 export default function MoviesAffiliate() {
   return (
     <>
-      <p className="text-4xl font-bold text-white my-11 mx-5">All cinemas</p>
+      <p className="text-4xl font-bold text-white my-11 mx-5 lg:mx-20">
+        All cinemas
+      </p>
 
       {/* Bangkok */}
-      <p className="text-[#8b93b0] text-2xl font-semibold mb-7 mx-5">Bangkok</p>
-      <div className="mx-5 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <p className="text-[#8b93b0] text-2xl font-semibold mb-7 mx-5 lg:mx-20">
+        Bangkok
+      </p>
+      <div className="mx-5 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mx-20">
         {/* Cinema 1 */}
         <div className="flex items-center border border-[#21263f] rounded-lg p-5 shadow-md">
           <div className="flex-none bg-[#2a304f] w-14 h-14 rounded-full flex items-center justify-center">
@@ -84,10 +88,10 @@ export default function MoviesAffiliate() {
       </div>
 
       {/* Pathumthani */}
-      <p className="text-[#8b93b0] text-2xl font-semibold mb-7 mx-5">
+      <p className="text-[#8b93b0] text-2xl font-semibold mb-7 mx-5 lg:mx-20">
         Pathumthani
       </p>
-      <div className="mx-5 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="mx-5 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mx-20">
         {/* Cinema 1 */}
         <div className="flex items-center border border-[#21263f] rounded-lg p-5 shadow-md">
           <div className="flex-none bg-[#2a304f] w-14 h-14 rounded-full flex items-center justify-center">
@@ -128,10 +132,10 @@ export default function MoviesAffiliate() {
       </div>
 
       {/* Nonthaburi */}
-      <p className="text-[#8b93b0] text-2xl font-semibold mb-7 mx-5">
+      <p className="text-[#8b93b0] text-2xl font-semibold mb-7 mx-5 lg:mx-20">
         Nonthaburi
       </p>
-      <div className="mx-5 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="mx-5 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mx-20">
         {/* Cinema 1 */}
         <div className="flex items-center border border-[#21263f] rounded-lg p-5 shadow-md">
           <div className="flex-none bg-[#2a304f] w-14 h-14 rounded-full flex items-center justify-center">
