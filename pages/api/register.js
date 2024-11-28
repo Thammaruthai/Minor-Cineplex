@@ -51,18 +51,18 @@ export default async function handler(req, res) {
     const supabaseUserId = authData.user.id; // Supabase Auth UUID
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    Insert user into the `users` table
-    const insertUserQuery = `
-      INSERT INTO users (email, password_hash, supabase_uuid)
-      VALUES ($1, $2, $3)
-      RETURNING user_id;
-    `;
+     //Insert user into the `users` table
+     const insertUserQuery = `
+       INSERT INTO users (email, password_hash, supabase_uuid)
+       VALUES ($1, $2, $3)
+       RETURNING user_id;
+     `;
    
-    const userResult = await client.query(insertUserQuery, [
-      email,
-      hashedPassword,
-      supabaseUserId,
-    ]);
+     const userResult = await client.query(insertUserQuery, [
+       email,
+       hashedPassword,
+       supabaseUserId,
+     ]);
 
     //  const insertUserQuery = `
     //   INSERT INTO users (email, supabase_uuid)
