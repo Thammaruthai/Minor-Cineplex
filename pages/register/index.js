@@ -63,11 +63,10 @@ export default function Register() {
 
 
   // ถ้่ากดส่ง แล้ว OK 
-  if (success) {
+  if (1) {
     return (
-      <div className="flex flex-col items-center justify-center gap-6 text-white h-screen bg-slate-900">
-
-        <div className="flex flex-col gap-6 w-[380px]  rounded-lg text-center">
+      <div className="flex flex-col items-center justify-center gap-6 text-white h-screen bg-slate-900 min-h-[640px] min-w-[300px]">
+        <div className="flex flex-col gap-6 w-[380px]  rounded-lg text-center max-sm:w-11/12">
           <div className="flex flex-col items-center justify-center ">
             <div className="flex flex-col items-center justify-center w-[80px] h-[80px] rounded-full text-5xl text-white bg-[#00A372]">
               ✔
@@ -92,8 +91,8 @@ export default function Register() {
 
   return (
     <>
-      <div className=" w-full flex flex-col h-[100vh] items-center justify-center bg-[#070C1B]">
-        <div className=" container w-[380px]   text-white  rounded-lg">
+      <div className=" w-full flex flex-col h-[100vh] items-center justify-center bg-[#070C1B] min-h-[640px] min-w-[300px] max-sm:justify-start max-sm:pt-10 ">
+        <div className=" container w-[380px]   text-white  rounded-lg max-sm:w-11/12">
           <h1 className="mb-6 text-4xl text-center font-bold">Register</h1>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-y-6">
