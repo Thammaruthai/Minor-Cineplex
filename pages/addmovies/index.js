@@ -12,14 +12,16 @@ export default function AddMovie() {
   const [formData, setFormData] = useState({
     title: "",
     language: "",
-    release_date: "",
+    releaseDate: "",
     description: "",
     genres: "",
     poster: "",
+    banner: "",
   });
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  // Handle input changes for form fields
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -27,23 +29,31 @@ export default function AddMovie() {
     });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Make API call to add the movie
-      const response = await axios.post("/api/add-movie", formData);
+      // Make API call to add the movie using Axios
+      const response = await axios.post("/api/addmovie/add-movie", formData);
 
-      setMessage(response.data.message);
-      setError("");
-      setFormData({
-        title: "",
-        language: "",
-        release_date: "",
-        description: "",
-        genres: "",
-        poster: "",
-      });
+      if (response.status === 201) {
+        setMessage(response.data.message);
+        setError("");
+        // Reset form after successful submission
+        setFormData({
+          title: "",
+          language: "",
+          releaseDate: "",
+          description: "",
+          genres: "",
+          poster: "",
+          banner: "",
+        });
+      } else {
+        setError(response.data.error || "Something went wrong.");
+        setMessage("");
+      }
     } catch (err) {
       setError(
         err.response?.data?.error || "An error occurred while adding the movie."
@@ -53,7 +63,7 @@ export default function AddMovie() {
   };
 
   return (
-    <div className="flex flex-col h-screen items-center justify-center bg-[#070C1B] px-4 text-white">
+    <div className="flex flex-col h-screen items-center justify-center bg-[#070C1B] px-4 text-white min-h-[870px]">
       <div className="w-full max-w-lg bg-[#070C1B] rounded-lg">
         <h1 className="text-4xl text-center font-bold mb-6">Add Movie</h1>
         <form onSubmit={handleSubmit} className={formContainerStyle}>
@@ -88,15 +98,15 @@ export default function AddMovie() {
             />
           </div>
 
-          {/* Release Date */}
+          {/* Release Date as Native Date Picker */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="release_date" className={labelStyle}>
+            <label htmlFor="releaseDate" className={labelStyle}>
               Release Date
             </label>
             <input
               type="date"
-              name="release_date"
-              value={formData.release_date}
+              name="releaseDate"
+              value={formData.releaseDate}
               onChange={handleChange}
               className={inputStyle}
               required
@@ -142,6 +152,21 @@ export default function AddMovie() {
               type="url"
               name="poster"
               value={formData.poster}
+              onChange={handleChange}
+              className={inputStyle}
+              required
+            />
+          </div>
+
+          {/* Banner URL */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="banner" className={labelStyle}>
+              Banner URL
+            </label>
+            <input
+              type="url"
+              name="banner"
+              value={formData.banner}
               onChange={handleChange}
               className={inputStyle}
               required
