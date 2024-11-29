@@ -142,6 +142,10 @@ export default function viewMovie() {
   const cinemas = groupBy(movie, "cinema_name");
   const filteredHalls = groupByHall(movie);
 
+  const handleDate = async (day) => {
+    setDate(day.date);
+  };
+
   const filteredCinemas = Object.entries(cinemas).filter(
     ([cinema_name, shows]) => {
       const matchesCity =

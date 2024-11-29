@@ -26,6 +26,19 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["@chakra-ui/react"],
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        tls: false,
+        net: false,
+        dns: false,
+        "pg-native": false, // Prevents 'pg-native' from being resolved
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
