@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { fetchFilteredShows, viewMovie } from "@/lib/supabaseClient";
+import { fetchFilteredShows, viewMovie } from "../api/movies";
 import { Button } from "@/components/ui/button";
 import { HStack, Input, Kbd } from "@chakra-ui/react";
 import { InputGroup } from "@/components/ui/input-group";
@@ -29,13 +29,29 @@ export default function ViewMovies() {
     const options = { day: "2-digit", month: "short", year: "numeric" };
     return date.toLocaleDateString("en-GB", options);
   };
-  console.log(`This is movies`, movies);
+  const [date, setDate] = useState(new Date().toDateString());
   const groupByCinema = (movies) =>
     movies.reduce((acc, movie) => {
       if (!acc[movie.cinemaName]) {
         acc[movie.cinemaName] = [];
       }
       acc[movie.cinemaName].push(movie);
+      return acc;
+    }, {});
+
+  const groupByHall = (movies) =>
+    movies.reduce((acc, movie) => {
+      const showDate = new Date(movie.showtime).toDateString();
+      const selectedDate = new Date(date).toDateString();
+      if (
+        (!selectedCity || movie.cityName === selectedCity) &&
+        showDate === selectedDate
+      ) {
+        if (!acc[movie.hallName]) {
+          acc[movie.hallName] = [];
+        }
+        acc[movie.hallName].push(movie);
+      }
       return acc;
     }, {});
 
@@ -64,19 +80,27 @@ export default function ViewMovies() {
 
     const fetchData = async () => {
       try {
+        console.log("Fetching movie data for movieId:", movieId);
         const movieData = await viewMovie(movieId);
         setMovies(movieData);
+        console.log("Fetched movie data:", movieData);
         const cinemaData = await fetchFilteredShows({
           cinemaName: inputSearch,
+          date: date,
         });
-        setSearchCinema(cinemaData);
+        console.log("Fetched cinema data:", cinemaData);
+        if (cinemaData) {
+          setSearchCinema(cinemaData);
+        } else {
+          console.log("No cinema data found for the selected date and search.");
+        }
       } catch (err) {
         console.error("Failed to fetch movie data:", err);
         setError(err.message);
       }
     };
     fetchData();
-  }, [movieId, inputSearch]);
+  }, [movieId, inputSearch, date]);
 
   if (error) {
     return <p>Error: {error}</p>;
@@ -86,6 +110,7 @@ export default function ViewMovies() {
     return <p>Loading...</p>;
   }
   const cinemas = groupByCinema(movies);
+  const filteredHalls = groupByHall(movies);
 
   const convertDate = (dateString) => {
     const date = new Date(dateString);
@@ -109,6 +134,41 @@ export default function ViewMovies() {
       .replace(":", ".");
   };
 
+  const classifyShowtime = (showtime) => {
+    const currentTime = new Date();
+    const showTime = new Date(showtime);
+    const currentDate = currentTime.toDateString(); // Current day's date (without time)
+    const showDate = showTime.toDateString(); // Show's date (without time)
+
+    if (showDate > currentDate) {
+      return "upcoming";
+    }
+    // If the showtime is on the current day
+    if (showDate === currentDate) {
+      if (showTime < currentTime) {
+        return "past";
+      }
+      const diffMinutes = (showTime - currentTime) / (1000 * 60);
+      if (diffMinutes > 0 && diffMinutes <= 30) {
+        return "nearly";
+      }
+      return "upcoming";
+    }
+    // If the showtime is on a previous day
+    return "past";
+  };
+
+  const getNextShowtime = (shows, selectedDate) => {
+    const currentTime = new Date();
+    const selectedDateStr = new Date(selectedDate).toDateString(); // Compare only the selected date
+    const filteredShows = shows
+      .filter(
+        (show) => new Date(show.showtime).toDateString() === selectedDateStr
+      )
+      .sort((a, b) => new Date(a.showtime) - new Date(b.showtime)); // Sort shows by ascending time
+    return filteredShows.find((show) => new Date(show.showtime) > currentTime);
+  };
+
   const handleCity = (city) => {
     setSelectedCity(city);
   };
@@ -118,6 +178,10 @@ export default function ViewMovies() {
     setInputSearch(event.target.value);
   };
 
+  const handleDate = async (day) => {
+    setDate(day.date);
+  };
+
   const filteredCinemas = Object.entries(cinemas).filter(
     ([cinemaName, shows]) => {
       const matchesCity =
@@ -125,7 +189,12 @@ export default function ViewMovies() {
       const matchesSearch =
         !inputSearch ||
         cinemaName.toLowerCase().includes(inputSearch.toLowerCase());
-      return matchesCity && matchesSearch;
+      const matchesDate = shows.some((show) => {
+        const showDate = new Date(show.showtime).toDateString();
+        const selectedDate = new Date(date).toDateString();
+        return showDate === selectedDate;
+      });
+      return matchesCity && matchesSearch && matchesDate;
     }
   );
 
@@ -133,7 +202,7 @@ export default function ViewMovies() {
     <section className="w-full h-full flex flex-col items-center text-white">
       <div className="relative w-full h-[440px]">
         <Image
-          src="/darkknight.png"
+          src={movies[0].movieBanner}
           alt="Dark Knight"
           layout="fill"
           objectFit="cover"
@@ -175,14 +244,21 @@ export default function ViewMovies() {
           {days.map((day) => (
             <div
               key={day.date}
+              onClick={() => handleDate(day)}
               className={`p-2 w-44 text-center flex flex-col rounded-md cursor-pointer ${
-                day.day === "Today"
+                day.date === date
                   ? "bg-[#21263F] font-bold"
                   : "bg-none text-gray-300"
               }`}
             >
               <div className="text-2xl">{day.day}</div>
-              <div>{day.date}</div>
+              <div
+                className={`${
+                  day.date === date ? "text-[#C8CEDD]" : "text-[#565F7E]"
+                }`}
+              >
+                {day.date}
+              </div>
             </div>
           ))}
         </div>
@@ -265,16 +341,61 @@ export default function ViewMovies() {
               </SelectContent>
             </SelectRoot>
             <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col gap-14 p-10">
-              {shows.map((show) => (
-                <div key={show.showId} className="flex flex-col gap-4">
-                  <h1 className="text-2xl font-bold text-[#C8CEDD]">
-                    {show.hallName}
-                  </h1>
-                  <Button className="bg-[#1E29A8] rounded-md px-6 py-3 w-32 h-12 text-xl font-bold">
-                    {formatShowtime(show.showtime)}
-                  </Button>
-                </div>
-              ))}
+              {Object.entries(filteredHalls)
+                .filter(([hallName, hallShows]) =>
+                  hallShows.some((show) => {
+                    const showDate = new Date(show.showtime).toDateString();
+                    const selectedDateStr = new Date(date).toDateString();
+                    return (
+                      showDate === selectedDateStr &&
+                      show.cinemaName === cinemaName
+                    );
+                  })
+                )
+                .map(([hallName, shows]) => (
+                  <div key={hallName} className="flex flex-col gap-4">
+                    <h2 className="text-2xl font-bold text-[#C8CEDD]">
+                      {hallName}
+                    </h2>
+                    <div className="flex flex-wrap gap-4 mt-4">
+                      {shows
+                        .filter((show) => {
+                          const showDate = new Date(
+                            show.showtime
+                          ).toDateString();
+                          const selectedDateStr = new Date(date).toDateString();
+                          return showDate === selectedDateStr;
+                        })
+                        .map((show) => {
+                          const currentTime = new Date();
+                          const currentDate = currentTime.toDateString();
+                          const selectedDateStr = new Date(date).toDateString();
+                          const showtimeStatus = classifyShowtime(
+                            show.showtime
+                          );
+                          const nextShow =
+                            getNextShowtime(shows, date)?.showId ===
+                            show.showId;
+                          const buttonColor =
+                            selectedDateStr !== currentDate
+                              ? "bg-[#1E29A8]"
+                              : nextShow
+                              ? "bg-[#4E7BEE]"
+                              : showtimeStatus === "past"
+                              ? "border border-[#565F7E] text-[#565F7E] cursor-default"
+                              : "bg-[#1E29A8]";
+                          return (
+                            <Button
+                              key={show.showId}
+                              className={`${buttonColor} rounded-md px-6 py-3 w-32 h-12 text-xl font-bold`}
+                            >
+                              {formatShowtime(show.showtime)}
+                            </Button>
+                          );
+                        })}
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         ))}
