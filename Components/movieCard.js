@@ -1,48 +1,111 @@
+import { useEffect, useState } from "react";
+
 export default function MoviesCard() {
+  const [nowShowing, setNowShowing] = useState([]); // หนังที่กำลังฉาย
+  const [comingSoon, setComingSoon] = useState([]); // หนังที่กำลังจะมา
+  const [isNowShowing, setIsNowShowing] = useState(true); // สถานะตอนนี้
+
+  // ฟังก์ชันกรองค่าซ้ำ
+  const getUniqueMovies = (movies) => {
+    const uniqueMap = new Map();
+    movies.forEach((movie) => {
+      uniqueMap.set(movie.movie_id, movie);
+    });
+    return Array.from(uniqueMap.values());
+  };
+
+  // ดึงข้อมูลจาก API
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await fetch("/api/moviesNowShowing");
+        const data = await response.json();
+
+        // จัดเรียงหนังตามวันที่
+        const sortedMovies = data.movies.sort(
+          (a, b) => new Date(a.release_date) - new Date(b.release_date)
+        );
+
+        // กรองหนังที่ซ้ำกัน
+        const uniqueMovies = getUniqueMovies(sortedMovies);
+
+        // แยกข้อมูลหนังเป็น "Now Showing" และ "Coming Soon"
+        setNowShowing(uniqueMovies.slice(0, 4)); // 4 เรื่องแรก
+        setComingSoon(uniqueMovies.slice(4)); // เรื่องที่เหลือ
+      } catch (error) {
+        console.error("Failed to fetch movies:", error);
+      }
+    };
+
+    fetchMovies();
+  }, []); // ดึงข้อมูลครั้งแรกเมื่อคอมโพเนนต์โหลด
+
   return (
     <>
+      {/* Header */}
       <div className="py-5 mx-5 mb-8 mt-16 lg:mt-24 lg:mx-20">
-        <button className="text-white border-b-[1px] border-[#565f7e] pb-2 text-2xl lg:text-4xl font-bold">
+        <button
+          className={`${
+            isNowShowing
+              ? "text-white "
+              : "text-[#8b93b0]"
+          } pb-2 text-2xl lg:text-4xl font-bold`}
+          onClick={() => setIsNowShowing(true)} // สลับเป็น "Now Showing"
+        >
           Now showing
         </button>
-        <button className="text-[#8b93b0] text-2xl font-bold px-5 lg:text-4xl">
+        <button
+          className={`${
+            !isNowShowing
+              ? "text-white "
+              : "text-[#8b93b0]"
+          } text-2xl font-bold px-5 lg:text-4xl`}
+          onClick={() => setIsNowShowing(false)} // สลับเป็น "Coming Soon"
+        >
           Coming soon
         </button>
       </div>
 
-      <div className="mx-5 lg:mx-20">
-        <div>
-          <div>
-            <img
-              src="https://s3-alpha-sig.figma.com/img/fa8e/3df2/bb6b2ca1d3939f5479e79f0e95b8db3a?Expires=1733702400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Pm5l3E9vcfOyErP1cY8eFGtQuEwHXYo7zlPFtskpVNL2cT4mw6m8DPrGdWf2pDFAMDKwi7YoMKzzBiikWEE5J0T-2L9YAwVA3JThgjhEpr~o4yeWZBD15sKMaWkeeGREZJA6aP8HCM4uzVtbT86McLKKAO4C8JhshdE1amdEiXkwnr9jOs4EnDY6iP0w~wTcEuO5EvDwojaAkXMoHZcovnsGsbA1MKa7Cy9KoA5tBxUP0TiEDaRNmUsDZ4oyQmFN6DQ3V1uInLQ0qq1KG4cyf8grqotwEw00Rn87Aqn2iYvpvlWIErlx3Ye7njjcJy0ROrNl7xiuxhJCHBtQGUFyuA__"
-              className="Django Unchained rounded-lg"
-            />
+      {/* Content */}
+      <div className="mx-5 mb-10 grid grid-cols-2 gap-6 lg:grid-cols-4 lg:mx-20">
+        {(isNowShowing ? nowShowing : comingSoon).map((movie) => (
+          <div key={movie.movie_id} className="flex flex-col">
+            <div>
+              {/* ตั้งค่าให้ภาพ fit ขนาด */}
+              <img
+                src={movie.poster || "https://via.placeholder.com/300x400"}
+                className="rounded-lg object-cover w-full h-[310px] sm:h-[430px] lg:h-[450px] 2xl:h-[650px]"
+                alt={movie.title}
+              />
+            </div>
+
+            <div className="flex items-center justify-between pt-4">
+              <span className="text-[#8b93b0] text-base xl:text-xl">
+                {new Date(movie.release_date).toLocaleDateString("en-US", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </span>
+              <div className="flex items-center">
+                <img
+                  src="/img/Star_fill.png"
+                  className="Rating-Star w-3 h-3"
+                  alt="Rating"
+                />
+                <span className="text-[#8b93b0] pl-2 text-base 2xl:text-xl">
+                  {movie.rating ? movie.rating.toFixed(1) : "N/A"}
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-white text-xl lg:text-2xl xl:text-3xl font-bold pt-1">
+                {movie.title}
+              </p>
+            </div>
           </div>
-        </div>
-
-        <div className="flex items-center justify-between pt-4">
-          <span className="text-[#8b93b0] text-xl">24 Jun 2024</span>
-          <div className="flex items-center">
-            <img src="/img/Star_fill.png" className="Rating-Star w-4 h-4" />
-            <span className="text-[#8b93b0] pl-2 text-xl">4.6</span>
-          </div>
-        </div>
-
-        <div>
-          <p className="text-white text-2xl font-bold pt-1">Django Unchained</p>
-        </div>
-
-        <div className="flex gap-2 pt-3">
-          <button className="text-[#8b93b0] p-2 px-4 bg-[#2a304f] rounded-md">
-            Comedy
-          </button>
-          <button className="text-[#8b93b0] p-2 px-4 bg-[#2a304f] rounded-md">
-            Drama
-          </button>
-          <button className="text-[#c8cedd] p-2 px-4 bg-[#2a304f] rounded-md">
-            EN
-          </button>
-        </div>
+        ))}
       </div>
     </>
   );
