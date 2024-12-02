@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -15,6 +15,8 @@ export default function Filter() {
     genre: "",
     city: "",
   });
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false); // ควบคุมการเปิด-ปิดปฏิทิน
+  const datePickerRef = useRef();
 
   // Fetch Filters Data
   useEffect(() => {
@@ -32,6 +34,23 @@ export default function Filter() {
     };
 
     fetchFiltersData();
+  }, []);
+
+  // Handle clicks outside of the date picker
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        datePickerRef.current &&
+        !datePickerRef.current.contains(event.target)
+      ) {
+        setIsDatePickerOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleFilterChange = (key, value) => {
@@ -127,36 +146,56 @@ export default function Filter() {
               </select>
             </div>
 
-            {/* <div className="flex-1 relative">
-              <ReactDatePicker
-                selected={releaseDate}
-                onChange={(date) => setReleaseDate(date)}
-                className="w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none"
-                placeholderText="Release Date"
-              />
-              <span className="absolute right-12 top-1/2 -translate-y-1/2 text-gray-400">
+            {/* Release Date */}
+            <div className="flex-1 relative">
+              {/* Dropdown Select */}
+              <select
+                className="w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none appearance-none pr-10"
+                value={
+                  releaseDate ? releaseDate.toISOString().split("T")[0] : ""
+                }
+                onClick={() => setIsDatePickerOpen(!isDatePickerOpen)} // เปิด-ปิดปฏิทินเมื่อคลิก
+                readOnly // ป้องกันการแก้ไขค่าใน select
+              >
+                <option value="">
+                  {releaseDate
+                    ? releaseDate.toLocaleDateString("en-US", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : "Release Date"}
+                </option>
+              </select>
+
+              {/* Icon รูปปฏิทิน */}
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer">
                 <img
                   src="/img/Date_today_light.png"
                   alt="Calendar Icon"
-                  className="h-6 w-6"
+                  className="h-5 w-5"
+                  onClick={() => setIsDatePickerOpen(!isDatePickerOpen)} // เปิด-ปิดปฏิทิน
                 />
               </span>
-            </div> */}
 
-            <div className="flex-1 relative">
-              <div className="w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded cursor-pointer focus:outline-none flex items-center">
-                <span className="text-gray-400">Release date</span>
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <img
-                    src="/img/Date_today_light.png"
-                    alt="Calendar Icon"
-                    className="h-5 w-5"
+              {/* DatePicker */}
+              {isDatePickerOpen && (
+                <div
+                  ref={datePickerRef}
+                  className="absolute top-full mt-2 z-50 bg-[#21263f] text-white rounded-lg shadow-lg"
+                >
+                  <ReactDatePicker
+                    selected={releaseDate}
+                    onChange={(date) => {
+                      setReleaseDate(date); // อัปเดตวันที่เมื่อเลือก
+                      setIsDatePickerOpen(false); // ปิดปฏิทิน
+                    }}
+                    inline
                   />
-                </span>
-              </div>
+                </div>
+              )}
             </div>
           </div>
-
           {/* Search Button */}
           <div className="flex justify-center lg:flex-none lg:ml-4">
             <button

@@ -22,7 +22,7 @@ export default async function handler(req, res) {
         ORDER BY 
         m.title            
             `);
-            
+
       const languagesResult = await connectionPool.query(`
         SELECT language_id, name
         FROM languages

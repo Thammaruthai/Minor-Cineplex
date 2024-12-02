@@ -46,9 +46,7 @@ export default function MoviesCard() {
       <div className="py-5 mx-5 mb-8 mt-16 lg:mt-24 lg:mx-20">
         <button
           className={`${
-            isNowShowing
-              ? "text-white "
-              : "text-[#8b93b0]"
+            isNowShowing ? "text-white " : "text-[#8b93b0]"
           } pb-2 text-2xl lg:text-4xl font-bold`}
           onClick={() => setIsNowShowing(true)} // สลับเป็น "Now Showing"
         >
@@ -56,9 +54,7 @@ export default function MoviesCard() {
         </button>
         <button
           className={`${
-            !isNowShowing
-              ? "text-white "
-              : "text-[#8b93b0]"
+            !isNowShowing ? "text-white " : "text-[#8b93b0]"
           } text-2xl font-bold px-5 lg:text-4xl`}
           onClick={() => setIsNowShowing(false)} // สลับเป็น "Coming Soon"
         >
@@ -67,14 +63,13 @@ export default function MoviesCard() {
       </div>
 
       {/* Content */}
-      <div className="mx-5 mb-10 grid grid-cols-2 gap-6 lg:grid-cols-4 lg:mx-20">
+      <div className="mx-5 mb-10 grid grid-cols-2 gap-6  lg:grid-cols-4 lg:mx-20">
         {(isNowShowing ? nowShowing : comingSoon).map((movie) => (
           <div key={movie.movie_id} className="flex flex-col">
             <div>
-              {/* ตั้งค่าให้ภาพ fit ขนาด */}
               <img
                 src={movie.poster || "https://via.placeholder.com/300x400"}
-                className="rounded-lg object-cover w-full h-[310px] sm:h-[430px] lg:h-[450px] 2xl:h-[650px]"
+                className="rounded-lg object-cover w-full h-[310px] sm:h-[430px] md:h-[500px] xl:h-[480px]  lg:h-[300px] 2xl:h-[650px]"
                 alt={movie.title}
               />
             </div>
@@ -103,6 +98,28 @@ export default function MoviesCard() {
               <p className="text-white text-xl lg:text-2xl xl:text-3xl font-bold pt-1">
                 {movie.title}
               </p>
+            </div>
+
+            {/* Genres and Languages */}
+            <div className="flex gap-2 pt-3 flex-wrap">
+              {movie.genre_names &&
+                movie.genre_names.split(", ").map((genre, index) => (
+                  <button
+                    key={index}
+                    className="text-[#8b93b0] p-2 px-4 bg-[#2a304f] rounded-md"
+                  >
+                    {genre}
+                  </button>
+                ))}
+              {movie.language_names &&
+                movie.language_names.split(", ").map((lang, index) => (
+                  <button
+                    key={index}
+                    className="text-[#c8cedd] p-2 px-4 bg-[#2a304f] rounded-md"
+                  >
+                    {lang}
+                  </button>
+                ))}
             </div>
           </div>
         ))}
