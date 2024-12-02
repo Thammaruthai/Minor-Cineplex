@@ -1,13 +1,17 @@
 "use client";
-import { useState, useEffect } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { fetchFilteredShows, viewMovie } from "../api/movies";
 import { Button } from "@/components/ui/button";
-import { HStack, Input, Kbd } from "@chakra-ui/react";
+import { HStack, Input, Stack } from "@chakra-ui/react";
 import { InputGroup } from "@/components/ui/input-group";
 import { LuSearch } from "react-icons/lu";
 import Image from "next/image";
 import { createListCollection } from "@chakra-ui/react";
+import {
+  ProgressCircleRing,
+  ProgressCircleRoot,
+} from "@/components/ui/progress-circle";
 import {
   SelectContent,
   SelectItem,
@@ -15,45 +19,35 @@ import {
   SelectTrigger,
   SelectValueText,
 } from "@/components/ui/select";
+import {
+  formatDate,
+  convertDate,
+  formatShowtime,
+  classifyShowtime,
+  getNextShowtime,
+} from "../utils/date";
+import { groupBy } from "../utils/grouping";
+import CustomSkeleton from "../utils/skeleton";
 
-export default function ViewMovies() {
+export default function viewMovie() {
   const router = useRouter();
-  const [movies, setMovies] = useState([]);
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [inputSearch, setInputSearch] = useState("");
-  const [searchCinema, setSearchCinema] = useState([]);
-  const [error, setError] = useState(null);
   const { movieId } = router.query;
+  const [movie, setMovie] = useState([]);
+  const [city, setCity] = useState("All");
+  const [cinema, setCinema] = useState("");
+  const [inputSearch, setInputSearch] = useState("");
+  const [loading, setLoading] = useState(true);
   const currentDate = new Date();
-  const formatDate = (date) => {
-    const options = { day: "2-digit", month: "short", year: "numeric" };
-    return date.toLocaleDateString("en-GB", options);
-  };
   const [date, setDate] = useState(new Date().toDateString());
-  const groupByCinema = (movies) =>
-    movies.reduce((acc, movie) => {
-      if (!acc[movie.cinemaName]) {
-        acc[movie.cinemaName] = [];
-      }
-      acc[movie.cinemaName].push(movie);
-      return acc;
-    }, {});
-
-  const groupByHall = (movies) =>
-    movies.reduce((acc, movie) => {
-      const showDate = new Date(movie.showtime).toDateString();
-      const selectedDate = new Date(date).toDateString();
-      if (
-        (!selectedCity || movie.cityName === selectedCity) &&
-        showDate === selectedDate
-      ) {
-        if (!acc[movie.hallName]) {
-          acc[movie.hallName] = [];
-        }
-        acc[movie.hallName].push(movie);
-      }
-      return acc;
-    }, {});
+  const dropdown = createListCollection({
+    items: [
+      { label: "All", value: "All" },
+      { label: "Bangkok", value: "Bangkok" },
+      { label: "Nonthaburi", value: "Nonthaburi" },
+      { label: "Phatumthani", value: "Phatumthani" },
+      { label: "Chiangmai", value: "Chiangmai" },
+    ],
+  });
 
   const days = Array.from({ length: 7 }, (_, index) => {
     const nextDate = new Date(currentDate);
@@ -67,130 +61,80 @@ export default function ViewMovies() {
     };
   });
 
-  const dropdown = createListCollection({
-    items: [
-      { label: "Bangkok", value: "Bangkok" },
-      { label: "Nonthaburi", value: "Nonthaburi" },
-      { label: "Phatumthani", value: "Phatumthani" },
-    ],
-  });
-
   useEffect(() => {
-    if (!movieId) return;
-
+    const storedDate = localStorage.getItem("selectedDate");
+    if (storedDate) {
+      setDate(storedDate); // Set the stored date
+    } else {
+      const today = new Date().toDateString();
+      setDate(today); // Set today's date if no date is stored
+      localStorage.setItem("selectedDate", today); // Store today's date in localStorage
+    }
     const fetchData = async () => {
+      setLoading(true);
+      
       try {
-        console.log("Fetching movie data for movieId:", movieId);
-        const movieData = await viewMovie(movieId);
-        setMovies(movieData);
-        console.log("Fetched movie data:", movieData);
-        const cinemaData = await fetchFilteredShows({
-          cinemaName: inputSearch,
-          date: date,
-        });
-        console.log("Fetched cinema data:", cinemaData);
-        if (cinemaData) {
-          setSearchCinema(cinemaData);
-        } else {
-          console.log("No cinema data found for the selected date and search.");
-        }
-      } catch (err) {
-        console.error("Failed to fetch movie data:", err);
-        setError(err.message);
+        const params = new URLSearchParams({ movieId, city, cinema });
+        const response = await axios.get(
+          city === "All"
+            ? `/api/movies/${movieId}`
+            : `/api/movies/${movieId}?city=${city}&cinema=${cinema}`
+        );
+        setMovie(response.data.movies);
+      } catch (error) {
+        console.error("Error fetching movie:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchData();
-  }, [movieId, inputSearch, date]);
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
-  if (!movies || movies.length === 0) {
-    return <p>Loading...</p>;
-  }
-  const cinemas = groupByCinema(movies);
-  const filteredHalls = groupByHall(movies);
-
-  const convertDate = (dateString) => {
-    const date = new Date(dateString);
-    const formattedDate = new Intl.DateTimeFormat("en-GB", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    }).format(date);
-
-    return formattedDate;
-  };
-
-  const formatShowtime = (showtime) => {
-    const date = new Date(showtime);
-    return date
-      .toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      })
-      .replace(":", ".");
-  };
-
-  const classifyShowtime = (showtime) => {
-    const currentTime = new Date();
-    const showTime = new Date(showtime);
-    const currentDate = currentTime.toDateString(); // Current day's date (without time)
-    const showDate = showTime.toDateString(); // Show's date (without time)
-
-    if (showDate > currentDate) {
-      return "upcoming";
+    if (movieId) {
+      fetchData();
     }
-    // If the showtime is on the current day
-    if (showDate === currentDate) {
-      if (showTime < currentTime) {
-        return "past";
-      }
-      const diffMinutes = (showTime - currentTime) / (1000 * 60);
-      if (diffMinutes > 0 && diffMinutes <= 30) {
-        return "nearly";
-      }
-      return "upcoming";
+  }, [movieId, date, city]);
+
+  const handleCityChange = (city) => {
+    setCity(city);
+    if (city === "All") {
+      setCinema("");
     }
-    // If the showtime is on a previous day
-    return "past";
   };
 
-  const getNextShowtime = (shows, selectedDate) => {
-    const currentTime = new Date();
-    const selectedDateStr = new Date(selectedDate).toDateString(); // Compare only the selected date
-    const filteredShows = shows
-      .filter(
-        (show) => new Date(show.showtime).toDateString() === selectedDateStr
-      )
-      .sort((a, b) => new Date(a.showtime) - new Date(b.showtime)); // Sort shows by ascending time
-    return filteredShows.find((show) => new Date(show.showtime) > currentTime);
+  const handleSearchChange = (e) => setInputSearch(e.target.value);
+  const handleDateChange = (day) => {
+    setLoading(true);
+    const newDate = day.date;
+    setDate(newDate);
+    localStorage.setItem("selectedDate", newDate);
   };
 
-  const handleCity = (city) => {
-    setSelectedCity(city);
-  };
+  const groupByHall = (movies) =>
+    movies.reduce((acc, movie) => {
+      const showDate = new Date(movie.show_date_time).toDateString();
+      const selectedDate = new Date(date).toDateString();
+      if (
+        (city === "All" || movie.city_name === city) &&
+        showDate === selectedDate
+      ) {
+        if (!acc[movie.hall_name]) {
+          acc[movie.hall_name] = [];
+        }
+        acc[movie.hall_name].push(movie);
+      }
+      return acc;
+    }, {});
 
-  const handleSearch = (event) => {
-    event.preventDefault();
-    setInputSearch(event.target.value);
-  };
-
-  const handleDate = async (day) => {
-    setDate(day.date);
-  };
+  const cinemas = groupBy(movie, "cinema_name");
+  const filteredHalls = groupByHall(movie);
 
   const filteredCinemas = Object.entries(cinemas).filter(
-    ([cinemaName, shows]) => {
+    ([cinema_name, shows]) => {
       const matchesCity =
-        !selectedCity || shows.some((show) => show.cityName === selectedCity);
+        city === "All" || shows.some((show) => show.city_name === city);
       const matchesSearch =
         !inputSearch ||
-        cinemaName.toLowerCase().includes(inputSearch.toLowerCase());
+        cinema_name.toLowerCase().includes(inputSearch.toLowerCase());
       const matchesDate = shows.some((show) => {
-        const showDate = new Date(show.showtime).toDateString();
+        const showDate = new Date(show.show_date_time).toDateString();
         const selectedDate = new Date(date).toDateString();
         return showDate === selectedDate;
       });
@@ -200,207 +144,297 @@ export default function ViewMovies() {
 
   return (
     <section className="w-full h-full flex flex-col items-center text-white">
-      <div className="relative w-full h-[440px]">
-        <Image
-          src={movies[0].movieBanner}
-          alt="Dark Knight"
-          layout="fill"
-          objectFit="cover"
-          className="w-full h-full"
-        />
-      </div>
-      <div className="absolute top-36 w-[1200px] h-[600px] bg-[#070C1BB2] flex backdrop-blur-md bg-opacity-70 rounded-lg">
-        <Image
-          src={movies[0].moviePoster}
-          width={411}
-          height={600}
-          alt="Dark Kninght"
-        />
-        <div className="p-16 flex flex-col gap-20">
-          <div className="flex flex-col gap-6">
-            <h1 className="text-5xl">{movies[0].movieTitle}</h1>
-            <div className="flex gap-5 items-center">
-              <Button className="bg-[#21263F] p-4">Action</Button>
-              <Button className="bg-[#21263F] p-4">Crime</Button>
-              <Button className="bg-[#21263F] p-4">
-                {movies[0].movieLang}
-              </Button>
-              <div className="border-l-2 border-gray-500 h-full"></div>
-              <p className="text-xl">
-                Release date: {convertDate(movies[0].movieReleaseDate)}
-              </p>
-            </div>
-            <Button className="bg-[#4E7BEE] w-1/3 h-12 mt-6">
-              Movie detail
-            </Button>
-            <div>
-              <p className="text-lg mt-6">{movies[0].movieDescription}</p>
-            </div>
+      {movie && movie.length > 0 ? (
+        <>
+          <div className="hidden md:flex md:relative w-full h-[440px]">
+            <Image
+              src={movie[0].banner}
+              alt={movie[0].title || "Movie Banner"}
+              layout="fill"
+              objectFit="cover"
+              className="w-full h-full opacity-60"
+            />
           </div>
-        </div>
-      </div>
-      <div className="mt-96 w-full h-28 bg-[#070C1B] gap-6 flex justify-center items-center">
-        <div className="flex gap-1 w-[1200px] justify-between">
-          {days.map((day) => (
-            <div
-              key={day.date}
-              onClick={() => handleDate(day)}
-              className={`p-2 w-44 text-center flex flex-col rounded-md cursor-pointer ${
-                day.date === date
-                  ? "bg-[#21263F] font-bold"
-                  : "bg-none text-gray-300"
-              }`}
-            >
-              <div className="text-2xl">{day.day}</div>
-              <div
-                className={`${
-                  day.date === date ? "text-[#C8CEDD]" : "text-[#565F7E]"
-                }`}
-              >
-                {day.date}
+          <div className="md:absolute md:top-36 md:max-w-[1200px] lg:min-w-[1200px] h-[600px] bg-[#070C1BB2] md:flex-row flex flex-col backdrop-blur-md bg-opacity-70 rounded-lg">
+            <Image
+              src={movie[0].poster}
+              width={411}
+              height={600}
+              alt={movie[0].title || "Movie Poster"}
+            />
+            <div className="md:p-16 flex flex-col md:gap-20 gap-10 py-10 px-4">
+              <div className="flex flex-col gap-6">
+                <h1 className="md:text-5xl text-3xl font-bold">
+                  {movie[0].title}
+                </h1>
+                <div className="md:flex-row gap-6 md:items-center flex flex-col">
+                  <div className="flex md:gap-5 gap-2 items-center">
+                    {movie[0].genre.split(",").map((genre, index) => (
+                      <Button
+                        key={index}
+                        className="bg-[#21263F] p-4 text-[#C8CEDD]"
+                      >
+                        {genre.trim()}
+                      </Button>
+                    ))}
+                    <Button className="bg-[#21263F] p-4">
+                      {movie[0].language}
+                    </Button>
+                    <span className="border-l-2 border-gray-500 md:h-full h-3/4"></span>
+                  </div>
+                  <p className="md:text-xl text-[#C8CEDD]">
+                    Release date: {convertDate(movie[0].release_date)}
+                  </p>
+                </div>
+                <Button className="bg-[#4E7BEE] w-40 h-12 md:mt-6">
+                  Movie detail
+                </Button>
+                <div>
+                  <p className="text-lg mt-6 text-[#C8CEDD]">
+                    {movie[0].description}
+                  </p>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-      <article className="w-[1200px] mt-10 flex flex-col gap-10">
-        <div className="flex w-full gap-5">
-          <HStack
-            gap="10"
-            width="full"
-            className="bg-[#21263F] px-2 rounded-md h-12 border border-[#565F7E]"
-          >
-            <InputGroup flex="1" endElement={<LuSearch />} className="">
-              <Input
-                placeholder="Search cinema"
-                onChange={handleSearch}
-                value={inputSearch}
-              />
-            </InputGroup>
-          </HStack>
-          <SelectRoot
-            collection={dropdown}
-            size="sm"
-            width="320px"
-            className="bg-[#21263F] px-2 rounded-md flex justify-center border border-[#565F7E]"
-          >
-            <SelectTrigger className="w-full">
-              <SelectValueText placeholder="City" className="text-[#8B93B0]" />
-            </SelectTrigger>
-            <SelectContent className="mt-2 bg-[#21263F] text-[#8B93B0] text-base border border-[#565F7E]">
-              {dropdown.items.map((city) => (
-                <SelectItem
-                  item={city}
-                  key={city.value}
-                  onClick={() => handleCity(city.value)}
-                  className="hover:bg-slate-300 hover:text-slate-800"
+          </div>
+          <div className="md:mt-96 mt-[24rem] md:w-full w-full p-4 h-28 bg-[#070C1B] md:gap-6 flex justify-center items-center">
+            <div className="flex gap-1 overflow-x-auto md:overflow-x-hidden md:w-full md:max-w-[1200px] justify-between">
+              {days.map((day) => (
+                <div
+                  key={day.date}
+                  onClick={() => handleDateChange(day)}
+                  className={`p-2 w-28 md:w-40 flex-shrink-0 text-center flex flex-col rounded-md cursor-pointer ${
+                    day.date === date ||
+                    (new Date(day.date).toDateString() ===
+                      new Date().toDateString() &&
+                      !date)
+                      ? "bg-[#21263F] font-bold"
+                      : "bg-none text-gray-300"
+                  }`}
                 >
-                  {city.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectRoot>
-        </div>
-        {filteredCinemas.map(([cinemaName, shows]) => (
-          <div key={cinemaName} className="">
-            <SelectRoot
-              collection={dropdown}
-              size="sm"
-              width="1200px"
-              className="bg-[#070C1B] p-4 rounded-md"
-            >
-              <SelectTrigger>
-                <div className="flex items-center gap-5">
-                  <Image src="/icon.png" width={44} height={44} alt="Icon" />
-                  <h1 className="text-2xl">{cinemaName}</h1>
-                  <Button className="bg-[#21263F] p-3 text-[14px] text-[#8B93B0] rounded-md">
-                    Hearing assistance
-                  </Button>
-                  <Button className="bg-[#21263F] p-3 text-[14px] text-[#8B93B0] rounded-md">
-                    Wheelchair access
-                  </Button>
-                </div>
-              </SelectTrigger>
-              <SelectContent className="mt-2 rounded-md bg-[#070C1B] border border-[#565F7E]">
-                <div className="flex text-white">
-                  <Image src="/icon.png" width={44} height={44} alt="Icon" />
-                  <SelectItem
-                    item={cinemaName}
-                    key={cinemaName}
-                    className="text-xl pl-4 hover:cursor-pointer"
+                  <div className="md:text-2xl text-lg">{day.day}</div>
+                  <div
+                    className={`${
+                      day.date === date ? "text-[#C8CEDD]" : "text-[#565F7E]"
+                    }`}
                   >
-                    <div className="flex h-6 gap-5 items-center">
-                      {cinemaName}{" "}
-                      <div className="border-l-2 border-gray-500 h-full"></div>{" "}
-                      <p className="text-lg text-gray-400">
-                        {shows[0]?.cinemaAddress}
-                      </p>
-                    </div>
-                  </SelectItem>
-                </div>
-              </SelectContent>
-            </SelectRoot>
-            <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col gap-14 p-10">
-              {Object.entries(filteredHalls)
-                .filter(([hallName, hallShows]) =>
-                  hallShows.some((show) => {
-                    const showDate = new Date(show.showtime).toDateString();
-                    const selectedDateStr = new Date(date).toDateString();
-                    return (
-                      showDate === selectedDateStr &&
-                      show.cinemaName === cinemaName
-                    );
-                  })
-                )
-                .map(([hallName, shows]) => (
-                  <div key={hallName} className="flex flex-col gap-4">
-                    <h2 className="text-2xl font-bold text-[#C8CEDD]">
-                      {hallName}
-                    </h2>
-                    <div className="flex flex-wrap gap-4 mt-4">
-                      {shows
-                        .filter((show) => {
-                          const showDate = new Date(
-                            show.showtime
-                          ).toDateString();
-                          const selectedDateStr = new Date(date).toDateString();
-                          return showDate === selectedDateStr;
-                        })
-                        .map((show) => {
-                          const currentTime = new Date();
-                          const currentDate = currentTime.toDateString();
-                          const selectedDateStr = new Date(date).toDateString();
-                          const showtimeStatus = classifyShowtime(
-                            show.showtime
-                          );
-                          const nextShow =
-                            getNextShowtime(shows, date)?.showId ===
-                            show.showId;
-                          const buttonColor =
-                            selectedDateStr !== currentDate
-                              ? "bg-[#1E29A8]"
-                              : nextShow
-                              ? "bg-[#4E7BEE]"
-                              : showtimeStatus === "past"
-                              ? "border border-[#565F7E] text-[#565F7E] cursor-default"
-                              : "bg-[#1E29A8]";
-                          return (
-                            <Button
-                              key={show.showId}
-                              className={`${buttonColor} rounded-md px-6 py-3 w-32 h-12 text-xl font-bold`}
-                            >
-                              {formatShowtime(show.showtime)}
-                            </Button>
-                          );
-                        })}
-                    </div>
+                    {day.date}
                   </div>
-                ))}
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-        <div></div>
-      </article>
+          <article className="md:max-w-[1200px] w-full md:mt-10 flex flex-col">
+            <form>
+              <div className="md:flex-row flex flex-col w-full gap-5 py-10 px-4 md:px-0 md:max-w-[1200px]">
+                <HStack
+                  gap="10"
+                  width="full"
+                  className="bg-[#21263F] px-2 rounded-md h-12 border border-[#565F7E]"
+                >
+                  <InputGroup
+                    flex="1"
+                    endElement={<LuSearch />}
+                    className="h-12 flex"
+                  >
+                    <Input
+                      placeholder="Search cinema"
+                      onChange={handleSearchChange}
+                      value={inputSearch}
+                    />
+                  </InputGroup>
+                </HStack>
+                <SelectRoot
+                  collection={dropdown}
+                  size="sm"
+                  className="bg-[#21263F] px-2 rounded-md flex justify-center border border-[#565F7E] md:w-[320px]"
+                >
+                  <SelectTrigger className="w-full h-[46px] flex">
+                    <SelectValueText
+                      placeholder="City"
+                      className="text-[#8B93B0]"
+                    />
+                  </SelectTrigger>
+                  <SelectContent className="mt-2 bg-[#21263F] text-[#8B93B0] text-base border border-[#565F7E]">
+                    {dropdown.items.map((city) => (
+                      <SelectItem
+                        item={city}
+                        key={city.value}
+                        onClick={() => handleCityChange(city.value)}
+                        className="hover:bg-slate-300 hover:text-slate-800"
+                      >
+                        {city.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectRoot>
+              </div>
+            </form>
+            <div className="flex flex-col gap-6 w-full">
+              {loading ? (
+                <div className="flex justify-center items-center gap-3">
+                  <div>
+                    <ProgressCircleRoot value={null} size="sm">
+                      <ProgressCircleRing cap="round" />
+                    </ProgressCircleRoot>
+                  </div>
+                  <p>Loading...</p>
+                </div>
+              ) : filteredCinemas.length > 0 ? (
+                filteredCinemas.map(([cinema_name, shows]) => (
+                  <div
+                    key={cinema_name}
+                    className="selectCinema flex flex-col w-full"
+                  >
+                    <SelectRoot
+                      collection={dropdown}
+                      size="sm"
+                      className="bg-[#070C1B] p-4 rounded-md w-full md:max-w-[1200px]"
+                    >
+                      <SelectTrigger icon={null}>
+                        <div className="flex md:justify-between items-start justify-center md:items-center w-full">
+                          <div className="md:flex-row flex flex-col md:items-center gap-5 w-full">
+                            <div className="flex items-center gap-5">
+                              <Image
+                                src="/icon.png"
+                                width={44}
+                                height={44}
+                                alt="Icon"
+                              />
+                              <h1 className="text-2xl">{cinema_name}</h1>
+                            </div>
+                            <div className="flex gap-5">
+                              <Button className="bg-[#21263F] p-3 text-[14px] text-[#8B93B0] rounded-md">
+                                Hearing assistance
+                              </Button>
+                              <Button className="bg-[#21263F] p-3 text-[14px] text-[#8B93B0] rounded-md">
+                                Wheelchair access
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="flex items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth="1.5"
+                              stroke="gray"
+                              className="w-10 h-10"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent className="mt-2 rounded-md bg-[#070C1B] border border-[#565F7E]">
+                        <div className="flex text-white">
+                          <Image
+                            src="/icon.png"
+                            width={44}
+                            height={44}
+                            alt="Icon"
+                          />
+                          <SelectItem
+                            item={cinema_name}
+                            key={cinema_name}
+                            className="text-xl pl-4 hover:cursor-pointer"
+                          >
+                            <div className="flex h-6 gap-5 items-center">
+                              {cinema_name}{" "}
+                              <div className="border-l-2 border-gray-500 h-full"></div>{" "}
+                              <p className="text-lg text-gray-400">
+                                {shows[0]?.address}
+                              </p>
+                            </div>
+                          </SelectItem>
+                        </div>
+                      </SelectContent>
+                    </SelectRoot>
+                    <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col md:gap-14 gap-4 md:p-10 p-4">
+                      {Object.entries(filteredHalls)
+                        .filter(([hall_name, hallShows]) =>
+                          hallShows.some((show) => {
+                            const showDate = new Date(
+                              show.show_date_time
+                            ).toDateString();
+                            const selectedDateStr = new Date(
+                              date
+                            ).toDateString();
+                            return (
+                              showDate === selectedDateStr &&
+                              show.cinema_name === cinema_name
+                            );
+                          })
+                        )
+                        .map(([hall_name, shows]) => (
+                          <div key={hall_name} className="flex flex-col gap-4">
+                            <h2 className="text-2xl font-bold text-[#C8CEDD]">
+                              {hall_name}
+                            </h2>
+                            <div className="flex flex-wrap gap-4 mt-4">
+                              {shows
+                                .filter((show) => {
+                                  const showDate = new Date(
+                                    show.show_date_time
+                                  ).toDateString();
+                                  const selectedDateStr = new Date(
+                                    date
+                                  ).toDateString();
+                                  return showDate === selectedDateStr;
+                                })
+                                .map((show) => {
+                                  const currentTime = new Date();
+                                  const currentDate =
+                                    currentTime.toDateString();
+                                  const selectedDateStr = new Date(
+                                    date
+                                  ).toDateString();
+                                  const showtimeStatus = classifyShowtime(
+                                    show.show_date_time
+                                  );
+                                  const nextShow =
+                                    getNextShowtime(shows, date)?.show_id ===
+                                    show.show_id;
+                                  const buttonColor =
+                                    selectedDateStr !== currentDate
+                                      ? "bg-[#1E29A8]"
+                                      : nextShow
+                                      ? "bg-[#4E7BEE]"
+                                      : showtimeStatus === "past"
+                                      ? "border border-[#565F7E] text-[#565F7E] cursor-default"
+                                      : "bg-[#1E29A8]";
+                                  return (
+                                    <Button
+                                      key={show.show_id}
+                                      className={`${buttonColor} rounded-md md:px-6 px-4 py-3 md:w-32 w-24 h-12 text-xl font-bold`}
+                                    >
+                                      {formatShowtime(show.show_date_time)}
+                                    </Button>
+                                  );
+                                })}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="flex justify-center items-center">
+                  <p>No cinema found.</p>
+                </div>
+              )}
+            </div>
+          </article>
+        </>
+      ) : (
+        <div>
+          <p>No movies found.</p>
+        </div>
+      )}
     </section>
   );
 }

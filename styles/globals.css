@@ -15,3 +15,10 @@ body {
 [data-highlighted] {
   background-color: transparent;
 }
+
+.selectCinema .chakra-select__indicator.css-1atg1ut {
+  display: none;
+}
+.chakra-select__indicator.css-1atg1ut {
+  color: gray;
+}
