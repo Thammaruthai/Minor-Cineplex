@@ -1,6 +1,8 @@
 import connectionPool from "@/utils/db";
 
 export default async function handler(req, res) {
+  console.log(req.body);
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -10,7 +12,6 @@ export default async function handler(req, res) {
   if (!city || !cinema || !hall || !seatCapacity || !createdBy) {
     return res.status(400).json({ error: "Missing required fields" });
   }
-console.log(city, cinema, hall, seatCapacity, createdBy);
 
   const client = await connectionPool.connect();
 
@@ -25,14 +26,13 @@ console.log(city, cinema, hall, seatCapacity, createdBy);
   //   );
 
   //   console.log(cityCheckResult);
-    
 
   //   if (cityCheckResult.rows.length > 0) {
   //     cityId = cityCheckResult.rows[0].city_id;
   //   } else {
   //     const cityInsertResult = await client.query(
-  //       `INSERT INTO cities (city_name, created_by, updated_by, updated_at) 
-  //        VALUES ($1, $2, $2, NOW()) 
+  //       `INSERT INTO cities (city_name, created_by, updated_by, updated_at)
+  //        VALUES ($1, $2, $2, NOW())
   //        RETURNING city_id`,
   //       [city, createdBy]
   //     );
@@ -47,14 +47,13 @@ console.log(city, cinema, hall, seatCapacity, createdBy);
   //   );
 
   //   console.log(cinemaCheckResult);
-    
 
   //   if (cinemaCheckResult.rows.length > 0) {
   //     cinemaId = cinemaCheckResult.rows[0].cinema_id;
   //   } else {
   //     const cinemaInsertResult = await client.query(
-  //       `INSERT INTO cinemas (name, city_id, created_by, updated_by, updated_at) 
-  //        VALUES ($1, $2, $3, $3, NOW()) 
+  //       `INSERT INTO cinemas (name, city_id, created_by, updated_by, updated_at)
+  //        VALUES ($1, $2, $3, $3, NOW())
   //        RETURNING cinema_id`,
   //       [cinema, cityId, createdBy]
   //     );
@@ -68,7 +67,6 @@ console.log(city, cinema, hall, seatCapacity, createdBy);
   //   );
 
   //   console.log(hallCheckResult);
-    
 
   //   if (hallCheckResult.rows.length > 0) {
   //     throw new Error("Hall with the same name already exists.");
@@ -76,8 +74,8 @@ console.log(city, cinema, hall, seatCapacity, createdBy);
 
   //   //Insert hall
   //   const hallInsertResult = await client.query(
-  //     `INSERT INTO halls (name, cinema_id, seat_capacity, created_by, updated_by, updated_at) 
-  //      VALUES ($1, $2, $3, $4, $4, NOW()) 
+  //     `INSERT INTO halls (name, cinema_id, seat_capacity, created_by, updated_by, updated_at)
+  //      VALUES ($1, $2, $3, $4, $4, NOW())
   //      RETURNING hall_id`,
   //     [hall, cinemaId, seatCapacity, createdBy]
   //   );
@@ -95,4 +93,5 @@ console.log(city, cinema, hall, seatCapacity, createdBy);
   // } finally {
   //   client.release();
   // }
+  res.status(201).json({ message: "Hall added successfully!" });
 }

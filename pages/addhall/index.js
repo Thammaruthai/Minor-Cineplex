@@ -16,8 +16,6 @@ export default function AddHall() {
   const [formData, setFormData] = useState({
     city: "",
     cinema: "",
-    hall: "",
-    seatCapacity: "",
   });
 
   // Status is New one?
@@ -68,6 +66,7 @@ export default function AddHall() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log(name, value);
 
     if (name === "city") {
       if (value === "create_new") {
@@ -79,7 +78,6 @@ export default function AddHall() {
         setCreateNewCity(false);
         setFormData((prev) => ({ ...prev, city: value, cinema: "" }));
       }
-      
     } else if (name === "cinema") {
       if (value === "create_new") {
         setCreateNewCinema(true);
@@ -96,7 +94,7 @@ export default function AddHall() {
 
   const handleAddHall = async (e) => {
     e.preventDefault();
-
+    
     // Validation for new city/cinema/hall creation
     if (
       createNewCity &&
@@ -122,26 +120,23 @@ export default function AddHall() {
     if (
       !createNewCity &&
       !createNewCinema &&
-      (!formData.city ||
-        !formData.cinema ||
-        !formData.hall ||
-        !formData.seatCapacity)
+      (!formData.city || !formData.cinema || !newHall || !newSeatCapacity)
     ) {
       setError("Please fill in all required fields.");
       return;
     }
 
     try {
-      const response = await axios.post("/api/addhall/add-hall", {
+      const data = {
         city: createNewCity ? newCity : formData.city,
         cinema: createNewCity || createNewCinema ? newCinema : formData.cinema,
-        hall: createNewCity || createNewCinema ? newHall : formData.hall,
-        seatCapacity:
-          createNewCity || createNewCinema
-            ? newSeatCapacity
-            : formData.seatCapacity,
-        createdBy: 1, // Admin user ID
-      });
+        hall: newHall,
+        seatCapacity: newSeatCapacity,
+        createdBy: 7, // Admin user ID
+      };
+      console.log(data);
+
+      const response = await axios.post("/api/addhall/add-hall", data);
 
       setMessage(response.data.message);
       setError("");
@@ -159,8 +154,8 @@ export default function AddHall() {
   };
 
   return (
-    <div className="flex flex-col h-screen items-center justify-center bg-[#070C1B] px-4 text-white">
-      <div className="w-full max-w-lg bg-[#21263F] rounded-lg p-6">
+    <div className="flex flex-col h-screen items-center justify-center bg-[#070C1B] px-4 text-white pt-12 min-h-[690px] pb-6">
+      <div className="w-full max-w-lg rounded-lg p-6">
         <h1 className="text-4xl text-center font-bold mb-6">Add Hall</h1>
         <form onSubmit={handleAddHall} className={formContainerStyle}>
           {/* City */}
@@ -235,12 +230,8 @@ export default function AddHall() {
             </label>
             <input
               type="text"
-              value={createNewCity || createNewCinema ? newHall : formData.hall}
-              onChange={(e) =>
-                createNewCity || createNewCinema
-                  ? setNewHall(e.target.value)
-                  : handleChange(e)
-              }
+              value={newHall}
+              onChange={(e) => setNewHall(e.target.value)}
               className={inputStyle}
               placeholder="Enter hall name"
               required
@@ -254,16 +245,10 @@ export default function AddHall() {
             </label>
             <input
               type="number"
-              value={
-                createNewCity || createNewCinema
-                  ? newSeatCapacity
-                  : formData.seatCapacity
-              }
-              onChange={(e) =>
-                createNewCity || createNewCinema
-                  ? setNewSeatCapacity(e.target.value)
-                  : handleChange(e)
-              }
+              value={newSeatCapacity}
+              onChange={(e) => {
+                setNewSeatCapacity(e.target.value);
+              }}
               className={inputStyle}
               placeholder="Enter seat capacity"
               required
