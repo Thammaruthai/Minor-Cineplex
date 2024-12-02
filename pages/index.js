@@ -1,11 +1,21 @@
-//Font test
+import Filter from "@/Components/filter.js";
+import MoviesCard from "@/Components/movieCard.js";
+import MoviesAffiliate from "@/Components/moviesAffilate.js";
 
 export default function Home() {
   return (
-    <div className="font-sans text-lg text-gray-800">
-      <h1 className="text-3xl font-bold">Test Font</h1>
-      <h2 className="text-3xl font-bold">The Dark Knight</h2>
-      <p className="font-extrabold text-5xl">All cinemas.</p>
+    <div>
+      <div
+        className="h-[480px] bg-cover bg-center -mt-44 "
+        style={{
+          backgroundImage: "url('/img/header-mobile.jpg')",
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
+          backgroundBlendMode: "darken",
+        }}
+      ></div>
+      <Filter />
+      <MoviesCard />
+      <MoviesAffiliate />
     </div>
   );
 }
