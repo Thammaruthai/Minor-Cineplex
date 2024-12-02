@@ -22,7 +22,7 @@ export default function Filter() {
   useEffect(() => {
     const fetchFiltersData = async () => {
       try {
-        const response = await axios.get("/api/filterMovie");
+        const response = await axios.get("/api/filterAndMovieCard");
         const data = response.data;
         setMovies(data.movies || []);
         setLanguages(data.languages || []);

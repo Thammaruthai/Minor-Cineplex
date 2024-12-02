@@ -18,7 +18,7 @@ export default function MoviesCard() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch("/api/moviesNowShowing");
+        const response = await fetch("/api/filterAndMovieCard");
         const data = await response.json();
 
         // จัดเรียงหนังตามวันที่
