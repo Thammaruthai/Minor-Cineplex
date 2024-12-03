@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function MoviesCard() {
   const [nowShowing, setNowShowing] = useState([]); // หนังที่กำลังฉาย
@@ -18,8 +19,8 @@ export default function MoviesCard() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch("/api/filterAndMovieCard");
-        const data = await response.json();
+        const response = await axios.get("/api/filterAndMovieCard");
+        const data = response.data; // ดึงข้อมูลจาก response
         console.log(data.movies);
 
         // จัดเรียงหนังตามวันที่

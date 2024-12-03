@@ -13,12 +13,12 @@ export default function Navbar() {
           <img src="/img/Ham.png" alt="Menu" className="w-6 h-5 m-1 " />
         </button>
 
-        <div class="hidden lg:flex space-x-4">
-          <button class="px-4 py-2  text-white text-base font-normal rounded">
+        <div className="hidden lg:flex space-x-4">
+          <button className="px-4 py-2  text-white text-base font-normal rounded">
             Login
           </button>
           <button
-            class="border-[2px] border-[#8b93b0] w-[134px] h-[48px] text-white text-base font-bold rounded "
+            className="border-[2px] border-[#8b93b0] w-[134px] h-[48px] text-white text-base font-bold rounded "
           >
             Register
           </button>
