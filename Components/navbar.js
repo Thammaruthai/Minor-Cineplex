@@ -1,7 +1,7 @@
 export default function Navbar() {
   return (
     <header className="relative shadow-2xl ">
-      <div className="absolute inset-x-0 top-0 h-16 bg-white bg-opacity-5 backdrop-blur-lg w-full"></div>
+      <div className="absolute inset-x-0 top-0 h-16 bg-black bg-opacity-40 backdrop-blur-lg w-full"></div>
 
       <div className="relative flex justify-between items-center bg-transparent px-4 pt-2 lg:mx-14">
         <img src="/img/logo.png" alt="Logo" className="h-8" />
