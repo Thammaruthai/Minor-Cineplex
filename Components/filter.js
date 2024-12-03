@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function Filter() {
+export default function Filter({ onFilterApply }) {
   const [movies, setMovies] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [genres, setGenres] = useState([]);
@@ -15,10 +15,10 @@ export default function Filter() {
     genre: "",
     city: "",
   });
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false); // ควบคุมการเปิด-ปิดปฏิทิน
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const datePickerRef = useRef();
 
-  // Fetch Filters Data
+  // Fetch filter data
   useEffect(() => {
     const fetchFiltersData = async () => {
       try {
@@ -61,22 +61,35 @@ export default function Filter() {
   };
 
   const handleSearch = async () => {
-    const formattedDate = releaseDate
-      ? releaseDate.toISOString().split("T")[0]
-      : null;
-
-    const filters = {
-      ...selectedFilters,
-      releaseDate: formattedDate,
-    };
-
-    console.log("Filters applied:", filters);
-
     try {
-      const response = await axios.post("/api/filterMovie", filters);
-      console.log("Filtered Movies:", response.data);
+      const response = await axios.get("/api/filterAndMovieCard");
+      console.log("API Response Data:", response.data);
+      const data = response.data;
+
+      // Debug ค่าของ selectedFilters
+      console.log("Selected Filters:", selectedFilters);
+
+      // กรองข้อมูล
+      const filteredMovies = data.movies.filter((movie) => {
+        const genres = movie.genre_names.split(", "); // แปลง genre_names เป็น Array
+        const languages = movie.language_names.split(", "); // แปลง language_names เป็น Array
+
+        return (
+          (!selectedFilters.movie ||
+            movie.title
+              .toLowerCase()
+              .includes(selectedFilters.movie.toLowerCase())) &&
+          (!selectedFilters.language ||
+            languages.includes(selectedFilters.language)) &&
+          (!selectedFilters.genre || genres.includes(selectedFilters.genre)) &&
+          (!selectedFilters.city ||
+            movie.city_id === parseInt(selectedFilters.city))
+        );
+      });
+
+      onFilterApply(filteredMovies);
     } catch (error) {
-      console.error("Failed to fetch filtered movies:", error);
+      console.error("Failed to fetch filtered movies:", error.message);
     }
   };
 
@@ -93,14 +106,14 @@ export default function Filter() {
             >
               <option value="">Movie</option>
               {movies.map((movie) => (
-                <option key={movie.movie_id} value={movie.movie_id}>
+                <option key={movie.movie_id} value={movie.title}>
                   {movie.title}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* Language and Genre */}
+          {/* Language, Genre Dropdowns */}
           <div className="flex gap-4 mb-4 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4">
             <select
               className="flex-1 p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none"
@@ -109,7 +122,7 @@ export default function Filter() {
             >
               <option value="">Language</option>
               {languages.map((language) => (
-                <option key={language.language_id} value={language.language_id}>
+                <option key={language.language_id} value={language.language}>
                   {language.name}
                 </option>
               ))}
@@ -122,40 +135,35 @@ export default function Filter() {
             >
               <option value="">Genre</option>
               {genres.map((genre) => (
-                <option key={genre.genre_id} value={genre.genre_id}>
+                <option key={genre.genre_id} value={genre.genre}>
                   {genre.name}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* City and Release Date */}
+          {/* City Dropdown and Release Date Picker */}
           <div className="flex gap-4 mb-4 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4">
-            <div className="flex-1">
-              <select
-                className="w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none"
-                value={selectedFilters.city}
-                onChange={(e) => handleFilterChange("city", e.target.value)}
-              >
-                <option value="">City</option>
-                {cities.map((city) => (
-                  <option key={city.city_id} value={city.city_id}>
-                    {city.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Release Date */}
+            <select
+              className="flex-1 p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none"
+              value={selectedFilters.city}
+              onChange={(e) => handleFilterChange("city", e.target.value)}
+            >
+              <option value="">City</option>
+              {cities.map((city) => (
+                <option key={city.city_id} value={city.city_id}>
+                  {city.name}
+                </option>
+              ))}
+            </select>
             <div className="flex-1 relative">
-              {/* Dropdown Select */}
               <select
                 className="w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none appearance-none pr-10"
                 value={
                   releaseDate ? releaseDate.toISOString().split("T")[0] : ""
                 }
-                onClick={() => setIsDatePickerOpen(!isDatePickerOpen)} // เปิด-ปิดปฏิทินเมื่อคลิก
-                readOnly // ป้องกันการแก้ไขค่าใน select
+                onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+                readOnly
               >
                 <option value="">
                   {releaseDate
@@ -167,18 +175,6 @@ export default function Filter() {
                     : "Release Date"}
                 </option>
               </select>
-
-              {/* Icon รูปปฏิทิน */}
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer">
-                <img
-                  src="/img/Date_today_light.png"
-                  alt="Calendar Icon"
-                  className="h-5 w-5"
-                  onClick={() => setIsDatePickerOpen(!isDatePickerOpen)} // เปิด-ปิดปฏิทิน
-                />
-              </span>
-
-              {/* DatePicker */}
               {isDatePickerOpen && (
                 <div
                   ref={datePickerRef}
@@ -187,8 +183,8 @@ export default function Filter() {
                   <ReactDatePicker
                     selected={releaseDate}
                     onChange={(date) => {
-                      setReleaseDate(date); // อัปเดตวันที่เมื่อเลือก
-                      setIsDatePickerOpen(false); // ปิดปฏิทิน
+                      setReleaseDate(date);
+                      setIsDatePickerOpen(false);
                     }}
                     inline
                   />
@@ -196,6 +192,7 @@ export default function Filter() {
               )}
             </div>
           </div>
+
           {/* Search Button */}
           <div className="flex justify-center lg:flex-none lg:ml-4">
             <button

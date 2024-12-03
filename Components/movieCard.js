@@ -20,6 +20,7 @@ export default function MoviesCard() {
       try {
         const response = await fetch("/api/filterAndMovieCard");
         const data = await response.json();
+        console.log(data.movies);
 
         // จัดเรียงหนังตามวันที่
         const sortedMovies = data.movies.sort(
@@ -69,7 +70,7 @@ export default function MoviesCard() {
             <div>
               <img
                 src={movie.poster || "https://via.placeholder.com/300x400"}
-                className="rounded-lg object-cover w-full h-[310px] sm:h-[430px] md:h-[500px] xl:h-[480px]  lg:h-[300px] 2xl:h-[650px]"
+                className="rounded-lg object-cover w-full h-[310px] sm:h-[430px] md:h-[500px] xl:h-[480px]  lg:h-[300px] 2xl:h-[550px]"
                 alt={movie.title}
               />
             </div>
@@ -89,7 +90,7 @@ export default function MoviesCard() {
                   alt="Rating"
                 />
                 <span className="text-[#8b93b0] pl-2 text-base 2xl:text-xl">
-                  {movie.rating ? movie.rating.toFixed(1) : "N/A"}
+                  {movie.rating > 0 ? movie.rating.toFixed(1) : "N/A"}
                 </span>
               </div>
             </div>

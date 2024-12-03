@@ -1,4 +1,3 @@
-import Footer from "./footer";
 import Navbar from "./navbar";
 
 export default function Layout({ children }) {
@@ -6,7 +5,6 @@ export default function Layout({ children }) {
     <div className="flex flex-col h-screen">
       <Navbar />
       {children}
-      <Footer />
     </div>
   );
 }
