@@ -111,112 +111,112 @@ export default function Register() {
 
   return (
     <>
-    
-    <div className="w-full flex flex-col h-full items-center justify-center bg-[#070C1B] min-h-[640px] min-w-[300px] max-sm:justify-start max-sm:pt-10">
-      <div className="container w-[380px] text-white rounded-lg max-sm:w-11/12">
-        <h1 className="mb-6 text-4xl text-center font-bold">Register</h1>
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-y-6">
-            <div className={inputFieldStyle}>
-              <label className={labelStyle} htmlFor="name">
-                Name
-              </label>
-              <input
-                className={inputStyle}
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className={inputFieldStyle}>
-              <label className={labelStyle} htmlFor="email">
-                Email
-              </label>
-              <input
-                className={inputStyle}
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-              {emailError && (
-                <p className="text-sm text-red-500">{emailError}</p>
-              )}
-              {error && <p className="text-sm text-red-500">{error}</p>}
-            </div>
-            <div className={inputFieldStyle}>
-              <label className={labelStyle} htmlFor="password">
-                Password
-              </label>
-              <input
-                className={inputStyle}
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-              {passwordError && (
-                <p className="text-sm text-red-500">{passwordError}</p>
-              )}
+      <div className="w-full flex flex-col h-full items-center justify-center bg-[#070C1B] min-h-[500px] min-w-[300px] max-sm:justify-start max-sm:pt-8">
+        <div className="container w-[380px] text-white rounded-lg max-sm:w-11/12">
+          <h1 className="mb-6 text-4xl text-center font-bold">Register</h1>
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-y-6">
+              <div className={inputFieldStyle}>
+                <label className={labelStyle} htmlFor="name">
+                  Name
+                </label>
+                <input
+                  className={inputStyle}
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className={inputFieldStyle}>
+                <label className={labelStyle} htmlFor="email">
+                  Email
+                </label>
+                <input
+                  className={inputStyle}
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                {emailError && (
+                  <p className="text-sm text-red-500">{emailError}</p>
+                )}
+                {error && <p className="text-sm text-red-500">{error}</p>}
+              </div>
+              <div className={inputFieldStyle}>
+                <label className={labelStyle} htmlFor="password">
+                  Password
+                </label>
+                <input
+                  className={inputStyle}
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                {passwordError && (
+                  <p className="text-sm text-red-500">{passwordError}</p>
+                )}
 
-              {/* Password Strength Meter */}
-              {formData.password.length >= 6 && (
-                <div className="mt-2">
-                  {/* Password Meter */}
-                  <div className="relative h-5 w-full bg-gray-700 rounded">
-                    <div
-                      className={`absolute top-0 left-0 h-full rounded ${
-                        passwordStrength === 100
-                          ? "bg-green-500"
-                          : passwordStrength >= 50
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
-                      }`}
-                      style={{ width: `${passwordStrength}%` }}
-                    >
+                {/* Password Strength Meter */}
+                {formData.password.length >= 6 && (
+                  <div className="mt-2">
+                    {/* Password Meter */}
+                    <div className="relative h-5 w-full bg-gray-700 rounded">
                       <div
-                        className={`text-xs w-full h-full flex items-end justify-center ${
+                        className={`absolute top-0 left-0 h-full rounded ${
                           passwordStrength === 100
-                            ? "text-green-900"
+                            ? "bg-green-500"
                             : passwordStrength >= 50
-                            ? "text-yellow-900"
-                            : "text-red-500"
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
                         }`}
+                        style={{ width: `${passwordStrength}%` }}
                       >
-                        {passwordStrength === 100
-                          ? "Strong"
-                          : passwordStrength >= 50
-                          ? "Medium"
-                          : passwordStrength >= 25
-                          ? "Weak"
-                          : " "}
+                        <div
+                          className={`text-xs w-full h-full flex items-end justify-center ${
+                            passwordStrength === 100
+                              ? "text-green-900"
+                              : passwordStrength >= 50
+                              ? "text-yellow-900"
+                              : "text-red-500"
+                          }`}
+                        >
+                          {passwordStrength === 100
+                            ? "Strong"
+                            : passwordStrength >= 50
+                            ? "Medium"
+                            : passwordStrength >= 25
+                            ? "Weak"
+                            : " "}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-          <button
-            className={`${
-              formValid ? buttonStyleEnabled : buttonStyleDisabled
-            } mt-6`}
-            type="submit"
-            disabled={!formValid}
-          >
-            Register
-          </button>
-          <div className="flex justify-center mt-6 gap-2">
-            <p className="text-gray-300">Already have an account?</p>
-            <Link href="/login" className="underline underline-offset-1">
-              Login
-            </Link>
-          </div>
-        </form>
+            <button
+              className={`${
+                formValid ? buttonStyleEnabled : buttonStyleDisabled
+              } mt-6`}
+              type="submit"
+              disabled={!formValid}
+            >
+              Register
+            </button>
+            <div className="flex justify-center mt-6 gap-2">
+              <p className="text-gray-300">Already have an account?</p>
+              <Link href="/login" className="underline underline-offset-1">
+                Login
+              </Link>
+            </div>
+          </form>
+        </div>
       </div>
-    </div></>
+    </>
   );
 }
