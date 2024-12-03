@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
-import { HStack, Input, Stack } from "@chakra-ui/react";
+import { HStack, Input } from "@chakra-ui/react";
 import { InputGroup } from "@/components/ui/input-group";
 import { LuSearch } from "react-icons/lu";
 import Image from "next/image";
@@ -27,7 +27,7 @@ import {
   getNextShowtime,
 } from "../utils/date";
 import { groupBy } from "../utils/grouping";
-import CustomSkeleton from "../utils/skeleton";
+import { ChevronRight } from "lucide";
 
 export default function viewMovie() {
   const router = useRouter();
@@ -37,8 +37,11 @@ export default function viewMovie() {
   const [cinema, setCinema] = useState("");
   const [inputSearch, setInputSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [startIndex, setStartIndex] = useState(0);
   const currentDate = new Date();
   const [date, setDate] = useState(new Date().toDateString());
+  const totalDays = 14;
+  const maxVisibleDays = 6;
   const dropdown = createListCollection({
     items: [
       { label: "All", value: "All" },
@@ -49,7 +52,7 @@ export default function viewMovie() {
     ],
   });
 
-  const days = Array.from({ length: 7 }, (_, index) => {
+  const days = Array.from({ length: totalDays }, (_, index) => {
     const nextDate = new Date(currentDate);
     nextDate.setDate(currentDate.getDate() + index); // Add index days to the current date
     return {
@@ -72,7 +75,7 @@ export default function viewMovie() {
     }
     const fetchData = async () => {
       setLoading(true);
-      
+
       try {
         const params = new URLSearchParams({ movieId, city, cinema });
         const response = await axios.get(
@@ -106,6 +109,19 @@ export default function viewMovie() {
     setDate(newDate);
     localStorage.setItem("selectedDate", newDate);
   };
+  const handleNext = () => {
+    if (startIndex + maxVisibleDays < days.length) {
+      setStartIndex(startIndex + maxVisibleDays);
+    }
+  };
+
+  const handlePrev = () => {
+    if (startIndex > 0) {
+      setStartIndex(startIndex - maxVisibleDays);
+    }
+  };
+
+  const visibleDays = days.slice(startIndex, startIndex + maxVisibleDays);
 
   const groupByHall = (movies) =>
     movies.reduce((acc, movie) => {
@@ -143,7 +159,7 @@ export default function viewMovie() {
   );
 
   return (
-    <section className="w-full h-full flex flex-col items-center text-white">
+    <section className="w-full h-full flex flex-col items-center text-white my-2">
       {movie && movie.length > 0 ? (
         <>
           <div className="hidden md:flex md:relative w-full h-[440px]">
@@ -152,22 +168,24 @@ export default function viewMovie() {
               alt={movie[0].title || "Movie Banner"}
               layout="fill"
               objectFit="cover"
+              objectPosition="center"
               className="w-full h-full opacity-60"
             />
           </div>
-          <div className="md:absolute md:top-36 md:max-w-[1200px] lg:min-w-[1200px] h-[600px] bg-[#070C1BB2] md:flex-row flex flex-col backdrop-blur-md bg-opacity-70 rounded-lg">
+          <div className="md:absolute md:top-36 md:max-w-[1200px] lg:min-w-[1200px] md:h-[600px] h-[500px] bg-[#070C1BB2] md:flex-row flex flex-col backdrop-blur-md bg-opacity-70 rounded-lg">
             <Image
               src={movie[0].poster}
               width={411}
               height={600}
               alt={movie[0].title || "Movie Poster"}
+              className="w-full max-h-[600px] md:w-[411px]"
             />
-            <div className="md:p-16 flex flex-col md:gap-20 gap-10 py-10 px-4">
+            <div className="lg:p-16 flex flex-col md:gap-20 gap-10 py-10 px-4 w-full">
               <div className="flex flex-col gap-6">
                 <h1 className="md:text-5xl text-3xl font-bold">
                   {movie[0].title}
                 </h1>
-                <div className="md:flex-row gap-6 md:items-center flex flex-col">
+                <div className="md:flex-row gap-6 md:items-stretch flex flex-col">
                   <div className="flex md:gap-5 gap-2 items-center">
                     {movie[0].genre.split(",").map((genre, index) => (
                       <Button
@@ -180,7 +198,7 @@ export default function viewMovie() {
                     <Button className="bg-[#21263F] p-4">
                       {movie[0].language}
                     </Button>
-                    <span className="border-l-2 border-gray-500 md:h-full h-3/4"></span>
+                    <div className="border-l-2 border-gray-500 md:h-full h-3/4 "></div>
                   </div>
                   <p className="md:text-xl text-[#C8CEDD]">
                     Release date: {convertDate(movie[0].release_date)}
@@ -197,9 +215,31 @@ export default function viewMovie() {
               </div>
             </div>
           </div>
-          <div className="md:mt-96 mt-[24rem] md:w-full w-full p-4 h-28 bg-[#070C1B] md:gap-6 flex justify-center items-center">
-            <div className="flex gap-1 overflow-x-auto md:overflow-x-hidden md:w-full md:max-w-[1200px] justify-between">
-              {days.map((day) => (
+          <div className="md:mt-80 mt-[32rem] md:w-full w-full p-4 h-28 bg-[#070C1B] md:gap-1 flex justify-center items-center">
+            {startIndex === 0 ? null : (
+              <button
+                className="text-gray-300 p-2 hover:text-white"
+                onClick={handlePrev}
+                disabled={startIndex === 0}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="40"
+                  height="40"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="gray"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-chevron-left"
+                >
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+            )}
+            <div className="flex gap-1 overflow-x-auto lg:overflow-x-hidden md:w-full md:max-w-[1200px] justify-between">
+              {visibleDays.map((day) => (
                 <div
                   key={day.date}
                   onClick={() => handleDateChange(day)}
@@ -222,11 +262,31 @@ export default function viewMovie() {
                   </div>
                 </div>
               ))}
+              <button
+                className="text-gray-300 p-2 hover:text-white"
+                onClick={handleNext}
+                disabled={startIndex + maxVisibleDays >= days.length}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="40"
+                  height="40"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="gray"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-chevron-right"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
             </div>
           </div>
-          <article className="md:max-w-[1200px] w-full md:mt-10 flex flex-col">
+          <article className="md:max-w-[1200px] w-full md:my-10 flex flex-col">
             <form>
-              <div className="md:flex-row flex flex-col w-full gap-5 py-10 px-4 md:px-0 md:max-w-[1200px]">
+              <div className="md:flex-row flex flex-col w-full gap-5 py-12 px-4 lg:px-0 md:max-w-[1200px]">
                 <HStack
                   gap="10"
                   width="full"
@@ -301,7 +361,9 @@ export default function viewMovie() {
                                 height={44}
                                 alt="Icon"
                               />
-                              <h1 className="text-2xl">{cinema_name}</h1>
+                              <h1 className="text-2xl font-bold">
+                                {cinema_name}
+                              </h1>
                             </div>
                             <div className="flex gap-5">
                               <Button className="bg-[#21263F] p-3 text-[14px] text-[#8B93B0] rounded-md">
@@ -431,8 +493,13 @@ export default function viewMovie() {
           </article>
         </>
       ) : (
-        <div>
-          <p>No movies found.</p>
+        <div className="flex justify-center items-center gap-3">
+          <div>
+            <ProgressCircleRoot value={null} size="sm">
+              <ProgressCircleRing cap="round" />
+            </ProgressCircleRoot>
+          </div>
+          <p>Loading...</p>
         </div>
       )}
     </section>

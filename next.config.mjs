@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   //experimental: { optimizePackageImports: ["@chakra-ui/react"] },
   images: {
-    domains: ['image.tmdb.org'],
+    domains: ["image.tmdb.org"],
     remotePatterns: [
       {
         protocol: "https",
@@ -14,6 +14,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "i.ebayimg.com",
         pathname: "/images/**", // Adjust the path if necessary
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.majorcineplex.com",
+        port: "",
+        pathname: "/uploads/movie/**",
       },
     ],
   },
