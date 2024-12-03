@@ -24,7 +24,7 @@ export default function MoviesCard() {
         console.log(data.movies);
 
         // จัดเรียงหนังตามวันที่
-        const sortedMovies = data.movies.sort(
+        const  sortedMovies = data.movies.sort(
           (a, b) => new Date(a.release_date) - new Date(b.release_date)
         );
 

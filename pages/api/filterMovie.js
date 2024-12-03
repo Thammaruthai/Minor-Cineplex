@@ -3,7 +3,7 @@ import connectionPool from "@/utils/db";
 export default async function handler(req, res) {
   if (req.method === "GET") {
     try {
-      const result = await connectionPool.query(`
+      const result = await connectionPool.query (`
         SELECT
     m.movie_id,
     m.title,
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     m.title
             `);
 
-      const languagesResult = await connectionPool.query(`
+      const languagesResult = await  connectionPool.query(`
         SELECT language_id, name
         FROM languages
         ORDER BY name
