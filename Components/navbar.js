@@ -18,8 +18,7 @@ export default function Navbar() {
             Login
           </button>
           <button
-            class="px-10 py-3
-           border border-[#8b93b0] text-white text-base font rounded "
+            class="border-[2px] border-[#8b93b0] w-[134px] h-[48px] text-white text-base font-bold rounded "
           >
             Register
           </button>
