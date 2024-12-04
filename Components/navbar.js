@@ -1,11 +1,7 @@
 export default function Navbar() {
   return (
-    <nav className="relative ">
-      {/* Background Blur */}
-      <div
-        className="absolute inset-x-0 top-0 h-16 lg:h-20 bg-black bg-opacity-5 backdrop-blur-lg w-full
-        border-b-2 border-[#21263f] "
-      ></div>
+    <header className="relative shadow-2xl ">
+      <div className="absolute inset-x-0 top-0 h-16 bg-black bg-opacity-40 backdrop-blur-lg w-full"></div>
 
       <div className="relative flex justify-between items-center bg-transparent px-4 pt-2 lg:pt-[14px] lg:mx-14">
         <img src="/img/logo.png" alt="Logo" className="h-8" />
@@ -22,6 +18,6 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-    </nav>
+    </header>
   );
 }
