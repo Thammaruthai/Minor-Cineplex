@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import Navbar from "@/Components/navbar";
 
 const inputStyle = "border border-gray-200 rounded bg-[#21263F] py-3 pl-4";
 const labelStyle = "text-gray-400";
@@ -109,7 +110,9 @@ export default function Register() {
   }
 
   return (
-    <div className="w-full flex flex-col h-[100vh] items-center justify-center bg-[#070C1B] min-h-[640px] min-w-[300px] max-sm:justify-start max-sm:pt-10">
+    <>
+    
+    <div className="w-full flex flex-col h-full items-center justify-center bg-[#070C1B] min-h-[640px] min-w-[300px] max-sm:justify-start max-sm:pt-10">
       <div className="container w-[380px] text-white rounded-lg max-sm:w-11/12">
         <h1 className="mb-6 text-4xl text-center font-bold">Register</h1>
         <form onSubmit={handleSubmit}>
@@ -214,6 +217,6 @@ export default function Register() {
           </div>
         </form>
       </div>
-    </div>
+    </div></>
   );
 }
