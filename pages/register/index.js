@@ -62,6 +62,26 @@ export default function Register() {
     setFormValid(isNameValid && isEmailValid && isPasswordValid); // Set form validity
   };
 
+  // Function to calculate password strength
+  const calculatePasswordStrength = (password) => {
+    let strength = 0;
+
+    if (password.length >= 6) strength += 25; // Minimum length
+    if (password.match(/[A-Z]/)) strength += 25; // Uppercase letter
+    if (password.match(/[0-9]/)) strength += 25; // Number
+    if (password.match(/[!@#$%^&*]/)) strength += 25; // Special character
+
+    return strength;
+  };
+
+  const validateForm = (updatedForm) => {
+    const isNameValid = updatedForm.name.trim() !== ""; // Check if name is not empty or whitespace
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedForm.email); // Validate email format
+    const isPasswordValid = updatedForm.password.length >= 6; // Validate password length
+
+    setFormValid(isNameValid && isEmailValid && isPasswordValid); // Set form validity
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const updatedForm = { ...formData, [name]: value };
@@ -254,6 +274,6 @@ export default function Register() {
           </form>
         </div>
       </div>
-    </>
+    </div></>
   );
 }
