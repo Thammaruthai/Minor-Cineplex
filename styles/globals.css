@@ -8,6 +8,8 @@
 body {
   font-family: "Roboto", sans-serif; /* ตั้งฟอนต์เริ่มต้น */
   background-color: #101525;
+  width: 100%;
+  height: 100%;
 }
 
 [data-highlighted] {

@@ -12,33 +12,33 @@ export default async function handler(req, res) {
       const city = req.query.city || "";
       const cinema = req.query.cinema || "";
       let query = `
-      SELECT 
-      show_id, 
-      show_date_time, 
-      halls.name AS hall_name, 
-      movies.title, 
-      movies.description, 
-      movies.release_date, 
-      movies.poster, 
-      movies.banner, 
-      languages.name AS language, 
-      genres.name AS genre,
-      cinemas.name AS cinema_name,
-      cinemas.address, 
-      cities.city_name AS city_name
-      FROM shows 
-      INNER JOIN movies on movies.movie_id = shows.movie_id
-      INNER JOIN movie_genres on movies.movie_id = movie_genres.movie_id
-      INNER JOIN genres on genres.genre_id = movie_genres.genre_id
-      INNER JOIN languages on movies.language_id = languages.language_id
-      INNER JOIN halls on halls.hall_id = shows.hall_id
-      INNER JOIN cinemas on cinemas.cinema_id = halls.cinema_id
-      INNER JOIN cities on cinemas.city_id = cities.city_id
-      WHERE shows.movie_id = $1
+        SELECT 
+          show_id, 
+          show_date_time, 
+          halls.name AS hall_name, 
+          movies.title, 
+          movies.description, 
+          movies.release_date, 
+          movies.poster, 
+          movies.banner, 
+          languages.name AS language, 
+          cinemas.name AS cinema_name,
+          cinemas.address, 
+          cities.city_name AS city_name,
+          ARRAY_AGG(genres.name) AS genres
+        FROM shows 
+        INNER JOIN movies ON movies.movie_id = shows.movie_id
+        INNER JOIN movie_genres ON movies.movie_id = movie_genres.movie_id
+        INNER JOIN genres ON genres.genre_id = movie_genres.genre_id
+        INNER JOIN languages ON movies.language_id = languages.language_id
+        INNER JOIN halls ON halls.hall_id = shows.hall_id
+        INNER JOIN cinemas ON cinemas.cinema_id = halls.cinema_id
+        INNER JOIN cities ON cinemas.city_id = cities.city_id
+        WHERE shows.movie_id = $1
       `;
       let values = [movieId];
       let paramIndex = 2;
-      
+
       if (city) {
         query += ` AND cities.city_name = $${paramIndex}`;
         values.push(city);
@@ -51,11 +51,44 @@ export default async function handler(req, res) {
         paramIndex++;
       }
 
-      query += " ORDER BY halls.name ASC, show_date_time ASC";
+      query += `
+      GROUP BY 
+        show_id, 
+        show_date_time, 
+        halls.name, 
+        movies.title, 
+        movies.description, 
+        movies.release_date, 
+        movies.poster, 
+        movies.banner, 
+        languages.name, 
+        cinemas.name,
+        cinemas.address, 
+        cities.city_name
+      ORDER BY halls.name ASC, show_date_time ASC;
+    `;
       const result = await connectionPool.query(query, values);
 
+      const formattedData = result.rows.map((row) => ({
+        show_id: row.show_id,
+        show_date_time: row.show_date_time,
+        hall_name: row.hall_name,
+        cinema_name: row.cinema_name,
+        address: row.address,
+        city_name: row.city_name,
+        movies: {
+          title: row.title,
+          description: row.description,
+          release_date: row.release_date,
+          poster: row.poster,
+          banner: row.banner,
+          language: row.language,
+          genres: row.genres,
+        },
+      }));
+
       return res.status(200).json({
-        movies: result.rows,
+        data: formattedData,
       });
     } catch (error) {
       res.status(500).json({

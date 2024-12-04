@@ -21,6 +21,11 @@ const nextConfig = {
         port: "",
         pathname: "/uploads/movie/**",
       },
+      {
+        protocol: "https",
+        hostname: "dx35vtwkllhj9.cloudfront.net",
+        pathname: "/**", // Matches all paths under this hostname
+      },
     ],
   },
   experimental: {
