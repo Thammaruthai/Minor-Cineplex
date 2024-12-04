@@ -47,7 +47,6 @@ export default async function handler(req, res) {
       email,
       password,
     });
-
     if (authError) {
       console.error("Error signing up:", authError);
 
