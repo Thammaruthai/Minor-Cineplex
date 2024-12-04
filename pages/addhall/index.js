@@ -66,7 +66,6 @@ export default function AddHall() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
 
     if (name === "city") {
       if (value === "create_new") {
