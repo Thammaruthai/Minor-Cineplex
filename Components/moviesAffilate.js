@@ -57,7 +57,7 @@ export default function MoviesAffiliate() {
       </p>
       <div className="mx-5 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mx-20">
         {/* Cinema 1 */}
-        <div className="flex items-center border border-[#21263f] rounded-lg p-5 shadow-md">
+        <div className=" flex items-center border border-[#21263f] rounded-lg p-5 shadow-md">
           <div className="flex-none bg-[#2a304f] w-14 h-14 rounded-full flex items-center justify-center">
             <img
               src="/img/location.png"
