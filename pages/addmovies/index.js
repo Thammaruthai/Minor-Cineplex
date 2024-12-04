@@ -63,7 +63,7 @@ export default function AddMovie() {
   };
 
   return (
-    <div className="flex flex-col h-screen items-center justify-center bg-[#070C1B] px-4 text-white min-h-[870px]">
+    <div className="flex flex-col h-screen items-center justify-center bg-[#070C1B] px-4 text-white min-h-[870px] pb-6">
       <div className="w-full max-w-lg bg-[#070C1B] rounded-lg">
         <h1 className="text-4xl text-center font-bold mb-6">Add Movie</h1>
         <form onSubmit={handleSubmit} className={formContainerStyle}>
