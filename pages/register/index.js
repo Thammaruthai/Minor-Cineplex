@@ -62,6 +62,8 @@ export default function Register() {
     setFormValid(isNameValid && isEmailValid && isPasswordValid); // Set form validity
   };
 
+  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const updatedForm = { ...formData, [name]: value };
