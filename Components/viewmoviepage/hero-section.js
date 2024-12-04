@@ -1,5 +1,5 @@
 import { useMovie } from "@/hooks/useMovies";
-import { convertDate } from "@/pages/utils/date";
+import { convertDate } from "@/utils/date";
 import { Button } from "@chakra-ui/react";
 import Image from "next/image";
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { formatDate } from "@/pages/utils/date";
+import { formatDate } from "@/utils/date";
 
 export function DateSection({ setDate, date, setLoading }) {
   const [startIndex, setStartIndex] = useState(0);
@@ -10,13 +10,13 @@ export function DateSection({ setDate, date, setLoading }) {
 
   const days = Array.from({ length: totalDays }, (_, index) => {
     const nextDate = new Date();
-    nextDate.setDate(nextDate.getDate() + index); 
+    nextDate.setDate(nextDate.getDate() + index);
     return {
       date: formatDate(nextDate),
       day:
         index === 0
           ? "Today"
-          : nextDate.toLocaleDateString("en-US", { weekday: "short" }), 
+          : nextDate.toLocaleDateString("en-US", { weekday: "short" }),
     };
   });
 
@@ -41,8 +41,8 @@ export function DateSection({ setDate, date, setLoading }) {
     }
   };
 
-  console.log(`Current Date`, currentDate)
-  console.log(`Selected Date`, selectedDate)
+  console.log(`Current Date`, currentDate);
+  console.log(`Selected Date`, selectedDate);
 
   const visibleDays = days.slice(startIndex, startIndex + limitDays);
 
@@ -76,7 +76,8 @@ export function DateSection({ setDate, date, setLoading }) {
             key={day.date}
             onClick={() => handleDateChange(day)}
             className={`p-2 w-28 md:w-40 flex-shrink-0 text-center flex flex-col rounded-md cursor-pointer ${
-              day.date === selectedDate || (day.day === "Today" && selectedDate === currentDate)
+              day.date === selectedDate ||
+              (day.day === "Today" && selectedDate === currentDate)
                 ? "bg-[#21263F] font-bold"
                 : "bg-none text-gray-300"
             }`}
@@ -84,7 +85,8 @@ export function DateSection({ setDate, date, setLoading }) {
             <div className="md:text-2xl text-lg">{day.day}</div>
             <div
               className={`${
-                day.date === selectedDate || (day.day === "Today" && selectedDate === currentDate)
+                day.date === selectedDate ||
+                (day.day === "Today" && selectedDate === currentDate)
                   ? "text-[#C8CEDD]"
                   : "text-[#565F7E]"
               }`}

@@ -20,8 +20,8 @@ import {
   formatShowtime,
   classifyShowtime,
   getNextShowtime,
-} from "@/pages/utils/date";
-import { groupBy } from "@/pages/utils/grouping";
+} from "@/utils/date";
+import { groupBy } from "@/utils/grouping";
 import axios from "axios";
 
 export function CinemaSection({
