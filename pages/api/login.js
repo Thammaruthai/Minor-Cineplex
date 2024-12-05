@@ -1,12 +1,11 @@
-import { supabase } from "../../lib/supabaseClient";
 import connectionPool from "@/utils/db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.SECRET_KEY;
-const MAX_FAILED_ATTEMPTS = 5; // จำนวนครั้งที่อนุญาตให้พยายามล็อกอินผิด
+const MAX_FAILED_ATTEMPTS = 5; // จำนวนครั้งที่อนุญาตให้ล็อกอินผิด
 const LOCK_TIME = 5 * 60 * 1000; // เวลาที่บัญชีจะถูกล็อค (5 นาที)
-const LOGIN_ATTEMPT_TIMEFRAME = 24 * 60 * 60 * 1000; // ช่วงเวลาที่จะนับจำนวนการพยายามล็อกอินผิด (1 วัน)
+const LOGIN_ATTEMPT_TIMEFRAME = 24 * 60 * 60 * 1000; // ช่วงเวลาที่นับ
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -70,7 +69,7 @@ export default async function handler(req, res) {
 
       return res.status(403).json({
         success: false,
-        error: `Account locked due to too many failed login attempts. Please try again after ${lockUntil.toLocaleTimeString()}.`,
+        error: `Account locked due to too many failed login attempts. Please try again after 5 minutes`,
       });
     }
 

@@ -14,7 +14,13 @@ export default function LoginPage() {
   const [error, setError] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
   const [isSending, setIsSending] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
   const isFormValid = email.length > 0 && password.length >= 6;
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex สำหรับตรวจสอบ email
+    return emailRegex.test(email);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -73,10 +79,11 @@ export default function LoginPage() {
           }
         );
       } else if (error.response.status === 403) {
+        const lockedUntil = new Date(Date.now() + 5 * 60 * 1000);
         toast(
           <strong>
             Account locked due to too many failed login attempts. Please try
-            again later.
+            again after 5 minutes
           </strong>,
           {
             position: "bottom-right",
@@ -150,50 +157,63 @@ export default function LoginPage() {
         <h1 className="mb-8 text-center text-4xl font-bold text-white">
           Login
         </h1>
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm text-gray-300">
-              Email
-            </label>
-            <Field required>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                variant="filled"
-                bg="#21263F"
-                className={
-                  error
-                    ? "text-white border border-red-500 animate-shake"
-                    : "text-white"
-                }
-                key={shakeKey}
-              />
-            </Field>
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm text-gray-300">
-              Password
-            </label>
-            <Field required>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                variant="filled"
-                bg="#21263F"
-                className={
-                  error
-                    ? "text-white border border-red-500 animate-shake"
-                    : "text-white"
-                }
-                key={shakeKey}
-              />
-            </Field>
+        <form onSubmit={handleLogin} className="space-y-10">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm text-gray-300">
+                Email
+              </label>
+              <Field>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setEmail(value);
+                    if (!validateEmail(value)) {
+                      setEmailErrorMessage("Invalid email format.");
+                    } else {
+                      setEmailErrorMessage("");
+                    }
+                  }}
+                  variant="filled"
+                  bg="#21263F"
+                  className={
+                    error
+                      ? "text-white border border-red-500 px-3 animate-shake"
+                      : "text-white border border-[#565F7E] px-3"
+                  }
+                  key={shakeKey}
+                />
+              </Field>
+              {emailErrorMessage && (
+                <p className="text-sm text-red-500 mt-1">{emailErrorMessage}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm text-gray-300">
+                Password
+              </label>
+              <Field>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  variant="filled"
+                  bg="#21263F"
+                  className={
+                    error
+                      ? "text-white border border-red-500 px-3 animate-shake"
+                      : "text-white border border-[#565F7E] px-3"
+                  }
+                  key={shakeKey}
+                />
+              </Field>
+            </div>
           </div>
           <div className="flex items-center justify-between">
             <label className="flex items-center text-sm text-gray-300">
@@ -216,7 +236,7 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className={`w-full py-2 px-4 text-white font-semibold rounded-lg shadow-md transition duration-200 
+            className={`w-full py-3 px-4 text-white font-semibold rounded-[4px] shadow-md transition duration-200 
               ${
                 !isFormValid
                   ? "bg-[#4E7BEE] opacity-40 cursor-not-allowed"
@@ -227,7 +247,7 @@ export default function LoginPage() {
             Login
           </button>
 
-          <p className="text-center text-sm text-gray-400">
+          <p className="text-center text-sm text-[#8B93B0]">
             Don't have any account?{" "}
             <Link href="/register" className="text-white hover:underline">
               Register
@@ -235,7 +255,7 @@ export default function LoginPage() {
           </p>
         </form>
         {isSending && (
-          <div className="text-white text-center mt-5 animate-pulse">
+          <div className="text-[#8B93B0] text-center mt-5 animate-pulse">
             <p className="text-lg font-medium">
               Sending reset password request
               <span className="dot-animate ml-1">...</span>
