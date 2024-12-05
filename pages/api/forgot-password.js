@@ -1,4 +1,4 @@
-import { supabase } from "../../lib/supabaseClient"; // เชื่อมต่อกับ Supabase
+import { supabase } from "@/lib/supabase-client"; // เชื่อมต่อกับ Supabase
 import db from "../../utils/db"; // เชื่อมต่อกับฐานข้อมูล PostgreSQL
 
 export default async function handler(req, res) {
