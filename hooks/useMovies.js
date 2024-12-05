@@ -24,7 +24,6 @@ export function useMovie() {
             : `/api/movies/${movieId}?city=${city}&cinema=${cinema}`
         );
         setMovie(response.data.data);
-        console.log(`Fetch Date`, date)
       } catch (error) {
         console.error("Error fetching movie:", error);
       } finally {
