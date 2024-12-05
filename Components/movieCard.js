@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import axios from "axios";
 
 export default function MoviesCard() {
@@ -24,7 +25,7 @@ export default function MoviesCard() {
         console.log(data.movies);
 
         // จัดเรียงหนังตามวันที่
-        const  sortedMovies = data.movies.sort(
+        const sortedMovies = data.movies.sort(
           (a, b) => new Date(a.release_date) - new Date(b.release_date)
         );
 
@@ -68,6 +69,7 @@ export default function MoviesCard() {
       <div className="mx-5 mb-10 grid grid-cols-2 gap-6  lg:grid-cols-4 lg:mx-20">
         {(isNowShowing ? nowShowing : comingSoon).map((movie) => (
           <div key={movie.movie_id} className="flex flex-col">
+            <Link href={`/movies/${movie.movie_id}`}>
             <div>
               <img
                 src={movie.poster || "https://via.placeholder.com/300x400"}
@@ -75,7 +77,7 @@ export default function MoviesCard() {
                 alt={movie.title}
               />
             </div>
-
+            </Link>
             <div className="flex items-center justify-between pt-4">
               <span className="text-[#8b93b0] text-base xl:text-xl">
                 {new Date(movie.release_date).toLocaleDateString("en-US", {
@@ -95,12 +97,13 @@ export default function MoviesCard() {
                 </span>
               </div>
             </div>
-
-            <div>
-              <p className="text-white text-xl lg:text-2xl xl:text-3xl font-bold pt-1">
-                {movie.title}
-              </p>
-            </div>
+            <Link href={`/movies/${movie.movie_id}`}>
+              <div>
+                <p className="text-white text-xl lg:text-2xl xl:text-3xl font-bold pt-1">
+                  {movie.title}
+                </p>
+              </div>
+            </Link>
 
             {/* Genres and Languages */}
             <div className="flex gap-2 pt-3 flex-wrap">
