@@ -98,6 +98,14 @@ export default async function handler(req, res) {
       [user.user_id, currentTime, req.socket.remoteAddress]
     );
 
+    // Fetch user profile data
+    const profileResult = await client.query(
+      "SELECT name, profile_image FROM user_profiles WHERE user_id = $1",
+      [user.user_id]
+    );
+
+    const profile = profileResult.rows[0];
+
     // สร้าง token
     const token = jwt.sign(
       {
@@ -114,6 +122,8 @@ export default async function handler(req, res) {
       success: true,
       message: "Login successful",
       token,
+      name: profile?.name || "User",
+      profileImage: profile?.profile_image || null,
     });
   } catch (err) {
     console.error("Server error during login:", err);
@@ -121,5 +131,7 @@ export default async function handler(req, res) {
       success: false,
       error: "An unexpected error occurred. Please try again later.",
     });
+  } finally {
+    client.release();
   }
 }
