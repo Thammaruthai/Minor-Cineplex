@@ -50,6 +50,21 @@ const nextConfig = {
         port: '',
         pathname: '/images/**', // Allows all images under the `/images` path
       },
+      {
+        protocol: 'https',
+        hostname: 'www.futurepark.co.th',
+        pathname: '/stocks/wcmpage/o0x0/mo/yv/moyvffc3jt5/**', // Adjust as needed for specific paths or allow all
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.pixabay.com',
+        pathname: '/photo/**', // Adjust as needed for specific paths or allow all
+      },
+      {
+        protocol: 'https',
+        hostname: 'pixabay.com',
+        pathname: '/get/**', // Allows all paths under /get/
+      },
     ],
   },
   experimental: {

@@ -1,53 +1,44 @@
 "use client";
-import { HeroSection } from "@/Components/viewmoviepage/hero-section";
 import { DateSection } from "@/Components/viewmoviepage/date-section";
-import { CinemaSection } from "@/Components/viewmoviepage/cinemas-section";
 import Footer from "@/Components/footer";
-import { useMovie } from "@/hooks/useMovies";
 import {
   ProgressCircleRing,
   ProgressCircleRoot,
 } from "@/components/ui/progress-circle";
+import { useCinema } from "@/hooks/useCinema";
+import { HeroSectionCinema } from "@/Components/viewcinemapage/hero-section";
+import MovieSection from "@/Components/viewcinemapage/movies-section";
 
-export default function ViewMovie() {
+export default function ViewCinema() {
   const {
     movie,
-    city,
     date,
-    inputSearch,
     loading,
-    setCity,
-    setCinema,
     setDate,
-    setInputSearch,
     setLoading,
-  } = useMovie();
+  } = useCinema();
+
   console.log(`Movie:`, movie)
   return (
     <>
-      <section className="w-full h-full flex flex-col items-center text-white -mt-16">
+      <section className="w-full h-full flex flex-col items-center text-white my-2">
         {movie && movie.length > 0 ? (
           <>
-            <HeroSection />
+            <HeroSectionCinema />
             <DateSection
               date={date}
               setDate={setDate}
               setLoading={setLoading}
             />
-            <CinemaSection
+            <MovieSection
               movie={movie}
-              city={city}
               date={date}
               loading={loading}
-              inputSearch={inputSearch}
-              setInputSearch={setInputSearch}
-              setCity={setCity}
-              setCinema={setCinema}
               setLoading={setLoading}
             />
           </>
         ) : (
-          <div className="flex justify-center items-center gap-3 mt-28">
+          <div className="flex justify-center items-center gap-3">
             <div>
               <ProgressCircleRoot value={null} size="sm">
                 <ProgressCircleRing cap="round" />
