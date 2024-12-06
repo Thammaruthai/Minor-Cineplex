@@ -156,9 +156,9 @@ export default function Filter({ onFilterApply }) {
                 </option>
               ))}
             </select>
-            <div className="flex-1 relative">
+            <div className="flex-1 relative z-0">
               <select
-                className="w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none appearance-none pr-10"
+                className="absolute w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none appearance-none pr-10"
                 value={
                   releaseDate ? releaseDate.toISOString().split("T")[0] : ""
                 }
