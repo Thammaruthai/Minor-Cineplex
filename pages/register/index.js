@@ -5,12 +5,13 @@ import Navbar from "@/Components/navbar";
 
 const inputStyle =
   "border border-gray-200 rounded bg-[#21263F] py-3 pl-4 placeholder-[#8B93B0]";
-const inputErrorStyle =
-  "border border-[#E5364B] rounded bg-[#21263F] py-3 pl-4 placeholder-[#8B93B0]";
+  const inputErrorStyle =
+    "border border-[#E5364B] rounded bg-[#21263F] py-3 pl-4 placeholder-[#8B93B0]";
 const labelStyle = "text-[#C8CEDD]";
 const buttonStyleEnabled =
   "bg-[#4E7BEE] w-full py-3 hover:bg-[#1E29A8] active:[#0C1580]"; // Enabled button style
-const buttonStyleDisabled = "bg-gray-500 w-full py-3 cursor-not-allowed"; // Disabled button style
+const buttonStyleDisabled =
+  "bg-gray-500 w-full py-3 cursor-not-allowed"; // Disabled button style
 const inputFieldStyle = "flex flex-col gap-1";
 
 export default function Register() {
@@ -61,6 +62,8 @@ export default function Register() {
     setFormValid(isNameValid && isEmailValid && isPasswordValid); // Set form validity
   };
 
+  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const updatedForm = { ...formData, [name]: value };
@@ -90,24 +93,11 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsRegistering(true);
-
     try {
       const response = await axios.post("/api/register", formData);
-
-      if (response.data.success) {
-        const { name, token } = response.data; // สมมติ API ส่ง `name` และ `token` กลับมา
-        localStorage.setItem("name", name); // เก็บชื่อใน localStorage
-        localStorage.setItem("token", token); // เก็บ token ใน localStorage
-
-        toast.success("Registration successful!", {
-          position: "bottom-right",
-        });
-
-        // เปลี่ยนเส้นทางไปยังหน้าแรก
-        setMessage(response.data.message);
-        setError("");
-        setSuccess(true);
-      }
+      setMessage(response.data.message);
+      setError("");
+      setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong.");
       setMessage("");
