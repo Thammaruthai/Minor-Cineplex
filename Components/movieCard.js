@@ -71,7 +71,7 @@ export default function MoviesCard() {
             <div>
               <img
                 src={movie.poster || "https://via.placeholder.com/300x400"}
-                className="rounded-lg object-cover w-full h-[310px] sm:h-[430px] md:h-[500px] xl:h-[480px]  lg:h-[300px] 2xl:h-[550px]"
+                className="rounded-lg w-full h-[310px] sm:h-[430px] md:h-[500px] xl:h-[480px]  lg:h-[300px] 2xl:h-[550px]"
                 alt={movie.title}
               />
             </div>
