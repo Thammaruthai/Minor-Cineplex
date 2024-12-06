@@ -11,7 +11,7 @@ export function HeroSection() {
   const currentMovie = movie[0];
   return (
     <>
-      <div className="hidden md:flex md:relative w-full h-[440px]">
+      <div className="hidden md:flex md:relative w-full h-[440px] md:mb-96">
         <Image
           src={currentMovie.movies.banner}
           alt={currentMovie.movies.title}
@@ -21,7 +21,7 @@ export function HeroSection() {
           className="w-full h-full opacity-60"
         />
       </div>
-      <div className="md:absolute md:top-36 md:max-w-[1200px] md:h-[600px] h-[500px] bg-[#070C1BB2] md:flex-row flex flex-col backdrop-blur-md bg-opacity-70 rounded-lg">
+      <div className="md:absolute md:top-36 md:max-w-[1200px] md:h-[600px] h-[500px] bg-[#070C1BB2] md:flex-row flex flex-col backdrop-blur-md bg-opacity-70 rounded-lg mb-[32rem]">
         <Image
           src={currentMovie.movies.poster}
           width={411}

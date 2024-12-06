@@ -70,17 +70,18 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="relative">
+
+    <nav className="relative z-50">
       {/* Background Blur */}
       <div
         className="absolute inset-x-0 top-0 h-16 lg:h-20 bg-black bg-opacity-5 backdrop-blur-lg w-full
-        border-b-2 border-[#21263f]"
+        border-b-1 border-[#21263f] z-40 "
       ></div>
 
       <div className="relative flex justify-between items-center bg-transparent px-4 pt-2 lg:pt-[14px] lg:mx-14">
         {/* Logo */}
         <Link href="/">
-          <img src="/img/logo.png" alt="Logo" className="h-8" />
+          <img src="/img/logo.png" alt="Logo" className="h-8 z-50 relative" />
         </Link>
 
         {/* Mobile Menu Button */}
@@ -88,11 +89,11 @@ export default function Navbar() {
           className="rounded-sm border-none flex items-center justify-center mt-2 active:scale-95 transition-transform duration-150 lg:hidden"
           onClick={toggleMobileMenu}
         >
-          <img src="/img/Ham.png" alt="Menu" className="w-6 h-5 m-1" />
+          <img src="/img/Ham.png" alt="Menu" className="w-6 h-5 m-1 z-50 relative" />
         </button>
 
         {/* Desktop Menu */}
-        <div className="hidden lg:flex space-x-4 lg:items-center">
+        <div className="hidden lg:flex space-x-4 lg:items-center z-50">
           {!isLoggedIn ? (
             <>
               <Link href="/login">
@@ -101,7 +102,7 @@ export default function Navbar() {
                 </button>
               </Link>
               <Link href="/register">
-                <button className="w-[134px] h-[48px] text-white text-base font-bold rounded hover:border hover:border-[#8b93b0]">
+                <button className="w-[134px] h-[48px] text-white text-base font-bold rounded hover:border hover:border-[#8b93b0] z-10">
                   Register
                 </button>
               </Link>

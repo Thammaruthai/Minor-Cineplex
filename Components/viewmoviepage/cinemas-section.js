@@ -72,6 +72,7 @@ export function CinemaSection({
   const handleSearchChange = (e) => setInputSearch(e.target.value);
   const cinemas = groupBy(movie, "cinema_name");
   const filteredHalls = groupByHall(movie);
+  console.log(`Cinemas from gruopby`, cinemas)
 
   const filteredCinemas = Object.entries(cinemas).filter(
     ([cinema_name, shows]) => {
@@ -88,6 +89,9 @@ export function CinemaSection({
       return matchesCity && matchesSearch && matchesDate;
     }
   );
+
+  console.log(`Filtered cinemas`,filteredCinemas)
+  console.log(`Movies`, movie)
 
   useEffect(() => {
     const fetchCities = async () => {
