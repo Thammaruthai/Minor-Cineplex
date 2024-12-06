@@ -32,14 +32,14 @@ export default function LoginPage() {
       });
 
       if (response.data.success) {
-        const { token } = response.data;
+        const { token, name } = response.data; // สมมติ API ส่ง `name` กลับมา
         if (rememberMe) {
           localStorage.setItem("token", token);
+          localStorage.setItem("name", name); // เก็บชื่อผู้ใช้ใน localStorage
         } else {
-          sessionStorage.setItem("token", token); // ถ้าไม่ได้เลือกให้ใช้ sessionStorage
+          sessionStorage.setItem("token", token);
+          sessionStorage.setItem("name", name); // เก็บชื่อผู้ใช้ใน sessionStorage
         }
-
-        localStorage.setItem("token", token);
 
         toast(
           <div>
