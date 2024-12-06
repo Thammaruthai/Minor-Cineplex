@@ -7,7 +7,7 @@ export default function Layout({ children }) {
     <div className="flex flex-col">
       <Navbar />
       {children}
-      <Footer />
+      
 
     </div>
   );
