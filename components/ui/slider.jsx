@@ -26,7 +26,7 @@ function _optionalChain(ops) {
   }
   return value
 }
-import { Slider as ChakraSlider, HStack } from '@chakra-ui/react'
+import { Slider as ChakraSlider, For, HStack } from '@chakra-ui/react'
 import * as React from 'react'
 
 export const Slider = React.forwardRef(function Slider(props, ref) {

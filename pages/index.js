@@ -6,6 +6,7 @@ import ResultFromFilter from "@/Components/resultFromFilter.js";
 import Head from "next/head";
 import Footer from "@/Components/footer.js";
 
+
 export default function Home() {
   const [filteredMovies, setFilteredMovies] = useState([]);
 
