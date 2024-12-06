@@ -2,9 +2,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-export function useMovie() {
+export function useCinema() {
   const router = useRouter();
-  const { movieId } = router.query;
+  const { cinemaId } = router.query;
   const [movie, setMovie] = useState([]);
   const [city, setCity] = useState("All");
   const [cinema, setCinema] = useState("");
@@ -17,13 +17,10 @@ export function useMovie() {
       setLoading(true);
 
       try {
-        const params = new URLSearchParams({ movieId, city, cinema });
-        const response = await axios.get(
-          city === "All"
-            ? `/api/movies/${movieId}`
-            : `/api/movies/${movieId}?city=${city}&cinema=${cinema}`
-        );
+        const params = new URLSearchParams({ cinemaId });
+        const response = await axios.get(`/api/cinemas/${cinemaId}`);
         setMovie(response.data.data);
+
       } catch (error) {
         console.error("Error fetching movie:", error);
       } finally {
@@ -34,11 +31,11 @@ export function useMovie() {
     if (movie.length === 0) {
       setLoading(false);
     }
-    if (movieId) {
+    if (cinemaId) {
       fetchData();
     }
-  }, [movieId, date]);
-
+  }, [cinemaId, date]);
+  console.log(`data from useCinema`, movie)
   return {
     movie,
     city,

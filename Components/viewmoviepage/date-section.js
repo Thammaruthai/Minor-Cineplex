@@ -47,7 +47,7 @@ export function DateSection({ setDate, date, setLoading }) {
   const visibleDays = days.slice(startIndex, startIndex + limitDays);
 
   return (
-    <div className="md:mt-80 mt-[32rem] md:w-full w-full p-4 h-28 bg-[#070C1B] md:gap-1 flex justify-center items-center">
+    <div className="md:w-full w-full p-4 h-28 bg-[#070C1B] md:gap-1 flex justify-center items-center">
       {startIndex === 0 ? null : (
         <button
           className="text-gray-300 p-2 hover:text-white"

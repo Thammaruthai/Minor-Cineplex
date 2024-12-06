@@ -26,23 +26,49 @@ const nextConfig = {
         hostname: "dx35vtwkllhj9.cloudfront.net",
         pathname: "/**", // Matches all paths under this hostname
       },
+      {
+        protocol: 'https',
+        hostname: 'deadline.com',
+        port: '',
+        pathname: '/wp-content/uploads/**', // Adjust this to match the specific path pattern
+      },
+      {
+        protocol: 'https',
+        hostname: 'f.ptcdn.info',
+        port: '',
+        pathname: '/**', // Adjusted to allow all paths under this hostname
+      },
+      {
+        protocol: 'https',
+        hostname: 'th-test-11.slatic.net',
+        port: '',
+        pathname: '/**', // This allows all paths under this hostname
+      },
+      {
+        protocol: 'https',
+        hostname: 'm.media-amazon.com',
+        port: '',
+        pathname: '/images/**', // Allows all images under the `/images` path
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.futurepark.co.th',
+        pathname: '/stocks/wcmpage/o0x0/mo/yv/moyvffc3jt5/**', // Adjust as needed for specific paths or allow all
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.pixabay.com',
+        pathname: '/photo/**', // Adjust as needed for specific paths or allow all
+      },
+      {
+        protocol: 'https',
+        hostname: 'pixabay.com',
+        pathname: '/get/**', // Allows all paths under /get/
+      },
     ],
   },
   experimental: {
     optimizePackageImports: ["@chakra-ui/react"],
-  },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        tls: false,
-        net: false,
-        dns: false,
-        "pg-native": false, // Prevents 'pg-native' from being resolved
-      };
-    }
-    return config;
   },
 };
 
