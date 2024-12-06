@@ -5,7 +5,7 @@ import MoviesAffiliate from "@/Components/moviesAffilate.js";
 import ResultFromFilter from "@/Components/resultFromFilter.js";
 import Head from "next/head";
 import Footer from "@/Components/footer.js";
-
+import Navbar from "@/Components/navbar";
 
 export default function Home() {
   const [filteredMovies, setFilteredMovies] = useState([]);
@@ -15,6 +15,7 @@ export default function Home() {
       <Head>
         <title>หน้าแรก | Minor Cineplex</title>
       </Head>
+      <Navbar />
       <div
         className="h-[480px] bg-cover bg-center -mt-44"
         style={{

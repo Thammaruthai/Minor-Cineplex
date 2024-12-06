@@ -3,6 +3,7 @@ import { HeroSection } from "@/Components/viewmoviepage/hero-section";
 import { DateSection } from "@/Components/viewmoviepage/date-section";
 import { CinemaSection } from "@/Components/viewmoviepage/cinemas-section";
 import Footer from "@/Components/footer";
+import Navbar from "@/Components/navbar";
 import { useMovie } from "@/hooks/useMovies";
 import {
   ProgressCircleRing,
@@ -25,6 +26,7 @@ export default function ViewMovie() {
   console.log(`Movie:`, movie)
   return (
     <>
+    <Navbar />
       <section className="w-full h-full flex flex-col items-center text-white -mt-16">
         {movie && movie.length > 0 ? (
           <>

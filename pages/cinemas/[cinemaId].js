@@ -1,6 +1,7 @@
 "use client";
 import { DateSection } from "@/Components/viewmoviepage/date-section";
 import Footer from "@/Components/footer";
+import Navbar from "@/Components/navbar";
 import {
   ProgressCircleRing,
   ProgressCircleRoot,
@@ -18,9 +19,9 @@ export default function ViewCinema() {
     setLoading,
   } = useCinema();
 
-  console.log(`Movie:`, movie)
   return (
     <>
+    <Navbar/>
       <section className="w-full h-full flex flex-col items-center text-white my-2">
         {movie && movie.length > 0 ? (
           <>
