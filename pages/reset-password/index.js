@@ -66,10 +66,7 @@ export default function ResetPassword() {
         ) : (
           <form className="space-y-10" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <label
-                htmlFor="new-password"
-                className="block text-sm text-gray-300"
-              >
+              <label htmlFor="new-password" className="block  text-gray-300">
                 New Password
               </label>
               <Input
@@ -88,7 +85,7 @@ export default function ResetPassword() {
             <div className="space-y-2">
               <label
                 htmlFor="confirm-password"
-                className="block text-sm text-gray-300"
+                className="block text-gray-300"
               >
                 Confirm Password
               </label>
@@ -106,7 +103,7 @@ export default function ResetPassword() {
             </div>
             <button
               type="submit"
-              className={`w-full py-3 px-4 text-white font-semibold rounded-[4px] shadow-md transition duration-200 
+              className={`w-full py-3 px-4 text-white font-bold rounded-[4px] shadow-md transition duration-200 
                 ${
                   !isFormValid
                     ? "bg-[#4E7BEE] opacity-40 cursor-not-allowed"
