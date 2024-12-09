@@ -201,7 +201,7 @@ export default function Register() {
                 </label>
                 <input
                   placeholder="Password"
-                  className={emailError || error ? inputErrorStyle : inputStyle}
+                  className={passwordError ? inputErrorStyle : inputStyle}
                   type="password"
                   name="password"
                   value={formData.password}
