@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
-import Navbar from "@/Components/navbar";
+import Head from "next/head";
+
 
 const inputStyle =
   "border border-gray-200 rounded bg-[#21263F] py-3 pl-4 placeholder-[#8B93B0]";
@@ -108,7 +109,7 @@ export default function Register() {
 
   if (isRegistering) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#070C1B]">
+      <div className="flex items-center justify-center h-screen ">
         <div className="flex flex-col items-center justify-center text-white gap-4">
           {/* Spinner Animation */}
           <div className="w-16 h-16 border-4 border-blue-500 border-solid rounded-full border-t-transparent animate-spin"></div>
@@ -146,7 +147,17 @@ export default function Register() {
 
   return (
     <>
-      <div className="w-full flex flex-col h-full items-center justify-center bg-[#070C1B] min-h-[500px] min-w-[300px] max-sm:justify-start max-sm:pt-8">
+      {/* เพิ่ม Title Bar */}
+      <Head>
+        <title>Register - Minor Cineplex</title>
+        <meta
+          name="description"
+          content="Register for an amazing experience."
+        />
+        <link rel="icon" href="/img/logo.png" />
+      </Head>
+
+      <div className="w-full flex flex-col h-full items-center justify-center  min-h-[500px] min-w-[300px] max-sm:justify-start max-sm:pt-8 max-sm:mt-2 mt-10">
         <div className="container w-[380px] text-white rounded-lg max-sm:w-11/12">
           <h1 className="mb-10 text-4xl text-center font-bold h-11 ">
             Register
@@ -190,7 +201,7 @@ export default function Register() {
                 </label>
                 <input
                   placeholder="Password"
-                  className={emailError || error ? inputErrorStyle : inputStyle}
+                  className={passwordError ? inputErrorStyle : inputStyle}
                   type="password"
                   name="password"
                   value={formData.password}

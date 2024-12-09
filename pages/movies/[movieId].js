@@ -23,10 +23,9 @@ export default function ViewMovie() {
     setInputSearch,
     setLoading,
   } = useMovie();
-  console.log(`Movie:`, movie)
+  console.log(`Movie:`, movie);
   return (
     <>
-    <Navbar />
       <section className="w-full h-full flex flex-col items-center text-white -mt-16">
         {movie && movie.length > 0 ? (
           <>

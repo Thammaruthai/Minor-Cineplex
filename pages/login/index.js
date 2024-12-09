@@ -152,7 +152,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#101525]">
+    <div className=" bg-[#101525]">
       <main className="mx-auto max-w-md px-4 pt-16">
         <h1 className="mb-8 text-center text-4xl font-bold text-white">
           Login
@@ -160,7 +160,7 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="space-y-10">
           <div className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm text-gray-300">
+              <label htmlFor="email" className="block  text-gray-300">
                 Email
               </label>
               <Field>
@@ -193,7 +193,7 @@ export default function LoginPage() {
               )}
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm text-gray-300">
+              <label htmlFor="password" className="block  text-gray-300">
                 Password
               </label>
               <Field>
@@ -216,7 +216,7 @@ export default function LoginPage() {
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <label className="flex items-center text-sm text-gray-300">
+            <label className="flex items-center  text-gray-300">
               <input
                 type="checkbox"
                 checked={rememberMe}
@@ -228,7 +228,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleForgotPassword}
-              className="text-sm text-white hover:underline"
+              className=" text-white hover:underline font-bold"
             >
               Forget password?
             </button>
@@ -236,7 +236,7 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className={`w-full py-3 px-4 text-white font-semibold rounded-[4px] shadow-md transition duration-200 
+            className={`w-full py-3 px-4 text-white font-bold rounded-[4px] shadow-md transition duration-200 
               ${
                 !isFormValid
                   ? "bg-[#4E7BEE] opacity-40 cursor-not-allowed"
@@ -247,9 +247,12 @@ export default function LoginPage() {
             Login
           </button>
 
-          <p className="text-center text-sm text-[#8B93B0]">
-            Don&apos;t have any account?
-            <Link href="/register" className="text-white hover:underline">
+          <p className="text-center text-[#8B93B0]">
+            Don&apos;t have any account?{" "}
+            <Link
+              href="/register"
+              className="text-white hover:underline font-bold"
+            >
               Register
             </Link>
           </p>
