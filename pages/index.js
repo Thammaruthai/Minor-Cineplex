@@ -15,7 +15,6 @@ export default function Home() {
       <Head>
         <title>หน้าแรก | Minor Cineplex</title>
       </Head>
-      <Navbar />
       <div
         className="h-[480px] bg-cover bg-center -mt-44"
         style={{

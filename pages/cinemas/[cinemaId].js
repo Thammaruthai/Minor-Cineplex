@@ -15,7 +15,6 @@ export default function ViewCinema() {
 
   return (
     <>
-      <Navbar />
       <section className="w-full h-full flex flex-col items-center text-white my-2">
         {movie && movie.length > 0 ? (
           <>

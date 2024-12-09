@@ -26,7 +26,6 @@ export default function ViewMovie() {
   console.log(`Movie:`, movie);
   return (
     <>
-      <Navbar />
       <section className="w-full h-full flex flex-col items-center text-white -mt-16">
         {movie && movie.length > 0 ? (
           <>
