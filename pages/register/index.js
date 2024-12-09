@@ -146,66 +146,60 @@ export default function Register() {
 
   return (
     <>
-      <div className="flex flex-col min-h-[700px] h-screen">
-        <Navbar />
-        <div className="w-full flex flex-col h-screen items-center justify-center min-h-[550px] min-w-[300px] max-sm:justify-start max-sm:pt-8">
-          <div className="container w-[380px] text-white rounded-lg max-sm:w-11/12">
-            <h1 className="mb-10 text-4xl text-center font-bold h-11 ">
-              Register
-            </h1>
-            <form onSubmit={handleSubmit}>
-              <div className="flex flex-col gap-y-6">
-                <div className={inputFieldStyle}>
-                  <label className={labelStyle} htmlFor="name">
-                    Name
-                  </label>
-                  <input
-                    className={inputStyle}
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Full name"
-                    required
-                  />
-                </div>
-                <div className={inputFieldStyle}>
-                  <label className={labelStyle} htmlFor="email">
-                    Email
-                  </label>
-                  <input
-                    placeholder="Email"
-                    className={
-                      emailError || error ? inputErrorStyle : inputStyle
-                    }
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                  {emailError && (
-                    <p className="text-sm text-red-500">{emailError}</p>
-                  )}
-                  {error && <p className="text-sm text-red-500">{error}</p>}
-                </div>
-                <div className={inputFieldStyle}>
-                  <label className={labelStyle} htmlFor="password">
-                    Password
-                  </label>
-                  <input
-                    placeholder="Password"
-                    className={
-                      emailError || error ? inputErrorStyle : inputStyle
-                    }
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                  />
-                  {passwordError && (
-                    <p className="text-sm text-red-500">{passwordError}</p>
-                  )}
+      <div className="w-full flex flex-col h-screen items-center justify-center bg-[#070C1B] min-h-[500px] min-w-[300px] max-sm:justify-start max-sm:pt-8">
+        <div className="container w-[380px] text-white rounded-lg max-sm:w-11/12">
+          <h1 className="mb-10 text-4xl text-center font-bold h-11 ">
+            Register
+          </h1>
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-y-6">
+              <div className={inputFieldStyle}>
+                <label className={labelStyle} htmlFor="name">
+                  Name
+                </label>
+                <input
+                  className={inputStyle}
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Full name"
+                  required
+                />
+              </div>
+              <div className={inputFieldStyle}>
+                <label className={labelStyle} htmlFor="email">
+                  Email
+                </label>
+                <input
+                  placeholder="Email"
+                  className={emailError || error ? inputErrorStyle : inputStyle}
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                {emailError && (
+                  <p className="text-sm text-red-500">{emailError}</p>
+                )}
+                {error && <p className="text-sm text-red-500">{error}</p>}
+              </div>
+              <div className={inputFieldStyle}>
+                <label className={labelStyle} htmlFor="password">
+                  Password
+                </label>
+                <input
+                  placeholder="Password"
+                  className={emailError || error ? inputErrorStyle : inputStyle}
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                {passwordError && (
+                  <p className="text-sm text-red-500">{passwordError}</p>
+                )}
 
                   {/* Password Strength Meter */}
                   {formData.password.length >= 6 && (
