@@ -152,7 +152,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#101525]">
+    <div className=" bg-[#101525]">
       <main className="mx-auto max-w-md px-4 pt-16">
         <h1 className="mb-8 text-center text-4xl font-bold text-white">
           Login

@@ -11,17 +11,10 @@ import { HeroSectionCinema } from "@/Components/viewcinemapage/hero-section";
 import MovieSection from "@/Components/viewcinemapage/movies-section";
 
 export default function ViewCinema() {
-  const {
-    movie,
-    date,
-    loading,
-    setDate,
-    setLoading,
-  } = useCinema();
+  const { movie, date, loading, setDate, setLoading } = useCinema();
 
   return (
     <>
-    <Navbar/>
       <section className="w-full h-full flex flex-col items-center text-white my-2">
         {movie && movie.length > 0 ? (
           <>
@@ -39,7 +32,7 @@ export default function ViewCinema() {
             />
           </>
         ) : (
-          <div className="flex justify-center items-center gap-3">
+          <div className="flex justify-center items-center gap-3 mt-28">
             <div>
               <ProgressCircleRoot value={null} size="sm">
                 <ProgressCircleRing cap="round" />

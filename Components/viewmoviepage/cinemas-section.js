@@ -23,6 +23,7 @@ import {
 } from "@/utils/date";
 import { groupBy } from "@/utils/grouping";
 import axios from "axios";
+import Link from "next/link";
 
 export function CinemaSection({
   movie,
@@ -72,7 +73,7 @@ export function CinemaSection({
   const handleSearchChange = (e) => setInputSearch(e.target.value);
   const cinemas = groupBy(movie, "cinema_name");
   const filteredHalls = groupByHall(movie);
-  console.log(`Cinemas from gruopby`, cinemas)
+  console.log(`Cinemas from gruopby`, cinemas);
 
   const filteredCinemas = Object.entries(cinemas).filter(
     ([cinema_name, shows]) => {
@@ -90,8 +91,8 @@ export function CinemaSection({
     }
   );
 
-  console.log(`Filtered cinemas`,filteredCinemas)
-  console.log(`Movies`, movie)
+  console.log(`Filtered cinemas`, filteredCinemas);
+  console.log(`Movies`, movie);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -223,24 +224,31 @@ export function CinemaSection({
                     </div>
                   </div>
                 </SelectTrigger>
-                <SelectContent className="mt-2 rounded-md bg-[#070C1B] border border-[#565F7E]">
-                  <div className="flex text-white">
-                    <Image src="/icon.png" width={44} height={44} alt="Icon" />
-                    <SelectItem
-                      item={cinema_name}
-                      key={cinema_name}
-                      className="text-xl pl-4 hover:cursor-pointer"
-                    >
-                      <div className="flex h-6 gap-5 items-center">
-                        {cinema_name}{" "}
-                        <div className="border-l-2 border-gray-500 h-full"></div>{" "}
-                        <p className="text-lg text-gray-400">
-                          {shows[0]?.address}
-                        </p>
-                      </div>
-                    </SelectItem>
-                  </div>
-                </SelectContent>
+                <Link href={`/cinemas/${shows[0]?.cinema_id}`}>
+                  <SelectContent className="mt-2 rounded-md bg-[#070C1B] border border-[#565F7E]">
+                    <div className="flex text-white">
+                      <Image
+                        src="/icon.png"
+                        width={44}
+                        height={44}
+                        alt="Icon"
+                      />
+                      <SelectItem
+                        item={cinema_name}
+                        key={cinema_name}
+                        className="text-xl pl-4 hover:cursor-pointer"
+                      >
+                        <div className="flex h-6 gap-5 items-center">
+                          {cinema_name}{" "}
+                          <div className="border-l-2 border-gray-500 h-full"></div>{" "}
+                          <p className="text-lg text-gray-400">
+                            {shows[0]?.address}
+                          </p>
+                        </div>
+                      </SelectItem>
+                    </div>
+                  </SelectContent>
+                </Link>
               </SelectRoot>
               <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col md:gap-14 gap-4 md:p-10 p-4">
                 {Object.entries(filteredHalls)

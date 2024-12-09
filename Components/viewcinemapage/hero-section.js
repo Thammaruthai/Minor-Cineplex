@@ -18,7 +18,7 @@ export function HeroSectionCinema() {
             layout="fill"
             objectFit="cover"
             objectPosition="center"
-            className="w-full h-full opacity-60"
+            className="w-full h-full opacity-60 object-contain"
           />
         </div>
         <div className="md:absolute lg:top-32 md:top-12 md:max-w-[1200px] md:h-[350px] lg:h-[400px] bg-[#070C1BB2] md:flex-row flex flex-col backdrop-blur-md bg-opacity-70 rounded-lg p-4 gap-6 md:p-0 md:gap-0 mb-12">
@@ -28,7 +28,7 @@ export function HeroSectionCinema() {
               width={411}
               height={600}
               alt={currentCinema.cinemas.name}
-              className="w-full md:h-full md:w-[411px] h-44"
+              className="w-32 md:h-full md:w-[274px] h-44 object-cover"
             />
             <div className="lg:p-16 md:p-4 flex md:flex-col md:gap-12 w-full gap-6">
               <div className="flex flex-col gap-6">
