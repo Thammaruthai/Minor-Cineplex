@@ -27,43 +27,67 @@ const nextConfig = {
         pathname: "/**", // Matches all paths under this hostname
       },
       {
-        protocol: 'https',
-        hostname: 'deadline.com',
-        port: '',
-        pathname: '/wp-content/uploads/**', // Adjust this to match the specific path pattern
+        protocol: "https",
+        hostname: "deadline.com",
+        port: "",
+        pathname: "/wp-content/uploads/**", // Adjust this to match the specific path pattern
       },
       {
-        protocol: 'https',
-        hostname: 'f.ptcdn.info',
-        port: '',
-        pathname: '/**', // Adjusted to allow all paths under this hostname
+        protocol: "https",
+        hostname: "f.ptcdn.info",
+        port: "",
+        pathname: "/**", // Adjusted to allow all paths under this hostname
       },
       {
-        protocol: 'https',
-        hostname: 'th-test-11.slatic.net',
-        port: '',
-        pathname: '/**', // This allows all paths under this hostname
+        protocol: "https",
+        hostname: "th-test-11.slatic.net",
+        port: "",
+        pathname: "/**", // This allows all paths under this hostname
       },
       {
-        protocol: 'https',
-        hostname: 'm.media-amazon.com',
-        port: '',
-        pathname: '/images/**', // Allows all images under the `/images` path
+        protocol: "https",
+        hostname: "m.media-amazon.com",
+        port: "",
+        pathname: "/images/**", // Allows all images under the `/images` path
+      },
+      {
+        protocol: "https",
+        hostname: "www.futurepark.co.th",
+        pathname: "/stocks/wcmpage/o0x0/mo/yv/moyvffc3jt5/**", // Adjust as needed for specific paths or allow all
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.pixabay.com",
+        pathname: "/photo/**", // Adjust as needed for specific paths or allow all
+      },
+      {
+        protocol: "https",
+        hostname: "pixabay.com",
+        pathname: "/get/**", // Allows all paths under /get/
+      },
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com",
+        port: "", // Leave empty for default ports (80 for HTTP, 443 for HTTPS)
+        pathname: "/**", // Allows all paths under this hostname
+      },
+      {
+        protocol: "https", // Use https for the given URL
+        hostname: "www.central.co.th", // The domain from your error message
+        port: "", // Leave empty for default ports (80 for HTTP, 443 for HTTPS)
+        pathname: "/adobe/dynamicmedia/deliver/**", // Path pattern for matching the images
       },
       {
         protocol: 'https',
         hostname: 'www.futurepark.co.th',
-        pathname: '/stocks/wcmpage/o0x0/mo/yv/moyvffc3jt5/**', // Adjust as needed for specific paths or allow all
+        port: '',
+        pathname: '/stocks/wcmpage/**', // Allow paths under this directory
       },
       {
         protocol: 'https',
-        hostname: 'cdn.pixabay.com',
-        pathname: '/photo/**', // Adjust as needed for specific paths or allow all
-      },
-      {
-        protocol: 'https',
-        hostname: 'pixabay.com',
-        pathname: '/get/**', // Allows all paths under /get/
+        hostname: 'major-digital-cdn.app.vista.co',
+        port: '',
+        pathname: '/media/entity/get/**', // Allows paths under this directory
       },
     ],
   },
