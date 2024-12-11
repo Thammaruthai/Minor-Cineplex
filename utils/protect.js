@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.SECRET_KEY;
 
-export default function validateToken(req, res, next) {
+export default function protect(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {

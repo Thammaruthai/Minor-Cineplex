@@ -36,7 +36,7 @@ export default function AddHall() {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const response = await axios.get("/api/addhall/cities");
+        const response = await axios.get("/api/add-hall/cities");
         setCities(response.data);
       } catch (err) {
         console.error("Error fetching cities:", err);
@@ -51,7 +51,7 @@ export default function AddHall() {
       const fetchCinemas = async () => {
         try {
           const response = await axios.get(
-            `/api/addhall/cinemas?cityName=${formData.city}`
+            `/api/add-hall/cinemas?cityName=${formData.city}`
           );
           setCinemas(response.data);
         } catch (err) {
@@ -94,7 +94,7 @@ export default function AddHall() {
 
   const handleAddHall = async (e) => {
     e.preventDefault();
-    
+
     // Validation for new city/cinema/hall creation
     if (
       createNewCity &&

@@ -35,7 +35,7 @@ export default function AddMovie() {
 
     try {
       // Make API call to add the movie using Axios
-      const response = await axios.post("/api/addmovie/add-movie", formData);
+      const response = await axios.post("/api/add-movie/add-movie", formData);
 
       if (response.status === 201) {
         setMessage(response.data.message);

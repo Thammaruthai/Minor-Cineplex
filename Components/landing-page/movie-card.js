@@ -20,7 +20,7 @@ export default function MoviesCard() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get("/api/filterAndMovieCard");
+        const response = await axios.get("/api/landing-page/fetch-movie-card");
         const data = response.data; // ดึงข้อมูลจาก response
         console.log(data.movies);
 

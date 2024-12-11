@@ -1,9 +1,9 @@
 "use client";
-import { HeroSection } from "@/Components/viewmoviepage/hero-section";
-import { DateSection } from "@/Components/viewmoviepage/date-section";
-import { CinemaSection } from "@/Components/viewmoviepage/cinemas-section";
-import Footer from "@/Components/footer";
-import Navbar from "@/Components/navbar";
+import { HeroSection } from "@/Components/view-movie-page/hero-section";
+import { DateSection } from "@/Components/view-movie-page/date-section";
+import { CinemaSection } from "@/Components/view-movie-page/cinemas-section";
+import Footer from "@/Components/page-sections/footer";
+import Navbar from "@/Components/page-sections/navbar";
 import { useMovie } from "@/hooks/useMovies";
 import {
   ProgressCircleRing,

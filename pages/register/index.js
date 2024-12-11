@@ -3,16 +3,14 @@ import axios from "axios";
 import Link from "next/link";
 import Head from "next/head";
 
-
 const inputStyle =
   "border border-gray-200 rounded bg-[#21263F] py-3 pl-4 placeholder-[#8B93B0]";
-  const inputErrorStyle =
-    "border border-[#E5364B] rounded bg-[#21263F] py-3 pl-4 placeholder-[#8B93B0]";
+const inputErrorStyle =
+  "border border-[#E5364B] rounded bg-[#21263F] py-3 pl-4 placeholder-[#8B93B0]";
 const labelStyle = "text-[#C8CEDD]";
 const buttonStyleEnabled =
   "bg-[#4E7BEE] w-full py-3 hover:bg-[#1E29A8] active:[#0C1580]"; // Enabled button style
-const buttonStyleDisabled =
-  "bg-gray-500 w-full py-3 cursor-not-allowed"; // Disabled button style
+const buttonStyleDisabled = "bg-gray-500 w-full py-3 cursor-not-allowed"; // Disabled button style
 const inputFieldStyle = "flex flex-col gap-1";
 
 export default function Register() {
@@ -63,8 +61,6 @@ export default function Register() {
     setFormValid(isNameValid && isEmailValid && isPasswordValid); // Set form validity
   };
 
-  
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     const updatedForm = { ...formData, [name]: value };
@@ -95,7 +91,7 @@ export default function Register() {
     e.preventDefault();
     setIsRegistering(true);
     try {
-      const response = await axios.post("/api/register", formData);
+      const response = await axios.post("/api/auth/register", formData);
       setMessage(response.data.message);
       setError("");
       setSuccess(true);
