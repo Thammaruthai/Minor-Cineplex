@@ -25,7 +25,7 @@ export default function LoginPage() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/api/login", {
+      const response = await axios.post("/api/auth/login", {
         email,
         password,
         rememberMe,
@@ -123,7 +123,7 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await axios.post("/api/forgot-password", { email });
+      const response = await axios.post("/api/auth/forgot-password", { email });
 
       if (response.data.success) {
         setIsSending(false);

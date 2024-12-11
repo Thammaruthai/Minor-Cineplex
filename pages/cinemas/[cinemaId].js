@@ -1,14 +1,14 @@
 "use client";
-import { DateSection } from "@/Components/viewmoviepage/date-section";
-import Footer from "@/Components/footer";
-import Navbar from "@/Components/navbar";
+import { DateSection } from "@/Components/view-movie-page/date-section";
+import Footer from "@/Components/page-sections/footer";
+import Navbar from "@/Components/page-sections/navbar";
 import {
   ProgressCircleRing,
   ProgressCircleRoot,
 } from "@/components/ui/progress-circle";
 import { useCinema } from "@/hooks/useCinema";
-import { HeroSectionCinema } from "@/Components/viewcinemapage/hero-section";
-import MovieSection from "@/Components/viewcinemapage/movies-section";
+import { HeroSectionCinema } from "@/Components/view-cinema-page/hero-section";
+import MovieSection from "@/Components/view-cinema-page/movies-section";
 
 export default function ViewCinema() {
   const { movie, date, loading, setDate, setLoading } = useCinema();

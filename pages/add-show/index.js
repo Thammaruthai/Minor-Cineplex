@@ -21,7 +21,7 @@ export default function AddShow() {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const response = await axios.get("/api/addshow/cities");
+        const response = await axios.get("/api/add-show/cities");
         setCities(response.data);
       } catch (error) {
         console.error("Failed to fetch cities:", error);
@@ -34,7 +34,7 @@ export default function AddShow() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get("/api/addshow/movies");
+        const response = await axios.get("/api/add-show/movies");
         setMovies(response.data);
       } catch (error) {
         console.error("Failed to fetch movies:", error);
@@ -50,7 +50,7 @@ export default function AddShow() {
     const fetchCinemas = async () => {
       try {
         const response = await axios.get(
-          `/api/addshow/cinemas?cityId=${formData.cityId}`
+          `/api/add-show/cinemas?cityId=${formData.cityId}`
         );
         setCinemas(response.data);
       } catch (error) {
@@ -67,7 +67,7 @@ export default function AddShow() {
     const fetchHalls = async () => {
       try {
         const response = await axios.get(
-          `/api/addshow/halls?cinemaId=${formData.cinemaId}`
+          `/api/add-show/halls?cinemaId=${formData.cinemaId}`
         );
         setHalls(response.data);
       } catch (error) {
@@ -88,7 +88,7 @@ export default function AddShow() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/api/addshow/add-show", {
+      const response = await axios.post("/api/add-show/add-show", {
         movieId: formData.movieId,
         hallId: formData.hallId,
         showDateTime: formData.showDateTime,

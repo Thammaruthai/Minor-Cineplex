@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link"; // Import Link สำหรับลิงก์ไปยังหน้าอื่น
-import DropdownNavMenu from "./dropdownNavMenu";
+import DropdownNavMenu from "../landing-page/dropdown-menu";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -70,7 +70,6 @@ export default function Navbar() {
   }, []);
 
   return (
-
     <nav className="relative z-50">
       {/* Background Blur */}
       <div
@@ -89,7 +88,11 @@ export default function Navbar() {
           className="rounded-sm border-none flex items-center justify-center mt-2 active:scale-95 transition-transform duration-150 lg:hidden"
           onClick={toggleMobileMenu}
         >
-          <img src="/img/Ham.png" alt="Menu" className="w-6 h-5 m-1 z-50 relative" />
+          <img
+            src="/img/Ham.png"
+            alt="Menu"
+            className="w-6 h-5 m-1 z-50 relative"
+          />
         </button>
 
         {/* Desktop Menu */}

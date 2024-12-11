@@ -22,7 +22,7 @@ export default function Filter({ onFilterApply }) {
   useEffect(() => {
     const fetchFiltersData = async () => {
       try {
-        const response = await axios.get("/api/filterAndMovieCard");
+        const response = await axios.get("/api/landing-page/fetch-movie-card");
         const data = response.data;
         setMovies(data.movies || []);
         setLanguages(data.languages || []);
@@ -62,7 +62,7 @@ export default function Filter({ onFilterApply }) {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get("/api/filterAndMovieCard");
+      const response = await axios.get("/api/landing-page/fetch-movie-card");
       console.log("API Response Data:", response.data);
       const data = response.data;
 

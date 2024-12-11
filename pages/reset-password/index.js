@@ -24,7 +24,7 @@ export default function ResetPassword() {
     }
 
     try {
-      const response = await axios.post("/api/reset-password", {
+      const response = await axios.post("/api/auth/reset-password", {
         email,
         newPassword,
       });
@@ -83,10 +83,7 @@ export default function ResetPassword() {
             </div>
 
             <div className="space-y-2">
-              <label
-                htmlFor="confirm-password"
-                className="block text-gray-300"
-              >
+              <label htmlFor="confirm-password" className="block text-gray-300">
                 Confirm Password
               </label>
               <Input
