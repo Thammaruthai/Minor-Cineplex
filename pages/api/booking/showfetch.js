@@ -37,14 +37,31 @@ export default async function handler(req, res) {
     const hallResult = await client.query(hallQuery, [show.hall_id]);
     const hall = hallResult.rows[0];
 
-    const seatsQuery = `
-      SELECT * FROM seats WHERE hall_id = $1
+    const bookedSeatsQuery = `
+      SELECT 
+          s.seat_id,
+          s.seat_row,
+          s.seat_number,
+          COALESCE(bs.status, 'Available') AS booking_status,
+          bs.lock_expiry
+      FROM 
+          public.seats s
+      LEFT JOIN 
+          public.booking_seats bs ON s.seat_id = bs.seat_id
+      WHERE 
+          s.hall_id = $1
+      ORDER BY 
+          s.seat_row ASC, s.seat_number ASC;
     `;
-    const seatsResult = await client.query(seatsQuery, [show.hall_id]);
-    const seats = seatsResult.rows;
 
+    const bookedSeatsResult = await client.query(bookedSeatsQuery, [
+      show.hall_id,
+    ]);
+    const seats = bookedSeatsResult.rows;
+       
     client.release();
 
+    // Include `seats` with booking status in the response
     res.status(200).json({ show, movie, hall, seats });
   } catch (error) {
     console.error("Error fetching show details:", error);
