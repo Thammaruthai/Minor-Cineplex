@@ -9,13 +9,10 @@ export default function Profile() {
       <div className="mx-auto max-w-4xl">
         <div className="flex">
           {/* Sidebar */}
-          <div className="mt-10 bg-[#070C1B] h-[50%] drop-shadow-lg font-bold">
+          <div className="mt-10 bg-[#070C1B] h-[50%] drop-shadow-lg font-bold text-[#C8CEDD]">
             <div className="p-4 space-y-2 flex flex-col">
               <button className=" text-left py-2 px-4 rounded">
-                <div className="flex items-center">
-                  <div className="w-4 h-4 rounded-full bg-blue-500 mr-2"></div>
-                  Booking History
-                </div>
+                <div className="flex items-between gap-4">Booking History</div>
               </button>
               <button
                 className={`text-left py-2 px-4 rounded ${
@@ -25,10 +22,7 @@ export default function Profile() {
                 }`}
                 onClick={() => setActiveView("profile")}
               >
-                <div className="flex items-center">
-                  <div className="w-4 h-4 rounded-full bg-blue-500 mr-2"></div>
-                  Profile
-                </div>
+                <div className="flex items-center gap-4">Profile</div>
               </button>
               <button
                 className={`text-left py-2 px-4 rounded ${
@@ -38,10 +32,7 @@ export default function Profile() {
                 }`}
                 onClick={() => setActiveView("reset-password")}
               >
-                <div className="flex items-center">
-                  <div className="w-4 h-4 rounded-full bg-blue-500 mr-2"></div>
-                  Reset password
-                </div>
+                <div className="flex items-center gap-4">Reset password</div>
               </button>
             </div>
           </div>
