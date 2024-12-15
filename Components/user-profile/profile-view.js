@@ -3,6 +3,8 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase-client";
+import { toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 export default function ProfileView() {
   const [userData, setUserData] = useState({
@@ -44,16 +46,14 @@ export default function ProfileView() {
     try {
       const token =
         localStorage.getItem("token") || sessionStorage.getItem("token");
-      console.log(token);
 
-      // ถ้ามีการอัปโหลดไฟล์ใหม่
       if (fileForUpload) {
         const fileName = `${userData.user_id}-${Date.now()}`;
         const { data, error } = await supabase.storage
           .from("ProfilePicture")
           .upload(fileName, fileForUpload);
         if (error) {
-          console.error("Upload error:", error);
+          console.log("Upload error:", error);
           return;
         }
 
@@ -71,9 +71,34 @@ export default function ProfileView() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      toast(
+        <div>
+          <strong>Saved profile</strong>
+          <p>Your profile has been successfully updated</p>
+        </div>,
+        {
+          position: "bottom-right",
+          style: {
+            borderRadius: "4px",
+            color: "white",
+            backgroundColor: "#00A37299",
+          },
+        }
+      );
       fetchUserProfile();
     } catch (error) {
-      console.error("Error saving profile data:", error);
+      toast(
+        <strong>An unexpected error occurred. Please try again later.</strong>,
+        {
+          position: "bottom-right",
+          style: {
+            borderRadius: "4px",
+            backgroundColor: "#E5364B99",
+            color: "white",
+          },
+        }
+      );
+      console.log("Error saving profile data:", error);
     }
   };
 
@@ -143,6 +168,7 @@ export default function ProfileView() {
           </button>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }
