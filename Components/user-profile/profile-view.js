@@ -1,11 +1,15 @@
 import { Input } from "@chakra-ui/react";
+import {
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
+} from "@/components/ui/skeleton";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase-client";
 import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
-
 export default function ProfileView() {
   const [userData, setUserData] = useState({
     user_id: null,
@@ -15,7 +19,8 @@ export default function ProfileView() {
   });
   const [previewImage, setPreviewImage] = useState(null);
   const [fileForUpload, setFileForUpload] = useState(null);
-
+  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const fetchUserProfile = async () => {
     try {
       const token =
@@ -27,8 +32,9 @@ export default function ProfileView() {
       const response = await axios.get("api/users/profile", config);
 
       setUserData(response.data.data);
+      setIsLoading(false);
     } catch (error) {
-      console.error("Error fetching user profile", error);
+      setError(true);
     }
   };
 
@@ -101,14 +107,76 @@ export default function ProfileView() {
       console.log("Error saving profile data:", error);
     }
   };
-
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        setError(true); // แสดง error เมื่อโหลดเกิน 5 วิ
+        setIsLoading(false); // ปิดสถานะ loading
+      }
+    }, 5000);
 
+    const fetchData = async () => {
+      await fetchUserProfile();
+      if (!isLoading) {
+        clearTimeout(timeout); // ถ้าข้อมูลโหลดเสร็จแล้ว ยกเลิก timeout
+      }
+    };
+
+    fetchData();
+
+    return () => clearTimeout(timeout); // ล้าง timeout เมื่อ component unmount
+  }, [isLoading]);
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 md:p-8">
+        <h1 className="text-4xl font-bold mb-10">
+          <Skeleton height="48px" width="30%" />
+        </h1>
+
+        <SkeletonText noOfLines={2} gap="3" />
+
+        <div className="max-w-md mt-10">
+          <div className="mb-8 flex items-end gap-5">
+            <SkeletonCircle size="128px" />
+            <Skeleton height="24px" width="100px" />
+          </div>
+
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Skeleton height="20px" width="30%" />
+              <Skeleton height="40px" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton height="20px" width="30%" />
+              <Skeleton height="40px" />
+            </div>
+            <Skeleton height="48px" width="110px" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="p-8">
+        <p className="font-bold mb-5">Server error, please try again.</p>
+        <button
+          onClick={() => {
+            setIsLoading(true);
+            setError(false);
+            fetchUserProfile();
+          }}
+          className="px-4 py-2 border border-[#565F7E] text-white rounded font-bold"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
   return (
-    <div className="flex-1 p-8">
-      <h1 className="text-4xl font-bold mb-2">Profile</h1>
+    <div className="flex-1 md:p-8">
+      <h1 className="text-4xl font-bold mb-10">Profile</h1>
       <p className="text-gray-400 mb-8">
         Keep your personal details private.
         <br />
@@ -122,6 +190,7 @@ export default function ProfileView() {
               src={previewImage || userData.profile_image}
               width={128}
               height={128}
+              className="text-center"
               alt="Profile Picture"
             />
           </div>
@@ -137,13 +206,13 @@ export default function ProfileView() {
           </label>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
             <label className="block mb-1 text-[#C8CEDD]">Name</label>
             <Input
               defaultValue={userData.name}
               bg="#21263F"
-              className="text-white border border-[#565F7E] px-3"
+              className="text-white border border-[#565F7E] px-3 py-6"
               onChange={(e) =>
                 setUserData((prev) => ({ ...prev, name: e.target.value }))
               }
@@ -154,14 +223,14 @@ export default function ProfileView() {
             <Input
               defaultValue={userData.email}
               bg="#21263F"
-              className="text-white border border-[#565F7E] px-3"
+              className="text-white border border-[#565F7E] px-3 py-6"
               onChange={(e) =>
                 setUserData((prev) => ({ ...prev, email: e.target.value }))
               }
             />
           </div>
           <button
-            className="mt-4 px-6 py-2 bg-transparent border border-gray-600 text-white rounded hover:bg-gray-800"
+            className="px-10 py-3 bg-transparent border border-[#8B93B0] text-white rounded hover:bg-gray-800 translate-y-5"
             onClick={handleSave}
           >
             Save

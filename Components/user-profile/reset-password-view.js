@@ -66,9 +66,9 @@ export default function ResetPasswordView() {
   }, []);
 
   return (
-    <div className="flex-1 p-8">
-      <h1 className="text-4xl font-bold mb-6">Reset password</h1>
-      <main className="">
+    <div className="flex-1 md:p-8">
+      <h1 className="text-4xl font-bold mb-10">Reset password</h1>
+      <main className="max-w-md">
         {success ? (
           <div>
             <p className="text-green-500">
@@ -91,7 +91,7 @@ export default function ResetPasswordView() {
                 bg="#21263F"
                 borderColor="#565F7E"
                 value={newPassword}
-                className="text-white border border-[#565F7E] px-3 w-[380px]"
+                className="text-white border border-[#565F7E] px-3 py-6"
                 onChange={(e) => setNewPassword(e.target.value)}
               />
             </div>
@@ -108,13 +108,13 @@ export default function ResetPasswordView() {
                 bg="#21263F"
                 borderColor="#565F7E"
                 value={confirmPassword}
-                className="text-white border border-[#565F7E] px-3 w-[380px]"
+                className="text-white border border-[#565F7E] px-3 py-6"
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
             <button
               type="submit"
-              className={`mt-4 px-6 py-2 bg-transparent border border-[#8B93B0] text-white rounded font-bold 
+              className={`mt-4 px-8 py-3 bg-transparent border border-[#8B93B0] text-white rounded font-bold 
                 ${
                   !isFormValid
                     ? "opacity-40 cursor-not-allowed"
