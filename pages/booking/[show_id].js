@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
+import jwtInterceptor from "@/utils/jwt-interceptor";
 
 const SeatSelectionPage = () => {
   const router = useRouter();
@@ -15,6 +16,9 @@ const SeatSelectionPage = () => {
   const [countdown, setCountdown] = useState(3); // Set initial countdown value
   const [showCountdown, setShowCountdown] = useState(false);
 
+  const buttonStyleDisabled = "bg-gray-500 w-full py-3 cursor-not-allowed";
+  const buttonStyleEnabled =
+    "bg-[#4E7BEE] w-full py-3 hover:bg-[#1E29A8] active:[#0C1580]"; //
   // Animate the loading text
   useEffect(() => {
     if (loading) {
@@ -74,8 +78,11 @@ const SeatSelectionPage = () => {
     }
   };
 
-  const handleEvent = async () => {
-    const token = sessionStorage.getItem("token");
+  const handleSubmit = async () => {
+    const token =
+      sessionStorage.getItem("token") || localStorage.getItem("token");
+    const userUUID =
+      sessionStorage.getItem("UUID") || localStorage.getItem("UUID");
 
     if (!token) {
       setNotLogin(true);
@@ -83,20 +90,34 @@ const SeatSelectionPage = () => {
     }
 
     try {
-      // เรียก API เพื่อเช็ค Token
-      //  await axios.get("/api/protected-route", {
-      //    headers: {
-      //      Authorization: `Bearer ${token}`,
-      //    },
-      //  });
-      alert("You have access to this action!");
+      const data = {
+        showDetails,
+        booking: selectedSeats,
+        userUUID,
+        price: selectedSeats.length * 150,
+      };
+
+      // Ensure JWT interceptor is active
+      jwtInterceptor();
+
+      // POST request to the confirm booking API
+      const response = await axios.post("/api/booking/confirm-booking", data);
+
+      if (response.status === 200) {
+        alert("Booking confirmed successfully!");
+        setSelectedSeats([]);
+        
+        
+        // Redirect or perform another action after success
+      }
     } catch (error) {
       console.error("Error during API call:", error);
 
       if (error.response?.status === 401 || error.response?.status === 500) {
-        alert("Unauthorized or invalid token. Redirecting...");
+        alert("Unauthorized or invalid token. Please log in.");
+        window.location.href = "/login"; // Redirect to login
       } else {
-        alert("Something went wrong.");
+        alert("Something went wrong. Please try again later.");
       }
     }
   };
@@ -127,15 +148,15 @@ const SeatSelectionPage = () => {
       <div className="flex flex-col items-center justify-center gap-6 text-white h-screen bg-slate-900 min-h-[640px] min-w-[300px] animate-fade-in">
         <div className="flex flex-col gap-6 w-[380px] rounded-lg text-center max-sm:w-11/12 animate-scale-up">
           <div className="flex flex-col items-center justify-center ">
-            <div className="flex flex-col items-center justify-center w-[80px] h-[80px] rounded-full text-[44px] text-white bg-[#E5364B] animate-bounce">
-              !
+            <div className="flex flex-col items-center justify-center w-[80px] h-[80px] rounded-full text-[44px] text-white bg-blue-400 animate-bounce">
+              {"➜"}
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            <h1 className="text-4xl font-semibold">Not Logged In</h1>
+            <h1 className="text-4xl font-semibold">Login Required</h1>
             <p className="text-base text-gray-400">
               Redirecting to the login page in{" "}
-              <span className="text-red-500">{countdown}</span> seconds.
+              <span className="text-green-500">{countdown} seconds</span>.
             </p>
           </div>
           <button
@@ -580,7 +601,13 @@ const SeatSelectionPage = () => {
           <p className="text-gray-300 mb-4">
             <strong>Hall:</strong> {showDetails.hall.name}
           </p>
-          <div className="border-t border-gray-700 pt-4">
+          <div
+            className={
+              selectedSeats.length > 0
+                ? `border-t border-gray-700 pt-4 `
+                : "hidden"
+            }
+          >
             <p className="text-gray-300">
               <strong>Selected Seats:</strong>{" "}
               {selectedSeats.length > 0 ? selectedSeats.join(", ") : "None"}
@@ -590,9 +617,17 @@ const SeatSelectionPage = () => {
             </p>
           </div>
           <button
-            className="mt-6 bg-blue-500 w-full py-3 rounded text-white hover:bg-blue-600"
+            className={`${
+              selectedSeats.length > 0
+                ? buttonStyleEnabled
+                : buttonStyleDisabled
+            } mt-10 ${
+              selectedSeats.length > 0
+                ? `border-t border-gray-700 pt-4 `
+                : "hidden"
+            }`}
             disabled={selectedSeats.length === 0}
-            onClick={handleEvent}
+            onClick={handleSubmit}
           >
             Next
           </button>

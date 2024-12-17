@@ -59,16 +59,18 @@ export default async function handler(req, res) {
 
     // Query 5: Get booking information for the show
     const bookingsQuery = `
-      SELECT 
-          bs.seat_id,
-          bs.status AS booking_status,
-          bs.lock_expiry
-      FROM 
-          public.booking_seats bs
-      JOIN 
-          public.bookings b ON bs.booking_id = b.booking_id
-      WHERE 
-          b.show_id = $1;
+    SELECT 
+    bs.seat_id,
+    bs.status AS booking_status,
+    bs.lock_expiry,
+    b.booking_status AS booking_activation
+FROM 
+    public.booking_seats bs
+JOIN 
+    public.bookings b ON bs.booking_id = b.booking_id
+WHERE 
+    b.show_id = $1;
+
     `;
     const bookingsResult = await client.query(bookingsQuery, [show_Id]);
     const bookings = bookingsResult.rows;
@@ -78,14 +80,20 @@ export default async function handler(req, res) {
     // Combine seat and booking data
     const combinedSeats = seats.map((seat) => {
       const booking = bookings.find((b) => b.seat_id === seat.seat_id);
+      
+
       return {
         ...seat,
-        booking_status: booking ? booking.booking_status : "Available",
+        booking_status:
+          booking && booking.booking_activation !== "Cancelled" 
+            ? booking.booking_status
+            : "Available",
         lock_expiry: booking ? booking.lock_expiry : null,
       };
     });
 
     // Include combined seats in the response
+        
     res.status(200).json({ show, movie, hall, seats: combinedSeats });
   } catch (error) {
     console.error("Error fetching show details:", error);
