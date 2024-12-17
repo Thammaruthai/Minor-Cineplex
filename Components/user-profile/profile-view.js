@@ -10,34 +10,13 @@ import Image from "next/image";
 import { supabase } from "@/lib/supabase-client";
 import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
+import { useUser } from "@/context/user-context";
 export default function ProfileView() {
-  const [userData, setUserData] = useState({
-    user_id: null,
-    name: "",
-    email: "",
-    profile_image: "",
-  });
+  const { userData, setUserData, fetchUserProfile } = useUser();
   const [previewImage, setPreviewImage] = useState(null);
   const [fileForUpload, setFileForUpload] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const fetchUserProfile = async () => {
-    try {
-      const token =
-        localStorage.getItem("token") || sessionStorage.getItem("token");
-      const config = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
-
-      const response = await axios.get("api/users/profile", config);
-
-      setUserData(response.data.data);
-      setIsLoading(false);
-    } catch (error) {
-      setError(true);
-    }
-  };
-
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -45,6 +24,20 @@ export default function ProfileView() {
     // preview
     setPreviewImage(URL.createObjectURL(file));
     setFileForUpload(file);
+  };
+  const loadUserProfile = async () => {
+    try {
+      setIsLoading(true);
+      const result = await fetchUserProfile();
+      if (!result.success) {
+        setIsLoading(false);
+        setError(true);
+      }
+      setIsLoading(false);
+    } catch (err) {
+      setIsLoading(false);
+      setError(true);
+    }
   };
 
   const handleSave = async () => {
@@ -91,7 +84,7 @@ export default function ProfileView() {
           },
         }
       );
-      fetchUserProfile();
+      loadUserProfile();
     } catch (error) {
       toast(
         <strong>An unexpected error occurred. Please try again later.</strong>,
@@ -107,25 +100,10 @@ export default function ProfileView() {
       console.log("Error saving profile data:", error);
     }
   };
+
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (isLoading) {
-        setError(true); // แสดง error เมื่อโหลดเกิน 5 วิ
-        setIsLoading(false); // ปิดสถานะ loading
-      }
-    }, 5000);
-
-    const fetchData = async () => {
-      await fetchUserProfile();
-      if (!isLoading) {
-        clearTimeout(timeout); // ถ้าข้อมูลโหลดเสร็จแล้ว ยกเลิก timeout
-      }
-    };
-
-    fetchData();
-
-    return () => clearTimeout(timeout); // ล้าง timeout เมื่อ component unmount
-  }, [isLoading]);
+    loadUserProfile();
+  }, []);
 
   if (isLoading) {
     return (
@@ -165,7 +143,7 @@ export default function ProfileView() {
           onClick={() => {
             setIsLoading(true);
             setError(false);
-            fetchUserProfile();
+            loadUserProfile();
           }}
           className="px-4 py-2 border border-[#565F7E] text-white rounded font-bold"
         >
@@ -187,7 +165,11 @@ export default function ProfileView() {
         <div className="mb-8 flex items-end gap-5">
           <div className="w-32 h-32 bg-gray-700 rounded-full mb-2 flex items-center justify-center overflow-hidden">
             <Image
-              src={previewImage || userData.profile_image}
+              src={
+                previewImage ||
+                userData.profile_image ||
+                "/img/menu/User_duotone.png"
+              }
               width={128}
               height={128}
               className="text-center"

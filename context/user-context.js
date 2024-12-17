@@ -10,8 +10,6 @@ export const UserProvider = ({ children }) => {
     email: "",
     profile_image: "",
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   // Fetch user profile data
   const fetchUserProfile = async () => {
@@ -21,24 +19,21 @@ export const UserProvider = ({ children }) => {
       const config = {
         headers: { Authorization: `Bearer ${token}` },
       };
-
       const response = await axios.get("/api/users/profile", config);
       setUserData(response.data.data);
-      setIsLoading(false);
+      return { success: true, data: response.data.data };
     } catch (err) {
-      console.error("Error fetching user profile:", err);
-      setError("Failed to fetch user profile");
-      setIsLoading(false);
+      return { success: false, error: err };
     }
   };
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
   return (
     <UserContext.Provider
-      value={{ userData, isLoading, error, fetchUserProfile }}
+      value={{
+        userData,
+        setUserData,
+        fetchUserProfile,
+      }}
     >
       {children}
     </UserContext.Provider>
