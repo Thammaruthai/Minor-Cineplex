@@ -111,7 +111,7 @@ export function ExpiredDialog({ isOpen, onClose, setIsTimeout }) {
             <Button
               onClick={() => {
                 setIsTimeout(false);
-                router.push(`/bookings/${booking.show_id}`);
+                router.push(`/booking/${booking.show_id}`);
               }}
               variant="outline"
               className="text-white px-10 border border-[#8B93B0] font-bold bg-[#4E7BEE] w-full"

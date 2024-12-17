@@ -96,7 +96,7 @@ const SeatSelectionPage = () => {
         userUUID,
         price: selectedSeats.length * 150,
       };
-
+      console.log(`Data:`, data);
       // Ensure JWT interceptor is active
       jwtInterceptor();
 
@@ -104,9 +104,8 @@ const SeatSelectionPage = () => {
       const response = await axios.post("/api/booking/confirm-booking", data);
 
       if (response.status === 200) {
-        
         setSelectedSeats([]);
-        window.location.href = `/payment/${response.data.payment}`;
+        window.location.href = `/payments/${response.data.payment}`;
 
         // Redirect or perform another action after success
       }
@@ -114,7 +113,6 @@ const SeatSelectionPage = () => {
       console.error("Error during API call:", error);
 
       if (error.response?.status === 401 || error.response?.status === 500) {
-        
         window.location.href = "/login"; // Redirect to login
       } else {
         alert(`${error}`);
