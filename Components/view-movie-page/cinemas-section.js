@@ -50,7 +50,7 @@ export function CinemaSection({
     return initialState;
   });
 
-  console.log(`isShowHall:`, isShowHall)
+  console.log(`isShowHall:`, isShowHall);
   useEffect(() => {
     if (movie) {
       const initialState = {};
@@ -328,6 +328,8 @@ export function CinemaSection({
                               const nextShow =
                                 getNextShowtime(shows, date)?.show_id ===
                                 show.show_id;
+                              const isPastShowtime =
+                                new Date(show.show_date_time) < new Date();
                               const buttonColor =
                                 selectedDateStr !== currentDate
                                   ? "bg-[#1E29A8]"
@@ -338,11 +340,13 @@ export function CinemaSection({
                                   : "bg-[#1E29A8]";
                               return (
                                 <Link
-                                  href={`/booking/${show.show_id}`}
                                   key={show.show_id}
+                                  href={isPastShowtime ? "#" : `/booking/${show.show_id}`}
                                 >
                                   <Button
-                                    className={`${buttonColor} rounded-md md:px-6 px-4 py-3 md:w-32 w-24 h-12 text-xl font-bold hover:border hover:bg-blue-400 hover:border-gray-500`}
+                                    key={show.show_id}
+                                    disabled={isPastShowtime}
+                                    className={`${buttonColor} rounded-md md:px-6 px-4 py-3 md:w-32 w-24 h-12 text-xl font-bold hover:border ${isPastShowtime ? null : "hover:bg-blue-400 hover:border-gray-500"} `}
                                   >
                                     {formatShowtime(show.show_date_time)}
                                   </Button>
