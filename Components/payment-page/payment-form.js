@@ -7,7 +7,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { useAuth } from "@/context/authentication";
+import { useUser } from "@/context/user-context";
 import { useRouter } from "next/router";
 import ReactDatePicker from "react-datepicker";
 import Image from "next/image";
@@ -23,9 +23,9 @@ function PaymentForm({ total, setTotal }) {
   const [isLoading, setIsLoading] = useState(false);
   const [expDate, setExpDate] = useState(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const { booking, timeLeft, setTimeLeft } = useBooking();
+  const { booking } = useBooking();
   const datePickerRef = useRef();
-  const { state } = useAuth();
+  const { userData, fetchUserProfile } = useUser();
   const [errors, setErrors] = useState({
     cardNumber: "",
     cardOwner: "",
@@ -37,7 +37,7 @@ function PaymentForm({ total, setTotal }) {
   const currentBooking = booking;
   const [paymentDetails, setPaymentDetails] = useState(null);
   const [isTimeout, setIsTimeout] = useState(false);
-
+  const email = userData.email
 
   const handleTimeout = async () => {
     try {
@@ -86,7 +86,7 @@ function PaymentForm({ total, setTotal }) {
         currency: "thb",
         paymentMethodId: paymentMethod.id,
         customerName: cardOwner,
-        customerEmail: state.user.email,
+        customerEmail: email,
       });
 
       const payment_uuid = paymentDetails.temp_payment_uuid;
@@ -152,7 +152,6 @@ function PaymentForm({ total, setTotal }) {
       });
 
       setPaymentDetails(response.data.paymentDetails);
-
     } catch (err) {
       console.error(
         "Error creating pending payment:",
@@ -179,9 +178,8 @@ function PaymentForm({ total, setTotal }) {
       !errors.cardOwner;
 
     setIsValid(allFieldsFilled && noErrors);
+    fetchUserProfile();
   }, [cardOwner, errors, elements]);
-
-  console.log(`Payment Detail:`, paymentDetails);
 
   return (
     <div className="flex gap-24">

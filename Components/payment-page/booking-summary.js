@@ -236,10 +236,10 @@ function BookingSummary({
           onClick={() => {
             if (isTimeout) {
               handleTimeout();
-              openDialog(); // เปิด ExpiredDialog
+              openDialog();
             } else {
-              handleNext(); // ดำเนินการต่อเมื่อ isTimeout เป็น false
-              openDialog(); // เปิด ConfirmDialog
+              handleNext(); 
+              openDialog(); 
             }
           }}
           className={`bg-[#4E7BEE] text-white h-[48px] ${
