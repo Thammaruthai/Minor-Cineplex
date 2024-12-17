@@ -11,6 +11,9 @@ const SeatSelectionPage = () => {
   const [error, setError] = useState("");
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [loadingText, setLoadingText] = useState("Loading, please wait.");
+  const [notLogin, setNotLogin] = useState(false); // Assuming you set this based on login status
+  const [countdown, setCountdown] = useState(3); // Set initial countdown value
+  const [showCountdown, setShowCountdown] = useState(false);
 
   // Animate the loading text
   useEffect(() => {
@@ -19,11 +22,12 @@ const SeatSelectionPage = () => {
       const interval = setInterval(() => {
         dots = dots.length < 3 ? dots + "." : "";
         setLoadingText(`Loading, please wait${dots}`);
-      }, 200); // Update every 500ms
+      }, 200); //
       return () => clearInterval(interval); // Cleanup interval
     }
   }, [loading]);
 
+  //
   useEffect(() => {
     if (!show_id) return;
 
@@ -45,11 +49,55 @@ const SeatSelectionPage = () => {
     fetchShowDetails();
   }, [show_id]);
 
+  useEffect(() => {
+    if (notLogin) {
+      setShowCountdown(true); // Trigger the countdown display
+      const interval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            window.location.href = "/login"; // Redirect after countdown
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval); // Cleanup interval on unmount
+    }
+  }, [notLogin]); // Trigger useEffect only when `notLogin` changes
+
   const toggleSeatSelection = (seatId) => {
     if (selectedSeats.includes(seatId)) {
       setSelectedSeats(selectedSeats.filter((s) => s !== seatId));
     } else {
       setSelectedSeats([...selectedSeats, seatId]);
+    }
+  };
+
+  const handleEvent = async () => {
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      setNotLogin(true);
+      return;
+    }
+
+    try {
+      // เรียก API เพื่อเช็ค Token
+      //  await axios.get("/api/protected-route", {
+      //    headers: {
+      //      Authorization: `Bearer ${token}`,
+      //    },
+      //  });
+      alert("You have access to this action!");
+    } catch (error) {
+      console.error("Error during API call:", error);
+
+      if (error.response?.status === 401 || error.response?.status === 500) {
+        alert("Unauthorized or invalid token. Redirecting...");
+      } else {
+        alert("Something went wrong.");
+      }
     }
   };
 
@@ -69,6 +117,34 @@ const SeatSelectionPage = () => {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
         <p>Error: {error}</p>
+      </div>
+    );
+  }
+
+  // Render "Not Logged In" UI if `notLogin` is true
+  if (notLogin) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-6 text-white h-screen bg-slate-900 min-h-[640px] min-w-[300px] animate-fade-in">
+        <div className="flex flex-col gap-6 w-[380px] rounded-lg text-center max-sm:w-11/12 animate-scale-up">
+          <div className="flex flex-col items-center justify-center ">
+            <div className="flex flex-col items-center justify-center w-[80px] h-[80px] rounded-full text-[44px] text-white bg-[#E5364B] animate-bounce">
+              !
+            </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            <h1 className="text-4xl font-semibold">Not Logged In</h1>
+            <p className="text-base text-gray-400">
+              Redirecting to the login page in{" "}
+              <span className="text-red-500">{countdown}</span> seconds.
+            </p>
+          </div>
+          <button
+            className="bg-[#4E7BEE] w-full py-3 mt-4 hover:bg-[#1E29A8]"
+            onClick={() => (window.location.href = "/login")}
+          >
+            Go to Login Now
+          </button>
+        </div>
       </div>
     );
   }
@@ -99,13 +175,13 @@ const SeatSelectionPage = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-[60px] items-center justify-center ">
+      <div className="flex flex-col lg:flex-row gap-[60px] items-start justify-center ">
         {/* Seat Map */}
         <div className="flex flex-col  rounded-lg gap-[60px] min-w-[793px] ">
           <div className="flex items-center justify-center w-full h-11 text-center text-xl font-semibold mb-4 rounded-t-full bg-gradient-to-r from-[#2C344E] to-[#516199]">
             <div className="w-full ">screen</div>
           </div>
-          <div className="flex flex-col items-center gap-[30px]">
+          <div className="flex flex-col items-center justify-center gap-[30px]">
             {Object.entries(
               showDetails.seats
                 .sort((a, b) => {
@@ -174,18 +250,18 @@ const SeatSelectionPage = () => {
                                 rx="5.25"
                                 fill="#565F7E"
                                 stroke="#8B93B0"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                               />
                               <path
                                 d="M25 12.5L15 22.5M15 12.5L25 22.5"
                                 stroke="#8B93B0"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                               />
                               <path
                                 d="M0 20H7C8.65685 20 10 21.3431 10 23V29.5C10 31.1569 11.3431 32.5 13 32.5H27C28.6569 32.5 30 31.1569 30 29.5V23C30 21.3431 31.3431 20 33 20H40"
                                 stroke="#8B93B0"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                               />
                             </svg>
                           ) : seat.booking_status === "Locked" ? (
@@ -201,7 +277,7 @@ const SeatSelectionPage = () => {
                                 height="40"
                                 rx="6"
                                 fill="#4E7BEE"
-                                fill-opacity="0.4"
+                                fillOpacity="0.4"
                               />
                               <rect
                                 x="0.75"
@@ -210,12 +286,12 @@ const SeatSelectionPage = () => {
                                 height="38.5"
                                 rx="5.25"
                                 stroke="#4E7BEE"
-                                stroke-opacity="0.4"
-                                stroke-width="1.5"
+                                strokeOpacity="0.4"
+                                strokeWidth="1.5"
                               />
                               <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
+                                fillRule="evenodd"
+                                clipRule="evenodd"
                                 d="M23.7987 15.0399C23.4225 15.6995 22.8816 16.2502 22.2288 16.6381C22.0075 16.7681 21.875 16.9787 21.875 17.2006V17.2994C21.875 17.5206 22.0075 17.7312 22.2294 17.8625C22.8824 18.25 23.4235 18.8005 23.7996 19.4601C24.1758 20.1197 24.3741 20.8657 24.375 21.625V22.25H25V23.5H15V22.25H15.625V21.625C15.6265 20.8656 15.8251 20.1197 16.2013 19.4601C16.5775 18.8005 17.1184 18.2498 17.7713 17.8619C17.9925 17.7306 18.125 17.5206 18.125 17.2994V17.2006C18.125 16.9787 17.9925 16.7681 17.7713 16.6381C17.1184 16.2502 16.5775 15.6995 16.2013 15.0399C15.8251 14.3803 15.6265 13.6344 15.625 12.875V12.25H15V11H25V12.25H24.375V12.875C24.3735 13.6344 24.1749 14.3803 23.7987 15.0399ZM22.7143 20.0798C22.4461 19.6089 22.0601 19.2158 21.5944 18.9387C21.0985 18.6459 20.7663 18.1837 20.661 17.6607C20.4692 17.7891 20.2427 17.875 20 17.875C19.7573 17.875 19.5308 17.7891 19.339 17.6607C19.2337 18.1837 18.9016 18.6458 18.4062 18.9381C17.9403 19.2151 17.5542 19.6084 17.2858 20.0793C17.0355 20.5185 16.8955 21.0113 16.8771 21.5155C17.5492 21.2301 18.697 21 20 21C21.303 21 22.4508 21.2301 23.1229 21.5155C23.1045 21.0115 22.9645 20.5189 22.7143 20.0798ZM22.4816 14.7723C22.8914 14.2353 23.125 13.5693 23.125 12.875V12.25H16.875V12.875C16.8759 13.4169 17.0174 13.9494 17.2857 14.4202C17.3557 14.5431 17.4337 14.6607 17.5191 14.7724C17.6907 14.7975 17.892 14.8413 18.1169 14.8902C18.6406 15.0042 19.2929 15.1461 20 15.1461C20.7071 15.1461 21.3594 15.0042 21.8831 14.8902C22.1084 14.8412 22.3098 14.7974 22.4816 14.7723Z"
                                 fill="#8EAEFF"
                               />
@@ -223,7 +299,7 @@ const SeatSelectionPage = () => {
                                 opacity="0.4"
                                 d="M0 20H7C8.65685 20 10 21.3431 10 23V29.5C10 31.1569 11.3431 32.5 13 32.5H27C28.6569 32.5 30 31.1569 30 29.5V23C30 21.3431 31.3431 20 33 20H40"
                                 stroke="#4E7BEE"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                               />
                             </svg>
                           ) : isSelected ? (
@@ -249,7 +325,7 @@ const SeatSelectionPage = () => {
                                 height="38"
                                 rx="5"
                                 stroke="white"
-                                stroke-width="2"
+                                strokeWidth="2"
                               />
                               <rect
                                 x="23"
@@ -262,8 +338,8 @@ const SeatSelectionPage = () => {
                               <path
                                 d="M28.9167 34.1667L30.4831 35.3415C30.9118 35.663 31.5177 35.5895 31.857 35.1747L36.5 29.5"
                                 stroke="#4E7BEE"
-                                stroke-width="2"
-                                stroke-linecap="round"
+                                strokeWidth="2"
+                                strokeLinecap="round"
                               />
                               <path
                                 d="M1 20H6.86667C8.52352 20 9.86667 21.3431 9.86667 23V29C9.86667 30.6569 11.2098 32 12.8667 32H27.1333C28.7902 32 30.1333 30.6569 30.1333 29V23C30.1333 21.3431 31.4765 20 33.1333 20H39"
@@ -343,18 +419,18 @@ const SeatSelectionPage = () => {
                                 rx="5.25"
                                 fill="#565F7E"
                                 stroke="#8B93B0"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                               />
                               <path
                                 d="M25 12.5L15 22.5M15 12.5L25 22.5"
                                 stroke="#8B93B0"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                               />
                               <path
                                 d="M0 20H7C8.65685 20 10 21.3431 10 23V29.5C10 31.1569 11.3431 32.5 13 32.5H27C28.6569 32.5 30 31.1569 30 29.5V23C30 21.3431 31.3431 20 33 20H40"
                                 stroke="#8B93B0"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                               />
                             </svg>
                           ) : seat.booking_status === "Locked" ? (
@@ -370,7 +446,7 @@ const SeatSelectionPage = () => {
                                 height="40"
                                 rx="6"
                                 fill="#4E7BEE"
-                                fill-opacity="0.4"
+                                fillOpacity="0.4"
                               />
                               <rect
                                 x="0.75"
@@ -379,12 +455,12 @@ const SeatSelectionPage = () => {
                                 height="38.5"
                                 rx="5.25"
                                 stroke="#4E7BEE"
-                                stroke-opacity="0.4"
-                                stroke-width="1.5"
+                                strokeOpacity="0.4"
+                                strokeWidth="1.5"
                               />
                               <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
+                                fillRule="evenodd"
+                                clipRule="evenodd"
                                 d="M23.7987 15.0399C23.4225 15.6995 22.8816 16.2502 22.2288 16.6381C22.0075 16.7681 21.875 16.9787 21.875 17.2006V17.2994C21.875 17.5206 22.0075 17.7312 22.2294 17.8625C22.8824 18.25 23.4235 18.8005 23.7996 19.4601C24.1758 20.1197 24.3741 20.8657 24.375 21.625V22.25H25V23.5H15V22.25H15.625V21.625C15.6265 20.8656 15.8251 20.1197 16.2013 19.4601C16.5775 18.8005 17.1184 18.2498 17.7713 17.8619C17.9925 17.7306 18.125 17.5206 18.125 17.2994V17.2006C18.125 16.9787 17.9925 16.7681 17.7713 16.6381C17.1184 16.2502 16.5775 15.6995 16.2013 15.0399C15.8251 14.3803 15.6265 13.6344 15.625 12.875V12.25H15V11H25V12.25H24.375V12.875C24.3735 13.6344 24.1749 14.3803 23.7987 15.0399ZM22.7143 20.0798C22.4461 19.6089 22.0601 19.2158 21.5944 18.9387C21.0985 18.6459 20.7663 18.1837 20.661 17.6607C20.4692 17.7891 20.2427 17.875 20 17.875C19.7573 17.875 19.5308 17.7891 19.339 17.6607C19.2337 18.1837 18.9016 18.6458 18.4062 18.9381C17.9403 19.2151 17.5542 19.6084 17.2858 20.0793C17.0355 20.5185 16.8955 21.0113 16.8771 21.5155C17.5492 21.2301 18.697 21 20 21C21.303 21 22.4508 21.2301 23.1229 21.5155C23.1045 21.0115 22.9645 20.5189 22.7143 20.0798ZM22.4816 14.7723C22.8914 14.2353 23.125 13.5693 23.125 12.875V12.25H16.875V12.875C16.8759 13.4169 17.0174 13.9494 17.2857 14.4202C17.3557 14.5431 17.4337 14.6607 17.5191 14.7724C17.6907 14.7975 17.892 14.8413 18.1169 14.8902C18.6406 15.0042 19.2929 15.1461 20 15.1461C20.7071 15.1461 21.3594 15.0042 21.8831 14.8902C22.1084 14.8412 22.3098 14.7974 22.4816 14.7723Z"
                                 fill="#8EAEFF"
                               />
@@ -392,7 +468,7 @@ const SeatSelectionPage = () => {
                                 opacity="0.4"
                                 d="M0 20H7C8.65685 20 10 21.3431 10 23V29.5C10 31.1569 11.3431 32.5 13 32.5H27C28.6569 32.5 30 31.1569 30 29.5V23C30 21.3431 31.3431 20 33 20H40"
                                 stroke="#4E7BEE"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                               />
                             </svg>
                           ) : isSelected ? (
@@ -418,7 +494,7 @@ const SeatSelectionPage = () => {
                                 height="38"
                                 rx="5"
                                 stroke="white"
-                                stroke-width="2"
+                                strokeWidth="2"
                               />
                               <rect
                                 x="23"
@@ -431,8 +507,8 @@ const SeatSelectionPage = () => {
                               <path
                                 d="M28.9167 34.1667L30.4831 35.3415C30.9118 35.663 31.5177 35.5895 31.857 35.1747L36.5 29.5"
                                 stroke="#4E7BEE"
-                                stroke-width="2"
-                                stroke-linecap="round"
+                                strokeWidth="2"
+                                strokeLinecap="round"
                               />
                               <path
                                 d="M1 20H6.86667C8.52352 20 9.86667 21.3431 9.86667 23V29C9.86667 30.6569 11.2098 32 12.8667 32H27.1333C28.7902 32 30.1333 30.6569 30.1333 29V23C30.1333 21.3431 31.4765 20 33.1333 20H39"
@@ -516,6 +592,7 @@ const SeatSelectionPage = () => {
           <button
             className="mt-6 bg-blue-500 w-full py-3 rounded text-white hover:bg-blue-600"
             disabled={selectedSeats.length === 0}
+            onClick={handleEvent}
           >
             Next
           </button>
