@@ -104,20 +104,20 @@ const SeatSelectionPage = () => {
       const response = await axios.post("/api/booking/confirm-booking", data);
 
       if (response.status === 200) {
-        alert("Booking confirmed successfully!");
+        
         setSelectedSeats([]);
-        
-        
+        window.location.href = `/payment/${response.data.payment}`;
+
         // Redirect or perform another action after success
       }
     } catch (error) {
       console.error("Error during API call:", error);
 
       if (error.response?.status === 401 || error.response?.status === 500) {
-        alert("Unauthorized or invalid token. Please log in.");
+        
         window.location.href = "/login"; // Redirect to login
       } else {
-        alert("Something went wrong. Please try again later.");
+        alert(`${error}`);
       }
     }
   };
