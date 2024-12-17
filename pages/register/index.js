@@ -143,124 +143,121 @@ export default function Register() {
 
   return (
     <>
-      {/* เพิ่ม Title Bar */}
-      <Head>
-        <title>Register - Minor Cineplex</title>
-        <meta
-          name="description"
-          content="Register for an amazing experience."
-        />
-        <link rel="icon" href="/img/logo.png" />
-      </Head>
+      <div className="flex flex-col min-h-[700px] h-screen">
+        <Navbar />
+        <div className="w-full flex flex-col h-screen items-center justify-center min-h-[550px] min-w-[300px] max-sm:justify-start max-sm:pt-8">
+          <div className="container w-[380px] text-white rounded-lg max-sm:w-11/12">
+            <h1 className="mb-10 text-4xl text-center font-bold h-11 ">
+              Register
+            </h1>
+            <form onSubmit={handleSubmit}>
+              <div className="flex flex-col gap-y-6">
+                <div className={inputFieldStyle}>
+                  <label className={labelStyle} htmlFor="name">
+                    Name
+                  </label>
+                  <input
+                    className={inputStyle}
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Full name"
+                    required
+                  />
+                </div>
+                <div className={inputFieldStyle}>
+                  <label className={labelStyle} htmlFor="email">
+                    Email
+                  </label>
+                  <input
+                    placeholder="Email"
+                    className={
+                      emailError || error ? inputErrorStyle : inputStyle
+                    }
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                  {emailError && (
+                    <p className="text-sm text-red-500">{emailError}</p>
+                  )}
+                  {error && <p className="text-sm text-red-500">{error}</p>}
+                </div>
+                <div className={inputFieldStyle}>
+                  <label className={labelStyle} htmlFor="password">
+                    Password
+                  </label>
+                  <input
+                    placeholder="Password"
+                    className={
+                      emailError || error ? inputErrorStyle : inputStyle
+                    }
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  {passwordError && (
+                    <p className="text-sm text-red-500">{passwordError}</p>
+                  )}
 
-      <div className="w-full flex flex-col h-full items-center justify-center  min-h-[500px] min-w-[300px] max-sm:justify-start max-sm:pt-8 max-sm:mt-2 mt-10">
-        <div className="container w-[380px] text-white rounded-lg max-sm:w-11/12">
-          <h1 className="mb-10 text-4xl text-center font-bold h-11 ">
-            Register
-          </h1>
-          <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-y-6">
-              <div className={inputFieldStyle}>
-                <label className={labelStyle} htmlFor="name">
-                  Name
-                </label>
-                <input
-                  className={inputStyle}
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Full name"
-                  required
-                />
-              </div>
-              <div className={inputFieldStyle}>
-                <label className={labelStyle} htmlFor="email">
-                  Email
-                </label>
-                <input
-                  placeholder="Email"
-                  className={emailError || error ? inputErrorStyle : inputStyle}
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-                {emailError && (
-                  <p className="text-sm text-red-500">{emailError}</p>
-                )}
-                {error && <p className="text-sm text-red-500">{error}</p>}
-              </div>
-              <div className={inputFieldStyle}>
-                <label className={labelStyle} htmlFor="password">
-                  Password
-                </label>
-                <input
-                  placeholder="Password"
-                  className={passwordError ? inputErrorStyle : inputStyle}
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-                {passwordError && (
-                  <p className="text-sm text-red-500">{passwordError}</p>
-                )}
-
-                {/* Password Strength Meter */}
-                {formData.password.length >= 6 && (
-                  <div className="mt-2">
-                    {/* Password Meter */}
-                    <div className="relative h-5 w-full bg-gray-700 rounded">
-                      <div
-                        className={`absolute top-0 left-0 h-full rounded ${
-                          passwordStrength === 100
-                            ? "bg-green-500"
-                            : passwordStrength >= 75
-                            ? "bg-yellow-500"
-                            : passwordStrength >= 50
-                            ? "bg-orange-500"
-                            : passwordStrength >= 25
-                            ? "bg-red-500"
-                            : "bg-red-500"
-                        }`}
-                        style={{ width: `${passwordStrength}%` }}
-                      >
+                  {/* Password Strength Meter */}
+                  {formData.password.length >= 6 && (
+                    <div className="mt-2">
+                      {/* Password Meter */}
+                      <div className="relative h-5 w-full bg-gray-700 rounded">
                         <div
-                          className={`text-xs w-full h-full flex items-end justify-center ${
+                          className={`absolute top-0 left-0 h-full rounded ${
                             passwordStrength === 100
-                              ? "text-green-900"
+                              ? "bg-green-500"
+                              : passwordStrength >= 75
+                              ? "bg-yellow-500"
                               : passwordStrength >= 50
-                              ? "text-yellow-900"
-                              : "text-red-500"
+                              ? "bg-orange-500"
+                              : passwordStrength >= 25
+                              ? "bg-red-500"
+                              : "bg-red-500"
                           }`}
-                        ></div>
+                          style={{ width: `${passwordStrength}%` }}
+                        >
+                          <div
+                            className={`text-xs w-full h-full flex items-end justify-center ${
+                              passwordStrength === 100
+                                ? "text-green-900"
+                                : passwordStrength >= 50
+                                ? "text-yellow-900"
+                                : "text-red-500"
+                            }`}
+                          ></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-            <button
-              className={`${
-                formValid ? buttonStyleEnabled : buttonStyleDisabled
-              } mt-10`}
-              type="submit"
-              disabled={!formValid}
-            >
-              Register
-            </button>
-            <div className="flex justify-center mt-10 gap-2">
-              <p className="text-[#8B93B0]">Already have an account?</p>
-              <Link
-                href="/login"
-                className="underline underline-offset-1 text-white hover:text-sky-700"
+              <button
+                className={`${
+                  formValid ? buttonStyleEnabled : buttonStyleDisabled
+                } mt-10`}
+                type="submit"
+                disabled={!formValid}
               >
-                Login
-              </Link>
-            </div>
-          </form>
+                Register
+              </button>
+              <div className="flex justify-center mt-10 gap-2">
+                <p className="text-[#8B93B0]">Already have an account?</p>
+                <Link
+                  href="/login"
+                  className="underline underline-offset-1 text-white hover:text-sky-700"
+                >
+                  Login
+                </Link>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </>
