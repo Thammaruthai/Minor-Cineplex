@@ -93,6 +93,12 @@ const nextConfig = {
         port: "",
         pathname: "/media/entity/get/**", // Allows paths under this directory
       },
+      {
+        protocol: "https",
+        hostname: "filmartgallery.com",
+        port: "", // Leave empty if not using a specific port
+        pathname: "/cdn/shop/files/**", // Match the path structure
+      },
     ],
   },
   experimental: {
