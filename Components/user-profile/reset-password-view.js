@@ -3,28 +3,16 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
+import jwtInterceptor from "@/utils/jwt-interceptor";
+import { useUser } from "@/context/user-context";
 export default function ResetPasswordView() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const { userData, fetchUserProfile } = useUser();
+  const email = userData.email;
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [success, setSuccess] = useState(false);
   const isFormValid = newPassword.length >= 6 || confirmPassword.length > 6;
-  const fetchUserProfile = async () => {
-    try {
-      const token =
-        localStorage.getItem("token") || sessionStorage.getItem("token");
-      const config = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
-
-      const response = await axios.get("api/users/profile", config);
-
-      setEmail(response.data.data.email);
-    } catch (error) {
-      console.log("Error fetching user profile", error);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,11 +32,6 @@ export default function ResetPasswordView() {
 
       if (response.data.success) {
         setSuccess(true);
-
-        // หน่วงเวลา 5 วินาทีแล้ว redirect ไปที่หน้า login
-        setTimeout(() => {
-          router.push("/login");
-        }, 5000); // 5 วินาที (5000ms)
       } else {
         toast.error("Failed to reset password. Please try again.", {
           position: "bottom-right",
@@ -62,6 +45,7 @@ export default function ResetPasswordView() {
     }
   };
   useEffect(() => {
+    jwtInterceptor();
     fetchUserProfile();
   }, []);
 
@@ -75,7 +59,6 @@ export default function ResetPasswordView() {
               Password reset successful! You can now login with your new
               password.
             </p>
-            <p className="text-white">Redirecting to login page...</p>
           </div>
         ) : (
           <form className="space-y-10" onSubmit={handleSubmit}>

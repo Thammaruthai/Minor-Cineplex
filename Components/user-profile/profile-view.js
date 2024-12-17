@@ -11,6 +11,7 @@ import { supabase } from "@/lib/supabase-client";
 import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 import { useUser } from "@/context/user-context";
+import jwtInterceptor from "@/utils/jwt-interceptor";
 export default function ProfileView() {
   const { userData, setUserData, fetchUserProfile } = useUser();
   const [previewImage, setPreviewImage] = useState(null);
@@ -102,6 +103,7 @@ export default function ProfileView() {
   };
 
   useEffect(() => {
+    jwtInterceptor();
     loadUserProfile();
   }, []);
 

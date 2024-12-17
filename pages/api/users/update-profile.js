@@ -1,9 +1,8 @@
 import jwt from "jsonwebtoken";
 import connectionPool from "@/utils/db";
 import protect from "@/utils/protect";
-import jwtInterceptor from "@/utils/jwt-interceptor";
 export default async function updateUserProfile(req, res) {
-  jwtInterceptor();
+
   if (req.method !== "PATCH") {
     return res.status(405).json({ message: "Method not allowed" });
   }
