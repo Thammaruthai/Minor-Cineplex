@@ -96,7 +96,8 @@ const SeatSelectionPage = () => {
         userUUID,
         price: selectedSeats.length * 150,
       };
-
+      console.log(data);
+      
       // Ensure JWT interceptor is active
       jwtInterceptor();
 
@@ -106,7 +107,7 @@ const SeatSelectionPage = () => {
       if (response.status === 200) {
         
         setSelectedSeats([]);
-        window.location.href = `/payment/${response.data.payment}`;
+        //window.location.href = `/payment/${response.data.payment}`;
 
         // Redirect or perform another action after success
       }
