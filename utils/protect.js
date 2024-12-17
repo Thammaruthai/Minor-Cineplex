@@ -22,7 +22,9 @@ export default function protect(req, res, next) {
 
     next();
   } catch (err) {
-    console.error("Invalid token:", err);
+    if (err.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid token" });
+    }
     return res.status(500).json({
       success: false,
       error: "Invalid or expired token.",
