@@ -96,7 +96,7 @@ const SeatSelectionPage = () => {
         userUUID,
         price: selectedSeats.length * 150,
       };
-      console.log(`Data:`, data);
+
       // Ensure JWT interceptor is active
       jwtInterceptor();
 
