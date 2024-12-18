@@ -15,33 +15,38 @@ export default async function handler(req, res) {
     const client = await connectionPool.connect();
 
     // Query 1: Get show details
-    const showQuery = `
-      SELECT * FROM shows WHERE show_id = $1
+    const showSummaryQuery = `
+      SELECT    
+        movies.title,
+        movies.poster,
+        ARRAY_AGG(DISTINCT genres.name) AS genres,
+        languages.name AS language,
+        cinemas.name AS cinema_name,
+        shows.show_date_time,
+        shows.show_id,
+        halls.name AS hall_name,
+        shows.hall_id
+        FROM shows          
+      INNER JOIN movies ON movies.movie_id = shows.movie_id
+      INNER JOIN movie_genres ON movies.movie_id = movie_genres.movie_id
+      INNER JOIN genres ON genres.genre_id = movie_genres.genre_id
+      INNER JOIN languages ON movies.language_id = languages.language_id
+      INNER JOIN halls ON halls.hall_id = shows.hall_id
+      INNER JOIN cinemas ON cinemas.cinema_id = halls.cinema_id
+      WHERE shows.show_id = $1  
+      GROUP BY
+	  	  movies.title,
+        movies.poster,
+        languages.name,
+        cinemas.name,
+        shows.show_date_time,
+        shows.show_id,
+        halls.name
     `;
-    const showResult = await client.query(showQuery, [show_Id]);
+    const showSummaryResult = await client.query(showSummaryQuery, [show_Id]);
+    const showSummary = showSummaryResult.rows[0];
 
-    if (showResult.rows.length === 0) {
-      client.release();
-      return res.status(404).json({ error: "Show not found" });
-    }
-
-    const show = showResult.rows[0];
-
-    // Query 2: Get movie details
-    const movieQuery = `
-      SELECT * FROM movies WHERE movie_id = $1
-    `;
-    const movieResult = await client.query(movieQuery, [show.movie_id]);
-    const movie = movieResult.rows[0];
-
-    // Query 3: Get hall details
-    const hallQuery = `
-      SELECT * FROM halls WHERE hall_id = $1
-    `;
-    const hallResult = await client.query(hallQuery, [show.hall_id]);
-    const hall = hallResult.rows[0];
-
-    // Query 4: Get all seats for the hall
+    // Query 2: Get all seats for the hall
     const seatsQuery = `
       SELECT 
           s.seat_id,
@@ -54,10 +59,10 @@ export default async function handler(req, res) {
       ORDER BY 
           s.seat_row ASC, s.seat_number ASC;
     `;
-    const seatsResult = await client.query(seatsQuery, [show.hall_id]);
+    const seatsResult = await client.query(seatsQuery, [showSummary.hall_id]);
     const seats = seatsResult.rows;
 
-    // Query 5: Get booking information for the show
+    // Query 3: Get booking information for the show
     const bookingsQuery = `
     SELECT 
     bs.seat_id,
@@ -80,12 +85,11 @@ WHERE
     // Combine seat and booking data
     const combinedSeats = seats.map((seat) => {
       const booking = bookings.find((b) => b.seat_id === seat.seat_id);
-      
 
       return {
         ...seat,
         booking_status:
-          booking && booking.booking_activation !== "Cancelled" 
+          booking && booking.booking_activation !== "Cancelled"
             ? booking.booking_status
             : "Available",
         lock_expiry: booking ? booking.lock_expiry : null,
@@ -93,8 +97,7 @@ WHERE
     });
 
     // Include combined seats in the response
-        
-    res.status(200).json({ show, movie, hall, seats: combinedSeats });
+    res.status(200).json({ showSummary, seats: combinedSeats });
   } catch (error) {
     console.error("Error fetching show details:", error);
     res.status(500).json({ error: "Internal Server Error" });
