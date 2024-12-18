@@ -13,6 +13,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ["Roboto", "sans-serif"], // เพิ่ม Roboto เป็นฟอนต์หลัก
+        robotoCondensed: ['"Roboto Condensed"', "sans-serif"], // สำหรับ reponsive
       },
     },
   },
