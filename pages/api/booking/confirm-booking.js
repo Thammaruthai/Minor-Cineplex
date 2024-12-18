@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
   protect(req, res, async () => {
     try {
-      // ดึงข้อมูลจาก body
+      // ดึงข้อมูลจาก body           
       const { showDetails, booking, userUUID, price } = req.body;
 
       // ตรวจสอบข้อมูลที่จำเป็น
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
       `;
       const duplicateSeatsResult = await client.query(
         checkDuplicateSeatsQuery,
-        [showDetails.show.show_id, seatIdsToBook]
+        [showDetails.showSummary.show_id, seatIdsToBook]
       );
 
       console.log(duplicateSeatsResult.rows);
@@ -72,7 +72,7 @@ export default async function handler(req, res) {
         RETURNING booking_id, temp_booking_uuid;
       `;
       const bookingResult = await client.query(createBookingQuery, [
-        showDetails.show.show_id,
+        showDetails.showSummary.show_id,
         userIdAction.user_id,
         "Active",
         price,

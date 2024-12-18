@@ -74,7 +74,7 @@ FROM
 JOIN 
     public.bookings b ON bs.booking_id = b.booking_id
 WHERE 
-    b.show_id = $1;
+    b.booking_status != 'Cancelled' and b.show_id = $1;
 
     `;
     const bookingsResult = await client.query(bookingsQuery, [show_Id]);
@@ -96,6 +96,7 @@ WHERE
       };
     });
 
+        
     // Include combined seats in the response
     res.status(200).json({ showSummary, seats: combinedSeats });
   } catch (error) {

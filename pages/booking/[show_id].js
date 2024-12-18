@@ -29,7 +29,6 @@ const SeatSelectionPage = () => {
 
   //svg
 
-
   // Animate the loading text
   useEffect(() => {
     if (loading) {
@@ -121,12 +120,12 @@ const SeatSelectionPage = () => {
         // Redirect or perform another action after success
       }
     } catch (error) {
-      console.error("Error during API call:", error);
-
+      console.error("Error during API call:", error.response.data);
+      alert(error.response.data.error);
       if (error.response?.status === 401 || error.response?.status === 500) {
         window.location.href = "/login"; // Redirect to login
       } else {
-        alert(`${error}`);
+        
       }
     }
   };
