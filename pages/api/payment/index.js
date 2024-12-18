@@ -14,7 +14,9 @@ export default async function handler(req, res) {
       );
 
       if (booking.rows.length === 0) {
-        return res.status(400).json({ error: "Booking not found or already expired." });
+        return res
+          .status(400)
+          .json({ error: "Booking not found or already expired." });
       }
 
       // Step 1: Check for existing payments with the same booking_id
@@ -24,9 +26,19 @@ export default async function handler(req, res) {
       );
 
       if (existingPayment.rows.length > 0) {
+        const existingPendingPayment = existingPayment.rows.find(
+          (payment) => payment.payment_status === "Pending"
+        );
+
+        if (existingPendingPayment) {
+          return res.status(200).json({
+            message: "Pending payment already exists.",
+            paymentDetails: existingPendingPayment,
+          });
+        }
+
         return res.status(400).json({
-          error: "A payment for this booking already exists.",
-          paymentDetails: existingPayment.rows[0],
+          error: "A completed payment for this booking already exists.",
         });
       }
 
@@ -116,7 +128,7 @@ export default async function handler(req, res) {
         }
       );
 
-      console.log(`Payment Intent`, paymentIntent)
+      console.log(`Payment Intent`, paymentIntent);
 
       // Step 5: Update the payment status in the database
       await connectionPool.query(
@@ -127,7 +139,6 @@ export default async function handler(req, res) {
       );
 
       if (paymentIntent.status === "succeeded") {
-
         await connectionPool.query(
           `UPDATE booking_seats SET status = 'Booked' WHERE booking_id = $1`,
           [booking_id]
