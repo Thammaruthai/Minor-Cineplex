@@ -24,6 +24,7 @@ import {
 import { groupBy } from "@/utils/grouping";
 import axios from "axios";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export function CinemaSection({
   movie,
@@ -41,6 +42,24 @@ export function CinemaSection({
       items: [{ label: "All", value: "All" }],
     })
   );
+  const [isShowHall, setIsShowHall] = useState(() => {
+    const initialState = {};
+    movie?.forEach((show) => {
+      initialState[show.cinema_name] = true; // Make all cinemas visible initially
+    });
+    return initialState;
+  });
+
+  console.log(`isShowHall:`, isShowHall);
+  useEffect(() => {
+    if (movie) {
+      const initialState = {};
+      movie.forEach((show) => {
+        initialState[show.cinema_name] = true; // Set all cinemas as visible
+      });
+      setIsShowHall(initialState);
+    }
+  }, [movie]);
 
   const groupByHall = (movies) =>
     movies.reduce((acc, movie) => {
@@ -119,6 +138,13 @@ export function CinemaSection({
 
     fetchCities();
   }, []);
+
+  const handleShowHall = (cinema_name) => {
+    setIsShowHall((prev) => ({
+      ...prev,
+      [cinema_name]: !prev[cinema_name],
+    }));
+  };
 
   return (
     <article className="md:max-w-[1200px] w-full md:my-10 my-5 flex flex-col">
@@ -206,113 +232,132 @@ export function CinemaSection({
                         </Button>
                       </div>
                     </div>
-                    <div className="flex items-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="gray"
-                        className="w-10 h-10"
+                    {isShowHall[cinema_name] ? (
+                      <div
+                        className="flex items-center"
+                        onClick={() => handleShowHall(cinema_name)}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                        />
-                      </svg>
-                    </div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="45"
+                          height="45"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="gray"
+                          stroke-width="1.4"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-chevron-up"
+                        >
+                          <path d="m18 15-6-6-6 6" />
+                        </svg>
+                      </div>
+                    ) : (
+                      <div
+                        className="flex items-center"
+                        onClick={() => handleShowHall(cinema_name)}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="gray"
+                          className="w-10 h-10"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                          />
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 </SelectTrigger>
-                <Link href={`/cinemas/${shows[0]?.cinema_id}`}>
-                  <SelectContent className="mt-2 rounded-md bg-[#070C1B] border border-[#565F7E]">
-                    <div className="flex text-white">
-                      <Image
-                        src="/icon.png"
-                        width={44}
-                        height={44}
-                        alt="Icon"
-                      />
-                      <SelectItem
-                        item={cinema_name}
-                        key={cinema_name}
-                        className="text-xl pl-4 hover:cursor-pointer"
-                      >
-                        <div className="flex h-6 gap-5 items-center">
-                          {cinema_name}{" "}
-                          <div className="border-l-2 border-gray-500 h-full"></div>{" "}
-                          <p className="text-lg text-gray-400">
-                            {shows[0]?.address}
-                          </p>
-                        </div>
-                      </SelectItem>
-                    </div>
-                  </SelectContent>
-                </Link>
               </SelectRoot>
-              <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col md:gap-14 gap-4 md:p-10 p-4">
-                {Object.entries(filteredHalls)
-                  .filter(([hall_name, hallShows]) =>
-                    hallShows.some((show) => {
-                      const showDate = new Date(
-                        show.show_date_time
-                      ).toDateString();
-                      const selectedDateStr = new Date(date).toDateString();
-                      return (
-                        showDate === selectedDateStr &&
-                        show.cinema_name === cinema_name
-                      );
-                    })
-                  )
-                  .map(([hall_name, shows]) => (
-                    <div key={hall_name} className="flex flex-col gap-4">
-                      <h2 className="text-2xl font-bold text-[#C8CEDD]">
-                        {hall_name}
-                      </h2>
-                      <div className="flex flex-wrap gap-4 mt-4">
-                        {shows
-                          .filter((show) => {
-                            const showDate = new Date(
-                              show.show_date_time
-                            ).toDateString();
-                            const selectedDateStr = new Date(
-                              date
-                            ).toDateString();
-                            return showDate === selectedDateStr;
-                          })
-                          .map((show) => {
-                            const currentTime = new Date();
-                            const currentDate = currentTime.toDateString();
-                            const selectedDateStr = new Date(
-                              date
-                            ).toDateString();
-                            const showtimeStatus = classifyShowtime(
-                              show.show_date_time
-                            );
-                            const nextShow =
-                              getNextShowtime(shows, date)?.show_id ===
-                              show.show_id;
-                            const buttonColor =
-                              selectedDateStr !== currentDate
-                                ? "bg-[#1E29A8]"
-                                : nextShow
-                                ? "bg-[#4E7BEE]"
-                                : showtimeStatus === "past"
-                                ? "border border-[#565F7E] text-[#565F7E] cursor-default"
-                                : "bg-[#1E29A8]";
-                            return (
-                              <Button
-                                key={show.show_id}
-                                className={`${buttonColor} rounded-md md:px-6 px-4 py-3 md:w-32 w-24 h-12 text-xl font-bold`}
-                              >
-                                {formatShowtime(show.show_date_time)}
-                              </Button>
-                            );
-                          })}
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={
+                  isShowHall[cinema_name]
+                    ? { height: "auto", opacity: 1 }
+                    : { height: 0, opacity: 0 }
+                }
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                style={{ overflow: "hidden" }}
+              >
+                <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col md:gap-14 gap-4 md:p-10 p-4">
+                  {Object.entries(filteredHalls)
+                    .filter(([hall_name, hallShows]) =>
+                      hallShows.some((show) => {
+                        const showDate = new Date(
+                          show.show_date_time
+                        ).toDateString();
+                        const selectedDateStr = new Date(date).toDateString();
+                        return (
+                          showDate === selectedDateStr &&
+                          show.cinema_name === cinema_name
+                        );
+                      })
+                    )
+                    .map(([hall_name, shows]) => (
+                      <div key={hall_name} className="flex flex-col gap-4">
+                        <h2 className="text-2xl font-bold text-[#C8CEDD]">
+                          {hall_name}
+                        </h2>
+                        <div className="flex flex-wrap gap-4 mt-4">
+                          {shows
+                            .filter((show) => {
+                              const showDate = new Date(
+                                show.show_date_time
+                              ).toDateString();
+                              const selectedDateStr = new Date(
+                                date
+                              ).toDateString();
+                              return showDate === selectedDateStr;
+                            })
+                            .map((show) => {
+                              const currentTime = new Date();
+                              const currentDate = currentTime.toDateString();
+                              const selectedDateStr = new Date(
+                                date
+                              ).toDateString();
+                              const showtimeStatus = classifyShowtime(
+                                show.show_date_time
+                              );
+                              const nextShow =
+                                getNextShowtime(shows, date)?.show_id ===
+                                show.show_id;
+                              const isPastShowtime =
+                                new Date(show.show_date_time) < new Date();
+                              const buttonColor =
+                                selectedDateStr !== currentDate
+                                  ? "bg-[#1E29A8]"
+                                  : nextShow
+                                  ? "bg-[#4E7BEE]"
+                                  : showtimeStatus === "past"
+                                  ? "border border-[#565F7E] text-[#565F7E] cursor-default"
+                                  : "bg-[#1E29A8]";
+                              return (
+                                <Link
+                                  key={show.show_id}
+                                  href={isPastShowtime ? "#" : `/booking/${show.show_id}`}
+                                >
+                                  <Button
+                                    key={show.show_id}
+                                    disabled={isPastShowtime}
+                                    className={`${buttonColor} rounded-md md:px-6 px-4 py-3 md:w-32 w-24 h-12 text-xl font-bold hover:border ${isPastShowtime ? null : "hover:bg-blue-400 hover:border-gray-500"} `}
+                                  >
+                                    {formatShowtime(show.show_date_time)}
+                                  </Button>
+                                </Link>
+                              );
+                            })}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-              </div>
+                    ))}
+                </div>
+              </motion.div>
             </div>
           ))
         ) : (
