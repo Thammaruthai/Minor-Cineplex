@@ -32,7 +32,6 @@ export function usePayment() {
     }
   }, [payment_uuid]);
 
-  console.log(`Payment:`, payment)
   return {
     payment,
     loading,

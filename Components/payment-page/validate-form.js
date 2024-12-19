@@ -8,7 +8,7 @@ export default function ValidateForm() {
     return "";
   };
 
-  const validateExpiryDate = () => {
+  const validateExpiryDate = (expDate) => {
     if (!expDate || expDate < new Date()) {
       return "Expiry date is not valid";
     }

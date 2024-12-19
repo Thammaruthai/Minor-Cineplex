@@ -34,8 +34,6 @@ export function useBooking() {
     }
   }, [booking_uuid]);
 
-  console.log(`Booking:`, booking)
-  console.log(`Timeleft:`, timeLeft)
   return {
     booking,
     loading,
