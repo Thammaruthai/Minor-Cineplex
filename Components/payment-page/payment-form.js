@@ -50,6 +50,7 @@ function PaymentForm({ total, setTotal }) {
     setSelectedMethod(label);
   };
 
+  const [activeView, setActiveView] = useState("credit-card");
   const handleTimeout = async () => {
     try {
       // Notify backend to cancel the booking
