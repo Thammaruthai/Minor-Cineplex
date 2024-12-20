@@ -119,7 +119,7 @@ function PaymentForm({ total, setTotal }) {
       setErrMsg(errorMessage);
       setIsOpenToastErr(true);
       toast(
-        <div className="w-[300px]">
+        <div className="w-[300px] md:hidden">
           <strong>Payment failed</strong>
           <p>Please try again</p>
         </div>,
@@ -129,6 +129,8 @@ function PaymentForm({ total, setTotal }) {
             borderRadius: "4px",
             color: "white",
             backgroundColor: "#E5364B99",
+            display: "block",
+            ...(window.innerWidth >= 768 && { display: "none" }),
           },
         }
       );
@@ -235,7 +237,7 @@ function PaymentForm({ total, setTotal }) {
           setDiscount={setDiscount}
         />
       </div>
-      <Toaster className="md:hidden w-[300px]"/>
+      <Toaster className="md:hidden"/>
       {isOpenToastErr && (
         <div className="bg-[#E5364B99] text-white p-2 px-4 mt-10 lg:mr-28 rounded xl:w-[480px] w-full h-28 flex-col justify-center gap-1 hidden md:flex">
           <div className="flex justify-between">
