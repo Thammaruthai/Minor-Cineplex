@@ -27,6 +27,11 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    // Load user on initial app load
+    fetchUserProfile();
+  }, []);
+  
   return (
     <UserContext.Provider
       value={{
