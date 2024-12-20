@@ -22,7 +22,7 @@ export default function PaymentPage() {
   return (
     <Elements stripe={stripePromise}>
       <StepsHeader currentStep={3}/>
-      <section className="flex flex-col items-end justify-center px-28 py-11 h-full w-full">
+      <section className="flex flex-col items-end justify-center xl:px-28 lg:px-20 lg:py-11 py-4 h-full w-full">
         <PaymentForm total={total} setTotal={setTotal} />
       </section>
     </Elements>

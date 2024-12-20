@@ -13,6 +13,8 @@ import BookingSummary from "./booking-summary";
 import ValidateForm from "./validate-form";
 import { useBooking } from "@/hooks/useBooking";
 import { CreditCard } from "./credit-card";
+import { toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 function PaymentForm({ total, setTotal }) {
   const stripe = useStripe();
@@ -27,6 +29,7 @@ function PaymentForm({ total, setTotal }) {
     cardOwner: "",
     expiryDate: "",
     cvc: "",
+    coupon: "",
   });
   const [isValid, setIsValid] = useState(false);
   const { validateCardOwner } = ValidateForm();
@@ -115,6 +118,20 @@ function PaymentForm({ total, setTotal }) {
       const errorMessage = error.response?.data?.error;
       setErrMsg(errorMessage);
       setIsOpenToastErr(true);
+      toast(
+        <div className="w-[300px]">
+          <strong>Payment failed</strong>
+          <p>Please try again</p>
+        </div>,
+        {
+          position: "bottom-center",
+          style: {
+            borderRadius: "4px",
+            color: "white",
+            backgroundColor: "#E5364B99",
+          },
+        }
+      );
     } finally {
       setIsLoading(false);
       if (elements) {
@@ -137,7 +154,8 @@ function PaymentForm({ total, setTotal }) {
     setErrors({ ...errors, cardOwner: validateCardOwner(e.target.value) });
   };
 
-  const handleNext = async () => {
+  const handleNext = async (event) => {
+    event.preventDefault();
     try {
       const response = await axios.post("/api/payment", {
         amount: total * 100, // Convert to satang
@@ -175,9 +193,9 @@ function PaymentForm({ total, setTotal }) {
 
   return (
     <>
-      <div className="flex gap-24 w-full justify-center">
-        <div>
-          <div className="flex gap-5">
+      <div className="xl:flex-row flex flex-col lg:gap-24 gap-10 w-full justify-center items-center xl:items-start lg:p-0">
+        <div className="w-full xl:w-auto">
+          <div className="flex gap-5 p-4 lg:p-0">
             {paymentMethod.map((method) => (
               <h2
                 key={method.id}
@@ -217,8 +235,9 @@ function PaymentForm({ total, setTotal }) {
           setDiscount={setDiscount}
         />
       </div>
+      <Toaster className="md:hidden w-[300px]"/>
       {isOpenToastErr && (
-        <div className="bg-[#E5364B99] text-white p-2 px-4 mt-10 mr-28 rounded w-[480px] h-28 flex flex-col justify-center gap-1">
+        <div className="bg-[#E5364B99] text-white p-2 px-4 mt-10 lg:mr-28 rounded xl:w-[480px] w-full h-28 flex-col justify-center gap-1 hidden md:flex">
           <div className="flex justify-between">
             <strong>Payment failed.</strong>
             <svg

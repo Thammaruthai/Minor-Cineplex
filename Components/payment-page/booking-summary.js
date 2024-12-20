@@ -18,7 +18,6 @@ function BookingSummary({
   handleTimeout,
   handleNext,
   isLoading,
-  errors,
   setTotal,
   total,
   isValid,
@@ -30,7 +29,7 @@ function BookingSummary({
   const { booking, timeLeft, setTimeLeft } = useBooking();
   const currentBooking = booking;
   const [couponCode, setCouponCode] = useState("");
-  // const [discount, setDiscount] = useState(0);
+  const [couponIsValid, setCouponIsValid] = useState(true);
   const [error, setError] = useState("");
   const { isDialogOpen, openDialog, closeDialog } = useDialog();
   const [dots, setDots] = useState("");
@@ -40,6 +39,13 @@ function BookingSummary({
       setTotal(currentBooking.total_price);
     }
   }, [currentBooking]);
+
+  useEffect(() => {
+    if (couponCode.length === 0) {
+      setCouponIsValid(true);
+      setDiscount(0);
+    }
+  }, [couponCode]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -86,7 +92,7 @@ function BookingSummary({
 
       setDiscount(response.data.discount);
       setTotal(response.data.newTotal);
-      setError("");
+      setCouponIsValid(true);
     } catch (err) {
       console.error(
         "Coupon validation error:",
@@ -94,6 +100,7 @@ function BookingSummary({
       );
       setDiscount(0);
       setTotal(currentBooking.total_price);
+      setCouponIsValid(false);
       setError(err.response?.data?.error || "Invalid coupon code.");
     }
   }, 500);
@@ -101,13 +108,16 @@ function BookingSummary({
   const handleCouponInput = (e) => {
     const code = e.target.value;
     setCouponCode(code);
-    if (code.trim()) {
-      debouncedValidateCoupon(code.trim());
-    } else {
+
+    if (!code.trim()) {
       // Reset state if input is cleared
       setDiscount(0);
       setTotal(currentBooking.total_price);
+      setCouponIsValid(true);
       setError("");
+      return;
+    } else {
+      debouncedValidateCoupon(code.trim());
     }
   };
 
@@ -129,7 +139,7 @@ function BookingSummary({
   }
 
   return (
-    <article className="w-[350px] h-[650px] rounded-lg text-[#8B93B0] bg-[#070C1B] px-4 pt-4 pb-6 gap-6 flex flex-col">
+    <article className="md:w-[350px] w-full h-[650px] rounded-lg text-[#8B93B0] bg-[#070C1B] px-4 pt-4 pb-6 gap-6 flex flex-col">
       <div className="flex flex-col h-[336px] w-full gap-6 ">
         <div className="flex flex-col h-full gap-3">
           <div className="text-sm">
@@ -143,10 +153,9 @@ function BookingSummary({
           <div className="flex h-full w-full gap-4 items-center">
             <Image
               src={currentBooking?.poster}
-              alt="Dark Knight"
+              alt={currentBooking?.title}
               width={100}
               height={120}
-              className=""
             />
             <div className="flex flex-col gap-2">
               <div>
@@ -241,22 +250,58 @@ function BookingSummary({
             <p className="text-white font-bold">THB{Math.round(total)}</p>
           </div>
         </div>
-        <input
-          placeholder="Coupon"
-          disabled={!isValid || isLoading}
-          value={couponCode}
-          onChange={handleCouponInput}
-          className="bg-[#21263F] pl-4 p-3 rounded-md border border-[#565F7E]"
-        ></input>
+        <div className="w-full flex flex-col gap-2">
+          <div className="relative">
+            <input
+              placeholder="Coupon"
+              disabled={!isValid || isLoading}
+              value={couponCode}
+              onChange={handleCouponInput}
+              className={`w-full border ${
+                !couponIsValid && couponCode.trim()
+                  ? "border-red-500"
+                  : "border-[#565F7E]"
+              } bg-[#21263F] pl-4 p-3 rounded-md`}
+            />
+            {couponCode.length > 0 ? (
+              <svg
+                onClick={() => {
+                  setCouponCode("");
+                  setCouponIsValid(true);
+                  setTotal(currentBooking.total_price);
+                }}
+                style={{ cursor: "pointer" }}
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                className="lucide lucide-x absolute top-3 right-3"
+              >
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            ) : null}
+          </div>
+          {!couponIsValid && couponCode.trim() && (
+            <p className="error-text text-red-500 text-sm">
+              This coupon is not valid, please try another coupon
+            </p>
+          )}
+        </div>
         <Button
           type="button"
           disabled={!isValid || isLoading}
-          onClick={() => {
+          onClick={(e) => {
             if (isTimeout) {
               handleTimeout();
               openDialog();
             } else {
-              handleNext();
+              handleNext(e);
               openDialog();
             }
           }}
