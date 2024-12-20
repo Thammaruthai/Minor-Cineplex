@@ -131,7 +131,7 @@ export default function Navbar() {
 
               {/* Dropdown Menu for Desktop */}
               {showDropdown && (
-                <div className="absolute right-0 mt-3 h-44 w-[182px] bg-[#21263f] rounded shadow-lg">
+                <div className="absolute right-0 mt-3 h-44 w-[182px] bg-[#21263f] rounded shadow-lg z-50">
                   <DropdownNavMenu toggleLogin={handleLogout} />
                 </div>
               )}

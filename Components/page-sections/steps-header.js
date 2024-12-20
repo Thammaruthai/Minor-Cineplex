@@ -5,7 +5,7 @@ export function StepsHeader({ currentStep }) {
     { id: 3, label: "Payment" },
   ];
   return (
-    <div className="flex justify-center items-center mt-5 py-4 bg-[#070C1B] h-[100px] w-full relative z-50">
+    <div className="flex justify-center items-center mt-5 py-4 bg-[#070C1B] h-[100px] w-full relative z-40">
       <div className="flex gap-8 z-20 w-[468px] relative">
       <div className="absolute top-[30%] left-0 right-5 mx-auto h-0.5 bg-[#21263F] z-0 w-8/12" />
         {steps.map((step) => (

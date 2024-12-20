@@ -8,6 +8,10 @@ import { useState } from "react";
 import { useDialog } from "@/hooks/useDialog";
 import { debounce } from "lodash";
 import { ConfirmDialog, ExpiredDialog } from "./open-dialog";
+import {
+  ProgressCircleRing,
+  ProgressCircleRoot,
+} from "@/components/ui/progress-circle";
 
 function BookingSummary({
   handleSubmit,
@@ -20,13 +24,16 @@ function BookingSummary({
   isValid,
   isTimeout,
   setIsTimeout,
+  discount,
+  setDiscount,
 }) {
   const { booking, timeLeft, setTimeLeft } = useBooking();
   const currentBooking = booking;
   const [couponCode, setCouponCode] = useState("");
-  const [discount, setDiscount] = useState(0);
+  // const [discount, setDiscount] = useState(0);
   const [error, setError] = useState("");
   const { isDialogOpen, openDialog, closeDialog } = useDialog();
+  const [dots, setDots] = useState("");
 
   useEffect(() => {
     if (currentBooking) {
@@ -46,6 +53,14 @@ function BookingSummary({
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const dotInterval = setInterval(() => {
+      setDots((prev) => (prev.length < 3 ? prev + "." : ""));
+    }, 500);
+
+    return () => clearInterval(dotInterval);
   }, []);
 
   const formatTime = (seconds) => {
@@ -114,158 +129,167 @@ function BookingSummary({
   }
 
   return (
-      <article className="w-[350px] h-[650px] rounded-lg text-[#8B93B0] bg-[#070C1B] px-4 pt-4 pb-6 gap-6 flex flex-col">
-        <div className="flex flex-col h-[336px] w-full gap-6 ">
-          <div className="flex flex-col h-full gap-3">
-            <div className="text-sm">
-              <p>
-                Time remaining:
-                <span className="text-[#4E7BEE]">
-                  {isTimeout ? " 00:00" : ` ${formatTime(timeLeft)}`}
-                </span>
+    <article className="w-[350px] h-[650px] rounded-lg text-[#8B93B0] bg-[#070C1B] px-4 pt-4 pb-6 gap-6 flex flex-col">
+      <div className="flex flex-col h-[336px] w-full gap-6 ">
+        <div className="flex flex-col h-full gap-3">
+          <div className="text-sm">
+            <p>
+              Time remaining:
+              <span className="text-[#4E7BEE]">
+                {isTimeout ? " 00:00" : ` ${formatTime(timeLeft)}`}
+              </span>
+            </p>
+          </div>
+          <div className="flex h-full w-full gap-4 items-center">
+            <Image
+              src={currentBooking?.poster}
+              alt="Dark Knight"
+              width={100}
+              height={120}
+              className=""
+            />
+            <div className="flex flex-col gap-2">
+              <div>
+                <h3 className="text-white text-xl font-bold">
+                  {currentBooking?.title}
+                </h3>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {currentBooking?.genres?.map((genre, index) => (
+                  <Button
+                    key={index}
+                    className="bg-[#21263F] rounded-md text-sm w-[65px]"
+                  >
+                    {genre.trim()}
+                  </Button>
+                ))}
+                <Button className="bg-[#21263F] rounded-md text-sm w-12">
+                  {currentBooking?.language}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 text-[#C8CEDD]">
+          <div className="flex gap-3 items-center">
+            <Image
+              src="/img/Pin_fill.png"
+              width={0}
+              height={0}
+              alt="Pin icon"
+              className="w-4 h-4"
+            />
+            <p>{currentBooking?.cinema_name}</p>
+          </div>
+          <div className="flex gap-3 items-center">
+            <Image
+              src="/img/Date_range_fill.png"
+              width={0}
+              height={0}
+              alt="Calendar icon"
+              className="w-4 h-4"
+            />
+            <p>{formatedDate(currentBooking?.show_date_time)}</p>
+          </div>
+          <div className="flex gap-3 items-center">
+            <Image
+              src="/img/Time_fill.png"
+              width={0}
+              height={0}
+              alt="Time Icon"
+              className="w-4 h-4"
+            />
+            <p>{formatShowtime(currentBooking?.show_date_time)}</p>
+          </div>
+          <div className="flex gap-3 items-center">
+            <Image
+              src="/img/Shop.png"
+              width={0}
+              height={0}
+              alt="Shop icon"
+              className="w-4 h-4"
+            />
+            <p>{currentBooking?.hall_name}</p>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col gap-5 border-t border-[#21263F] pt-4 pb-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between">
+            <p>Selected Seat</p>
+            <div className="flex">
+              <p className="text-white font-bold">
+                {currentBooking?.selected_seats &&
+                  sortSeats(currentBooking.selected_seats)}
               </p>
             </div>
-            <div className="flex h-full w-full gap-4 items-center">
-              <Image
-                src={currentBooking?.poster}
-                alt="Dark Knight"
-                width={100}
-                height={120}
-                className=""
-              />
-              <div className="flex flex-col gap-2">
-                <div>
-                  <h3 className="text-white text-xl font-bold">
-                    {currentBooking?.title}
-                  </h3>
-                </div>
-                <div className="flex gap-2 flex-wrap">
-                  {currentBooking?.genres?.map((genre, index) => (
-                    <Button
-                      key={index}
-                      className="bg-[#21263F] rounded-md text-sm w-[65px]"
-                    >
-                      {genre.trim()}
-                    </Button>
-                  ))}
-                  <Button className="bg-[#21263F] rounded-md text-sm w-12">
-                    {currentBooking?.language}
-                  </Button>
-                </div>
-              </div>
-            </div>
           </div>
-          <div className="flex flex-col gap-2 text-[#C8CEDD]">
-            <div className="flex gap-3 items-center">
-              <Image
-                src="/img/Pin_fill.png"
-                width={0}
-                height={0}
-                alt="Pin icon"
-                className="w-4 h-4"
-              />
-              <p>{currentBooking?.cinema_name}</p>
-            </div>
-            <div className="flex gap-3 items-center">
-              <Image
-                src="/img/Date_range_fill.png"
-                width={0}
-                height={0}
-                alt="Calendar icon"
-                className="w-4 h-4"
-              />
-              <p>{formatedDate(currentBooking?.show_date_time)}</p>
-            </div>
-            <div className="flex gap-3 items-center">
-              <Image
-                src="/img/Time_fill.png"
-                width={0}
-                height={0}
-                alt="Time Icon"
-                className="w-4 h-4"
-              />
-              <p>{formatShowtime(currentBooking?.show_date_time)}</p>
-            </div>
-            <div className="flex gap-3 items-center">
-              <Image
-                src="/img/Shop.png"
-                width={0}
-                height={0}
-                alt="Shop icon"
-                className="w-4 h-4"
-              />
-              <p>{currentBooking?.hall_name}</p>
-            </div>
+          <div className="flex justify-between">
+            <p>Payment method</p>
+            <p className="text-white font-bold">Credit card</p>
           </div>
-        </div>
-        <div className="flex flex-col gap-5 border-t border-[#21263F] pt-4 pb-6">
-          <div className="flex flex-col gap-2">
+          {discount > 0 && (
             <div className="flex justify-between">
-              <p>Selected Seat</p>
-              <div className="flex">
-                <p className="text-white font-bold">
-                  {currentBooking?.selected_seats &&
-                    sortSeats(currentBooking.selected_seats)}
-                </p>
-              </div>
+              <p>Coupon</p>
+              <p className="text-red-500 font-bold">
+                -THB{Math.round(discount)}
+              </p>
             </div>
-            <div className="flex justify-between">
-              <p>Payment method</p>
-              <p className="text-white font-bold">Credit card</p>
-            </div>
-            {discount > 0 && (
-              <div className="flex justify-between">
-                <p>Coupon</p>
-                <p className="text-red-500 font-bold">
-                  -THB{Math.round(discount)}
-                </p>
-              </div>
-            )}
-            <div className="flex justify-between">
-              <p>Total</p>
-              <p className="text-white font-bold">THB{Math.round(total)}</p>
-            </div>
-          </div>
-          <input
-            placeholder="Coupon"
-            disabled={!isValid || isLoading}
-            value={couponCode}
-            onChange={handleCouponInput}
-            className="bg-[#21263F] pl-4 p-3 rounded-md border border-[#565F7E]"
-          ></input>
-          <Button
-            type="button"
-            disabled={!isValid || isLoading}
-            onClick={() => {
-              if (isTimeout) {
-                handleTimeout();
-                openDialog();
-              } else {
-                handleNext();
-                openDialog();
-              }
-            }}
-            className={`bg-[#4E7BEE] text-white h-[48px] ${
-              isLoading ? "bg-gray-600" : "bg-blue-600 hover:bg-[#4E7BEE]"
-            }`}
-          >
-            {isLoading ? "Processing..." : "Next"}
-          </Button>
-          {isTimeout ? (
-            <ExpiredDialog
-              isOpen={isDialogOpen}
-              onClose={closeDialog}
-              setIsTimeout={setIsTimeout}
-            />
-          ) : (
-            <ConfirmDialog
-              isOpen={isDialogOpen}
-              onClose={closeDialog}
-              handleSubmit={handleSubmit}
-            />
           )}
+          <div className="flex justify-between">
+            <p>Total</p>
+            <p className="text-white font-bold">THB{Math.round(total)}</p>
+          </div>
         </div>
-      </article>
+        <input
+          placeholder="Coupon"
+          disabled={!isValid || isLoading}
+          value={couponCode}
+          onChange={handleCouponInput}
+          className="bg-[#21263F] pl-4 p-3 rounded-md border border-[#565F7E]"
+        ></input>
+        <Button
+          type="button"
+          disabled={!isValid || isLoading}
+          onClick={() => {
+            if (isTimeout) {
+              handleTimeout();
+              openDialog();
+            } else {
+              handleNext();
+              openDialog();
+            }
+          }}
+          className={`bg-[#4E7BEE] text-white h-[48px] ${
+            isLoading ? "bg-gray-600" : "bg-blue-600 hover:bg-[#4E7BEE]"
+          }`}
+        >
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <ProgressCircleRoot value={null} size="sm">
+                <ProgressCircleRing cap="round" />
+              </ProgressCircleRoot>
+              <span>{`Processing${dots}`}</span>
+            </div>
+          ) : (
+            "Next"
+          )}
+        </Button>
+        {isTimeout ? (
+          <ExpiredDialog
+            isOpen={isDialogOpen}
+            onClose={closeDialog}
+            setIsTimeout={setIsTimeout}
+          />
+        ) : (
+          <ConfirmDialog
+            isOpen={isDialogOpen}
+            onClose={closeDialog}
+            handleSubmit={handleSubmit}
+          />
+        )}
+      </div>
+    </article>
   );
 }
 

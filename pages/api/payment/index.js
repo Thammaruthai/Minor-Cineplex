@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import connectionPool from "@/utils/db";
+import { method } from "lodash";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -75,6 +76,8 @@ export default async function handler(req, res) {
         customerName,
         customerEmail,
         currency = "thb",
+        incomingCard,
+        discount,
       } = req.body;
 
       // Step 1: Retrieve the pending payment
@@ -105,13 +108,41 @@ export default async function handler(req, res) {
         });
       }
 
-      // Step 3: Attach the payment method if not already attached
-      await stripe.paymentMethods.attach(paymentMethodId, {
+      // Step 3: Check if the payment method already exists
+      const existingPaymentMethods = await stripe.paymentMethods.list({
         customer: customer.id,
+        type: "card",
       });
-      await stripe.customers.update(customer.id, {
-        invoice_settings: { default_payment_method: paymentMethodId },
-      });
+
+      // Check if a matching card already exists for the customer
+      const matchedPaymentMethod = existingPaymentMethods.data.find(
+        (method) =>
+          method.card.last4 === incomingCard.last4 &&
+          method.card.exp_month === incomingCard.exp_month &&
+          method.card.exp_year === incomingCard.exp_year
+      );
+
+      if (!matchedPaymentMethod) {
+        // Attach the payment method if it doesn't exist
+        const newPaymentMethod = await stripe.paymentMethods.attach(
+          paymentMethodId,
+          {
+            customer: customer.id,
+          }
+        );
+
+        // ตั้งบัตรใหม่เป็น Default
+        await stripe.customers.update(customer.id, {
+          invoice_settings: { default_payment_method: newPaymentMethod.id },
+        });
+      } else {
+        // ถ้าบัตรมีอยู่แล้ว ให้ตั้งเป็น Default ทันที
+        await stripe.customers.update(customer.id, {
+          invoice_settings: { default_payment_method: matchedPaymentMethod.id },
+        });
+      }
+
+      const uniqueIdempotencyKey = `confirm_payment_${booking_id}_${Date.now()}`;
 
       // Step 4: Create and confirm the payment intent
       const paymentIntent = await stripe.paymentIntents.create(
@@ -124,7 +155,7 @@ export default async function handler(req, res) {
           confirm: true,
         },
         {
-          idempotencyKey: `confirm_payment_${booking_id}`,
+          idempotencyKey: uniqueIdempotencyKey,
         }
       );
 
@@ -142,6 +173,11 @@ export default async function handler(req, res) {
         await connectionPool.query(
           `UPDATE booking_seats SET status = 'Booked' WHERE booking_id = $1`,
           [booking_id]
+        );
+
+        await connectionPool.query(
+          `UPDATE bookings SET final_price = $1, discount_applied = $2, booking_status = 'Paid' WHERE booking_id = $3`,
+          [payment_amount, discount, booking_id]
         );
       }
 

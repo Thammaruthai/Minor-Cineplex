@@ -11,7 +11,7 @@ export default function PaymentPage() {
   const [total, setTotal] = useState(0);
   const { booking } = useBooking();
 
-  if (booking?.booking_status === "Cancelled" || booking?.booking_status === "Booked") {
+  if (booking?.booking_status === "Cancelled" || booking?.booking_status === "Paid") {
     return (
       <section className="flex items-start justify-center gap-24 px-28 py-20 h-full w-full text-white">
         <p>404 This page could not be found</p>
