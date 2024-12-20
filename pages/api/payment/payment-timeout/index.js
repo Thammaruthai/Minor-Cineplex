@@ -7,9 +7,6 @@ const updateExpiredBookings = async () => {
     const now = new Date();
     const fiveMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
 
-    console.log(`[CRON] Running at ${now}`);
-    console.log(`[CRON] Threshold Time: ${fiveMinutesAgo}`);
-
     // update booking_status in bookings
     const updateBookings = await connectionPool.query(
       `UPDATE bookings 
@@ -21,8 +18,6 @@ const updateExpiredBookings = async () => {
 
     // bring booking_id that updated
     const updatedBookingIds = updateBookings.rows.map((row) => row.booking_id);
-
-    console.log(`[CRON] Updated Booking IDs:`, updatedBookingIds);
 
     // update booking_seats that related
     if (updatedBookingIds.length > 0) {
