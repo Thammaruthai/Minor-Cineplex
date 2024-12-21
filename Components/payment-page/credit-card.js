@@ -37,8 +37,8 @@ export function CreditCard({
   };
 
   return (
-    <form className="w-[900px] rounded-lg text-white ">
-      <div className="mb-4 flex gap-6 w-full">
+    <form className="xl:w-[900px] rounded-lg text-white px-4 lg:p-0">
+      <div className="mb-7 md:flex-row flex flex-col gap-6 w-full">
         <div className="flex flex-col w-full h-full gap-1">
           <label htmlFor="card-number" className="block text-[#C8CEDD]">
             Card number
@@ -110,7 +110,7 @@ export function CreditCard({
           )}
         </div>
       </div>
-      <div className="mb-4 flex gap-6 w-full">
+      <div className="mb-4 gap-6 w-full md:flex-row flex flex-col">
         <div className="flex flex-col w-full gap-1 ">
           <label htmlFor="card-number" className="block text-[#C8CEDD]">
             Expiry date

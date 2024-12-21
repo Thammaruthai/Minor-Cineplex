@@ -18,8 +18,8 @@ export default function BookingSuccess() {
   };
 
   return (
-    <section className="w-full flex flex-col justify-center items-center">
-      <div className="w-[386px] mt-32 flex flex-col gap-12 ">
+    <section className="w-full flex flex-col justify-center items-center p-4 py-10">
+      <div className="md:w-[386px] w-full md:mt-28 my-10 flex flex-col gap-12 ">
         <div className="flex flex-col items-center gap-6">
           <Image
             src="/img/success.png"
@@ -96,13 +96,13 @@ export default function BookingSuccess() {
             </div>
           </div>
         </div>
-        <div className="text-white flex w-full gap-4">
+        <div className="text-white flex md:w-full min-w-[344px] gap-4 justify-between">
           <Link href="/">
-            <Button className="border border-[#8B93B0] w-[185px] px-10">
+            <Button className="border border-[#8B93B0] md:w-[185px] px-5 md:px-10 w-[164px]">
               Back to home
             </Button>
           </Link>
-          <Button className="bg-[#4E7BEE] px-10 w-[185px]">
+          <Button className="bg-[#4E7BEE] md:px-10 md:w-[185px] w-[164px] px-5 ">
             Booking detail
           </Button>
         </div>

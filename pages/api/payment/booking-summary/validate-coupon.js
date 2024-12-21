@@ -73,6 +73,31 @@ export default async function handler(req, res) {
       console.error("Error:", error.message);
       return res.status(500).json({ error: error.message });
     }
+  } else if (req.method === "GET") {
+    try {
+      const result = await connectionPool.query(
+        `SELECT * FROM coupons WHERE is_active = TRUE AND expiration_date > NOW()`
+      );
+      const coupons =
+        result.rows.length > 0
+          ? result.rows.map((row) => ({
+              coupon_id: row.coupon_id,
+              coupon_name: row.code,
+              coupon_discount: row.discount_amount,
+              min_purchase: row.min_purchase_amount,
+              max_use: row.max_uses,
+              coupon_type: row.discount_type,
+              expiration: row.expiration_date,
+            }))
+          : [];
+      res.status(200).json({
+        data: coupons,
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message,
+      });
+    }
   }
 
   return res.status(405).json({ error: "Method Not Allowed" });
