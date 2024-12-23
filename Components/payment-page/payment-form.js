@@ -208,9 +208,11 @@ function PaymentForm({ total, setTotal }) {
                     : "text-[#8B93B0] font-bold"
                 }`}
               >
+
                 {method.label}
               </h2>
             ))}
+
           </div>
           {selectedMethod === "Credit card" && (
             <CreditCard
