@@ -32,8 +32,6 @@ export default function Navbar() {
     sessionStorage.removeItem("name");
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-    localStorage.removeItem("UUID");
-    sessionStorage.removeItem("UUID");
     window.location.href = "/"; // รีเฟรชไปยังหน้าแรก
   };
 
@@ -131,7 +129,7 @@ export default function Navbar() {
 
               {/* Dropdown Menu for Desktop */}
               {showDropdown && (
-                <div className="absolute right-0 mt-3 h-44 w-[182px] bg-[#21263f] rounded shadow-lg">
+                <div className="absolute right-0 mt-3 h-44 w-[182px] bg-[#21263f] rounded shadow-lg z-50">
                   <DropdownNavMenu toggleLogin={handleLogout} />
                 </div>
               )}

@@ -1,5 +1,6 @@
 import connectionPool from "@/utils/db";
 import protect from "@/utils/protect";
+import jwt from "jsonwebtoken";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -8,11 +9,16 @@ export default async function handler(req, res) {
 
   protect(req, res, async () => {
     try {
-      // ดึงข้อมูลจาก body           
-      const { showDetails, booking, userUUID, price } = req.body;
+      // ดึงข้อมูลจาก body
+      const { showDetails, booking, price } = req.body;
 
+      const token = req.headers.authorization?.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+      const { userId } = decoded;
+      //console.log(userId);
+      
       // ตรวจสอบข้อมูลที่จำเป็น
-      if (!showDetails || !booking || !userUUID) {
+      if (!showDetails || !booking || !userId) {
         return res.status(400).json({ error: "Missing required fields." });
       }
 
@@ -20,9 +26,9 @@ export default async function handler(req, res) {
 
       // ตรวจสอบ User
       const userQuery = `
-        SELECT * FROM users WHERE supabase_uuid = $1;
+        SELECT * FROM users WHERE user_id = $1;
       `;
-      const userResult = await client.query(userQuery, [userUUID]);
+      const userResult = await client.query(userQuery, [userId]);
       if (userResult.rows.length === 0) {
         client.release();
         return res.status(404).json({ error: "User not found." });
@@ -55,7 +61,7 @@ export default async function handler(req, res) {
         [showDetails.showSummary.show_id, seatIdsToBook]
       );
 
-      console.log(duplicateSeatsResult.rows);
+      //console.log(duplicateSeatsResult.rows);
 
       if (duplicateSeatsResult.rows.length > 0) {
         client.release();

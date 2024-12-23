@@ -38,11 +38,11 @@ export default function LoginPage() {
         if (rememberMe) {
           localStorage.setItem("token", token);
           localStorage.setItem("name", name); // เก็บชื่อผู้ใช้ใน localStorage
-          localStorage.setItem("UUID", userUUID); // เพิ่ม user uuid เพื่อทำ audit log หรือดึงเผื่อให้รู้ว่า user คนไหนดึง ที่ไม่ดึง name เพราะมีโอกาศซ้ำกัน
+          
         } else {
           sessionStorage.setItem("token", token);
           sessionStorage.setItem("name", name); // เก็บชื่อผู้ใช้ใน sessionStorage
-          sessionStorage.setItem("UUID", userUUID); // เพิ่ม user uuid เพื่อทำ audit log หรือดึงเผื่อให้รู้ว่า user คนไหนดึง ที่ไม่ดึง name เพราะมีโอกาศซ้ำกัน
+          
         }
 
         toast(

@@ -241,7 +241,7 @@ function PaymentForm({ total, setTotal }) {
                   className="w-full"
                 />
                 <Image
-                  src={`/img/${cardBrand}.png`}
+                  src={`/img/brand/${cardBrand}.png`}
                   alt={cardBrand}
                   width={32}
                   height={32}

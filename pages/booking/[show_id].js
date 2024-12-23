@@ -189,9 +189,7 @@ const SeatSelectionPage = () => {
   const handleSubmit = async () => {
     const token =
       sessionStorage.getItem("token") || localStorage.getItem("token");
-    const userUUID =
-      sessionStorage.getItem("UUID") || localStorage.getItem("UUID");
-
+    
     if (!token) {
       setNotLogin(true);
       return;
@@ -201,7 +199,6 @@ const SeatSelectionPage = () => {
       const data = {
         showDetails,
         booking: selectedSeats,
-        userUUID,
         price: selectedSeats.length * 150,
       };
 
