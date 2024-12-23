@@ -6,12 +6,14 @@ export function StepsHeader({ currentStep }) {
   ];
   return (
     <div className="flex justify-center items-center mt-5 py-4 bg-[#070C1B] h-[100px] w-full relative z-40">
-      <div className="flex gap-8 z-20 w-[468px] relative">
+
+      <div className="flex xl:gap-8 z-20 xl:w-[468px] relative">
+
       <div className="absolute top-[30%] left-0 right-5 mx-auto h-0.5 bg-[#21263F] z-0 w-8/12" />
         {steps.map((step) => (
           <div
             key={step.id}
-            className="flex flex-col items-center w-[140px] gap-1.5 z-20"
+            className="flex flex-col items-center md:w-[140px] w-[105px] gap-1.5 z-20"
           >
             <div
               className={`w-11 h-11 rounded-full flex items-center justify-center text-xl ${
@@ -25,7 +27,7 @@ export function StepsHeader({ currentStep }) {
               {currentStep > step.id ? "✔" : step.id}
             </div>
             <span
-              className={`${
+              className={`md:text-base text-sm ${
                 currentStep > step.id
                   ? " text-gray-400"
                   : "text-white"
