@@ -494,7 +494,7 @@ const SeatSelectionPage = () => {
                               Seat: {seat.seat_row}
                               {seat.seat_number}
                             </p>
-                            <p className="text-sm">
+                            <div className="text-sm">
                               Status:{" "}
                               <span
                                 className={
@@ -512,7 +512,7 @@ const SeatSelectionPage = () => {
                                   ? "(On hold for payment.)"
                                   : ""}
                               </p>
-                            </p>
+                            </div>
                           </div>
                         </div>
                       );
