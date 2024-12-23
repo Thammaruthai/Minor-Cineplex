@@ -32,8 +32,6 @@ export default function Navbar() {
     sessionStorage.removeItem("name");
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-    localStorage.removeItem("UUID");
-    sessionStorage.removeItem("UUID");
     window.location.href = "/"; // รีเฟรชไปยังหน้าแรก
   };
 
