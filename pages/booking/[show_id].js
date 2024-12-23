@@ -1,17 +1,24 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-import jwtInterceptor from "@/utils/jwt-interceptor";
-
-import { Button } from "@chakra-ui/react";
-
-import { formatedDate, formatShowtime } from "@/utils/date";
 import Image from "next/image";
 
+import { Button } from "@chakra-ui/react";
+import jwtInterceptor from "@/utils/jwt-interceptor";
+import { formatedDate, formatShowtime } from "@/utils/date";
+import { StepsHeader } from "@/Components/page-sections/steps-header";
+import { supabase } from "@/lib/supabase-client";
+import { toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+
 const SeatSelectionPage = () => {
+  //router
+
   const router = useRouter();
+
   const { show_id } = router.query;
 
+  //Usestate
   const [showDetails, setShowDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -20,14 +27,13 @@ const SeatSelectionPage = () => {
   const [notLogin, setNotLogin] = useState(false); // Assuming you set this based on login status
   const [countdown, setCountdown] = useState(3); // Set initial countdown value
   const [showCountdown, setShowCountdown] = useState(false);
+  const [isChanged, setIsChanged] = useState(0);
 
   //style
   const buttonStyleDisabled = "bg-gray-500 w-full py-3 cursor-not-allowed";
   const buttonStyleEnabled =
     "bg-[#4E7BEE] w-full py-3 hover:bg-[#1E29A8] active:[#0C1580]";
   const seatStyle = "max-sm:w-full max-sm:h-auto w-10 h-10";
-
-  //svg
 
   // Animate the loading text
   useEffect(() => {
@@ -41,7 +47,30 @@ const SeatSelectionPage = () => {
     }
   }, [loading]);
 
-  //
+  useEffect(() => {
+    const channel = supabase
+      .channel("bookings")
+      .on(
+        "postgres_changes",
+        {
+          event: "*", // INSERT, UPDATE, DELETE
+          schema: "public",
+          table: "bookings",
+        },
+        (payload) => {
+          console.log("Change received!", payload);
+          setIsChanged((prev) => prev + 1);
+        }
+      )
+      .subscribe();
+
+    // Cleanup: ปลดการ subscribe
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  //first open will have loading screen
   useEffect(() => {
     if (!show_id) return;
 
@@ -62,6 +91,75 @@ const SeatSelectionPage = () => {
 
     fetchShowDetails();
   }, [show_id]);
+
+  //while update
+  useEffect(() => {
+    if (!show_id) return;
+
+    const fetchShowDetails = async () => {
+      try {
+        // Fetch show details
+        const response = await axios.get("/api/booking/showfetch", {
+          params: { show_Id: show_id },
+        });
+
+        // Update show details state
+        setShowDetails(response.data);
+
+        // Get updated seat details
+        const updatedSeats = response.data.seats;
+
+        // Find invalid seats (locked or booked)
+        const invalidSeats = updatedSeats
+          .filter(
+            (seat) =>
+              seat.booking_status === "Locked" ||
+              seat.booking_status === "Booked"
+          )
+          .map((seat) => `${seat.seat_row}${seat.seat_number}`);
+
+        // Find seats in selectedSeats that are invalid
+        const removedSeats = selectedSeats.filter((seat) =>
+          invalidSeats.includes(seat)
+        );
+
+        // Remove only invalid seats from selectedSeats
+        const validSelectedSeats = selectedSeats.filter(
+          (seat) => !invalidSeats.includes(seat)
+        );
+
+        // Update selected seats state
+        setSelectedSeats(validSelectedSeats);
+
+        // Render toast notification for removed seats
+        if (removedSeats.length > 0) {
+          toast(
+            <div>
+              <strong>Seats are booked by other.</strong>
+              <p>{removedSeats.join(", ")} seats were no longer available.</p>
+            </div>,
+            {
+              position: "top-center",
+              style: {
+                borderRadius: "4px",
+                color: "white",
+                backgroundColor: "#4E7BEE",
+                width: "700px",
+                textAlign: "center",
+              },
+            }
+          );
+        }
+
+        setError("");
+      } catch (err) {
+        setError(err.response?.data?.error || "Something went wrong.");
+      }
+    };
+
+    fetchShowDetails();
+  }, [isChanged]);
+
 
   useEffect(() => {
     if (notLogin) {
@@ -91,9 +189,7 @@ const SeatSelectionPage = () => {
   const handleSubmit = async () => {
     const token =
       sessionStorage.getItem("token") || localStorage.getItem("token");
-    const userUUID =
-      sessionStorage.getItem("UUID") || localStorage.getItem("UUID");
-
+    
     if (!token) {
       setNotLogin(true);
       return;
@@ -103,7 +199,6 @@ const SeatSelectionPage = () => {
       const data = {
         showDetails,
         booking: selectedSeats,
-        userUUID,
         price: selectedSeats.length * 150,
       };
 
@@ -125,7 +220,6 @@ const SeatSelectionPage = () => {
       if (error.response?.status === 401 || error.response?.status === 500) {
         window.location.href = "/login"; // Redirect to login
       } else {
-        
       }
     }
   };
@@ -179,36 +273,11 @@ const SeatSelectionPage = () => {
   }
 
   return (
-    <div className="text-white  mt-[20px] font-robotoCondensed">
+    <div className="text-white font-robotoCondensed">
       {/* Steps Header */}
-      <div className="flex justify-center items-center mb-8 bg-[#070C1B] h-[108px]">
-        <div className="flex gap-8 max-sm:gap-[0px]">
-          <div className="flex flex-col items-center w-[140px] gap-1.5 max-sm:w-[100px]">
-            <div className="w-11 h-11 rounded-full bg-[#1E29A8] flex items-center justify-center text-white text-xl">
-              ✔
-            </div>
-            <span className="text-gray-300 max-sm:text-sm font-normal">
-              Select showtime
-            </span>
-          </div>
-          <div className="flex flex-col items-center w-[140px] gap-1.5 max-sm:w-[100px]">
-            <div className="w-11 h-11 rounded-full bg-[#4E7BEE] flex items-center justify-center text-white text-xl">
-              2
-            </div>
-            <span className=" text-gray-300 max-sm:text-sm">Select Seat</span>
-          </div>
-          <div className="flex flex-col items-center w-[140px] gap-1.5 max-sm:w-[100px]">
-            <div className="w-11 h-11 rounded-full bg-gray-700 flex items-center justify-center text-gray-400 text-xl">
-              3
-            </div>
-            <span className="text-gray-400 max-sm:text-sm font-normal">
-              Payment
-            </span>
-          </div>
-        </div>
-      </div>
+      <StepsHeader currentStep={2} />
 
-      <div className="flex flex-col xl:flex-row gap-[102px] items-center justify-center max-sm:items-center max-sm:gap-[10px] max-xl:gap-[20px]">
+      <div className="flex flex-col xl:flex-row gap-[102px]  justify-center max-sm:items-center max-xl:items-center items-start max-sm:gap-[10px] max-xl:gap-[20px] pt-[80px]">
         {/* Seat Map */}
         <div className="flex flex-col  rounded-lg gap-[60px] xl:min-w-[793px] max-sm:w-11/12 max-sm:justify-start max-sm:gap-7">
           <div className="flex items-center justify-center w-full h-11 text-center text-xl font-semibold mb-4 rounded-t-full bg-gradient-to-r from-[#2C344E] to-[#516199]">
@@ -811,6 +880,7 @@ const SeatSelectionPage = () => {
           </div>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 };
