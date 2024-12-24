@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { formatDateToLocal } from "@/utils/date";
 
-export function FilterBar() {
+export default function FilterBar() {
   const [movies, setMovies] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [genres, setGenres] = useState([]);
