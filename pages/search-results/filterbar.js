@@ -144,7 +144,7 @@ export default function FilterBar() {
           {/* Movie Dropdown */}
           <div className="mb-4 lg:mb-0 lg:flex-1 lg:max-w-[267px] relative">
             <select
-              className="w-full border border-[#565f7e] p-2 py-4 bg-[#21263f] text-[#8b93b0] rounded focus:outline-none appearance-none cursor-pointer"
+              className="w-full border border-[#565f7e] p-2 py-4 bg-[#21263f] text-white rounded focus:outline-none appearance-none cursor-pointer"
               value={selectedFilters.movie}
               onChange={(e) => handleFilterChange("movie", e.target.value)}
             >
@@ -175,7 +175,7 @@ export default function FilterBar() {
           <div className="flex gap-4 mb-4 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4">
             <div className="lg:min-w-[190.25px] relative">
               <select
-                className="flex-1 p-2 appearance-none border border-[#565f7e] w-full py-4 bg-[#21263f] text-[#8b93b0] rounded focus:outline-none cursor-pointer"
+                className="flex-1 p-2 appearance-none border border-[#565f7e] w-full py-4 bg-[#21263f] text-white rounded focus:outline-none cursor-pointer"
                 value={selectedFilters.language}
                 onChange={(e) => handleFilterChange("language", e.target.value)}
               >
@@ -203,7 +203,7 @@ export default function FilterBar() {
             </div>
             <div className="lg:min-w-[190.25px] relative">
               <select
-                className="flex-1 w-full p-2 border border-[#565f7e] py-4 lg:max-w-[197.25px] bg-[#21263f] text-[#8b93b0] rounded focus:outline-none cursor-pointer appearance-none"
+                className="flex-1 w-full p-2 border border-[#565f7e] py-4 lg:max-w-[197.25px] bg-[#21263f] text-white rounded focus:outline-none cursor-pointer appearance-none"
                 value={selectedFilters.genre}
                 onChange={(e) => handleFilterChange("genre", e.target.value)}
               >
@@ -235,7 +235,7 @@ export default function FilterBar() {
           <div className="flex gap-4 mb-4 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4">
             <div className="lg:min-w-[190.25px] relative">
               <select
-                className="flex-1 p-2 border w-full border-[#565f7e] lg:max-w-[189.25px] py-4 bg-[#21263f] text-[#8b93b0] rounded focus:outline-none cursor-pointer appearance-none"
+                className="flex-1 p-2 border w-full border-[#565f7e] lg:max-w-[189.25px] py-4 bg-[#21263f] text-white rounded focus:outline-none cursor-pointer appearance-none"
                 value={selectedFilters.city}
                 onChange={(e) => handleFilterChange("city", e.target.value)}
               >
@@ -263,7 +263,7 @@ export default function FilterBar() {
             </div>
             <div className="flex-1 relative z-40">
               <button
-                className="w-full h-[58px] px-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] rounded focus:outline-none text-start"
+                className="w-full h-[58px] px-2 border border-[#565f7e] py-4 bg-[#21263f] text-white rounded focus:outline-none text-start"
                 onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
               >
                 {filterDate ? formatDateToLocal(filterDate) : "All Date"}
