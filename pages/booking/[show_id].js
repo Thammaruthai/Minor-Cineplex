@@ -219,7 +219,7 @@ const SeatSelectionPage = () => {
 
       if (response.status === 200) {
         setSelectedSeats([]);
-        window.location.href = `/payments/${response.data.payment}`;
+        router.push(`/payments/${response.data.payment}`);
 
         // Redirect or perform another action after success
       }
