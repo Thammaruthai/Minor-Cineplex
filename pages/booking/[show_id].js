@@ -167,7 +167,7 @@ const SeatSelectionPage = () => {
         setCountdown((prev) => {
           if (prev <= 1) {
             clearInterval(interval);
-            window.location.href = "/login"; // Redirect after countdown
+            router.push(`/login`);; // Redirect after countdown
           }
           return prev - 1;
         });
@@ -219,7 +219,7 @@ const SeatSelectionPage = () => {
 
       if (response.status === 200) {
         setSelectedSeats([]);
-        window.location.href = `/payments/${response.data.payment}`;
+        router.push(`/payments/${response.data.payment}`);
 
         // Redirect or perform another action after success
       }
@@ -227,7 +227,7 @@ const SeatSelectionPage = () => {
       console.error("Error during API call:", error.response.data);
       alert(error.response.data.error);
       if (error.response?.status === 401 || error.response?.status === 500) {
-        window.location.href = "/login"; // Redirect to login
+        router.push(`/login`); // Redirect to login
       } else {
       }
     }
