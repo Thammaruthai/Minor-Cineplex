@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
   try {
     const result = await client.query(
-      "SELECT user_id, password_hash, locked_until FROM users WHERE email = $1",
+      "SELECT user_id, password_hash, locked_until, supabase_uuid FROM users WHERE email = $1", // เพิ่ม user uuid เพื่อทำ audit log หรือดึงเผื่อให้รู้ว่า user คนไหนดึง ที่ไม่ดึง name เพราะมีโอกาศซ้ำกัน
       [email]
     );
 
@@ -124,6 +124,7 @@ export default async function handler(req, res) {
       token,
       name: profile?.name || "User",
       profileImage: profile?.profile_image || null,
+      userUUID: user.supabase_uuid, // เพิ่ม user uuid เพื่อทำ audit log หรือดึงเผื่อให้รู้ว่า user คนไหนดึง ที่ไม่ดึง name เพราะมีโอกาศซ้ำกัน
     });
   } catch (err) {
     console.error("Server error during login:", err);

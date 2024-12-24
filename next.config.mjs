@@ -3,7 +3,11 @@ const nextConfig = {
   reactStrictMode: true,
   //experimental: { optimizePackageImports: ["@chakra-ui/react"] },
   images: {
-    domains: ["image.tmdb.org"],
+    domains: [
+      "image.civitai.com",
+      "image.tmdb.org",
+      "legtiifzmznryewotxso.supabase.co",
+    ],
     remotePatterns: [
       {
         protocol: "https",
@@ -78,16 +82,22 @@ const nextConfig = {
         pathname: "/adobe/dynamicmedia/deliver/**", // Path pattern for matching the images
       },
       {
-        protocol: 'https',
-        hostname: 'www.futurepark.co.th',
-        port: '',
-        pathname: '/stocks/wcmpage/**', // Allow paths under this directory
+        protocol: "https",
+        hostname: "www.futurepark.co.th",
+        port: "",
+        pathname: "/stocks/wcmpage/**", // Allow paths under this directory
       },
       {
-        protocol: 'https',
-        hostname: 'major-digital-cdn.app.vista.co',
-        port: '',
-        pathname: '/media/entity/get/**', // Allows paths under this directory
+        protocol: "https",
+        hostname: "major-digital-cdn.app.vista.co",
+        port: "",
+        pathname: "/media/entity/get/**", // Allows paths under this directory
+      },
+      {
+        protocol: "https",
+        hostname: "filmartgallery.com",
+        port: "", // Leave empty if not using a specific port
+        pathname: "/cdn/shop/files/**", // Match the path structure
       },
     ],
   },

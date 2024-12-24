@@ -32,13 +32,17 @@ export default function LoginPage() {
       });
 
       if (response.data.success) {
-        const { token, name } = response.data; // สมมติ API ส่ง `name` กลับมา
+        const { token, name, userUUID } = response.data; // สมมติ API ส่ง `name` กลับมา
+        
+        
         if (rememberMe) {
           localStorage.setItem("token", token);
           localStorage.setItem("name", name); // เก็บชื่อผู้ใช้ใน localStorage
+          
         } else {
           sessionStorage.setItem("token", token);
           sessionStorage.setItem("name", name); // เก็บชื่อผู้ใช้ใน sessionStorage
+          
         }
 
         toast(

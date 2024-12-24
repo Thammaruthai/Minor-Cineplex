@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
 /* Tailwind CSS utilities */
 @tailwind base;
 @tailwind components;
@@ -66,4 +66,14 @@ body {
   100% {
     content: '.';
   }
+}
+
+.chakra-checkbox__control.css-oo3nwl {
+  border: solid 1px;
+  border-color: #8B93B0;
+  border-radius: 4px;
+}
+
+div .react-datepicker {
+  font-size: 14px;
 }

@@ -74,7 +74,7 @@ export default function Navbar() {
       {/* Background Blur */}
       <div
         className="absolute inset-x-0 top-0 h-16 lg:h-20 bg-black bg-opacity-5 backdrop-blur-lg w-full
-        border-b-1 border-[#21263f] z-40 "
+        border-b-[1.5px] border-[#21263f] z-40 "
       ></div>
 
       <div className="relative flex justify-between items-center bg-transparent px-4 pt-2 lg:pt-[14px] lg:mx-14">
@@ -129,7 +129,7 @@ export default function Navbar() {
 
               {/* Dropdown Menu for Desktop */}
               {showDropdown && (
-                <div className="absolute right-0 mt-3 h-44 w-[182px] bg-[#21263f] rounded shadow-lg">
+                <div className="absolute right-0 mt-3 h-44 w-[182px] bg-[#21263f] rounded shadow-lg z-50">
                   <DropdownNavMenu toggleLogin={handleLogout} />
                 </div>
               )}

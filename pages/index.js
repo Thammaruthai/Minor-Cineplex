@@ -2,10 +2,8 @@ import { useState } from "react";
 import Filter from "@/Components/landing-page/search-filter-movie.js";
 import MoviesCard from "@/Components/landing-page/movie-card.js";
 import MoviesAffiliate from "@/Components/landing-page/movies-affilate.js";
-import ResultFromFilter from "@/Components/search-result/search-result.js";
 import Head from "next/head";
 import Footer from "@/Components/page-sections/footer.js";
-import Navbar from "@/Components/page-sections/navbar";
 
 export default function Home() {
   const [filteredMovies, setFilteredMovies] = useState([]);
@@ -24,7 +22,6 @@ export default function Home() {
         }}
       ></div>
       <Filter onFilterApply={(movies) => setFilteredMovies(movies)} />
-      {/* <ResultFromFilter filteredMovies={filteredMovies} />  รอแก้ sprint 2 */}
       <MoviesCard />
       <MoviesAffiliate />
       <Footer />

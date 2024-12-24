@@ -3,7 +3,9 @@ import axios from "axios";
 function jwtInterceptor() {
   axios.interceptors.request.use(
     (req) => {
-      const token = window.localStorage.getItem("token");
+      const token =
+        window.localStorage.getItem("token") ||
+        window.sessionStorage.getItem("token");
 
       if (token) {
         req.headers = {
@@ -25,7 +27,8 @@ function jwtInterceptor() {
     },
     (error) => {
       if (error.response && error.response.status === 401) {
-        window.localStorage.removeItem("token");
+        window.localStorage.removeItem("token") ||
+          window.sessionStorage.removeItem("token");
 
         window.location.replace("/login");
       }
