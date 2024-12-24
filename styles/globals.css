@@ -68,3 +68,12 @@ body {
   }
 }
 
+.chakra-checkbox__control.css-oo3nwl {
+  border: solid 1px;
+  border-color: #8B93B0;
+  border-radius: 4px;
+}
+
+div .react-datepicker {
+  font-size: 14px;
+}

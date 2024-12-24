@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useRouter } from "next/router";
 
 export default function Filter({ onFilterApply }) {
   const [movies, setMovies] = useState([]);
@@ -14,9 +15,11 @@ export default function Filter({ onFilterApply }) {
     language: "",
     genre: "",
     city: "",
+    date: "",
   });
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const datePickerRef = useRef();
+  const router = useRouter();
 
   // Fetch filter data
   useEffect(() => {
@@ -61,36 +64,22 @@ export default function Filter({ onFilterApply }) {
   };
 
   const handleSearch = async () => {
-    try {
-      const response = await axios.get("/api/landing-page/fetch-movie-card");
-      console.log("API Response Data:", response.data);
-      const data = response.data;
-
-      // Debug ค่าของ selectedFilters
-      console.log("Selected Filters:", selectedFilters);
-
-      // กรองข้อมูล
-      const filteredMovies = data.movies.filter((movie) => {
-        const genres = movie.genre_names.split(", "); // แปลง genre_names เป็น Array
-        const languages = movie.language_names.split(", "); // แปลง language_names เป็น Array
-
-        return (
-          (!selectedFilters.movie ||
-            movie.title
-              .toLowerCase()
-              .includes(selectedFilters.movie.toLowerCase())) &&
-          (!selectedFilters.language ||
-            languages.includes(selectedFilters.language)) &&
-          (!selectedFilters.genre || genres.includes(selectedFilters.genre)) &&
-          (!selectedFilters.city ||
-            movie.city_id === parseInt(selectedFilters.city))
-        );
-      });
-
-      onFilterApply(filteredMovies);
-    } catch (error) {
-      console.error("Failed to fetch filtered movies:", error.message);
-    }
+    const formatDateToLocal = (date) => {
+      if (!date) return new Date().toDateString();
+      const offsetDate = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60000
+      );
+      return offsetDate.toISOString().split("T")[0];
+    };
+    const filters = {
+      movie: selectedFilters.movie || "",
+      language: selectedFilters.language || "",
+      genre: selectedFilters.genre || "",
+      city: selectedFilters.city || "",
+      date: formatDateToLocal(releaseDate),
+    };
+    const queryParams = new URLSearchParams(filters).toString();
+    router.push(`/search-results?${queryParams}`);
   };
 
   return (
@@ -151,7 +140,7 @@ export default function Filter({ onFilterApply }) {
             >
               <option value="">City</option>
               {cities.map((city) => (
-                <option key={city.city_id} value={city.city_id}>
+                <option key={city.city_id} value={city.name}>
                   {city.name}
                 </option>
               ))}
