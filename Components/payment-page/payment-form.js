@@ -15,6 +15,7 @@ import { useBooking } from "@/hooks/useBooking";
 import { CreditCard } from "./credit-card";
 import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
+import QrCodePayment from "./qr-code-payment";
 
 function PaymentForm({ total, setTotal }) {
   const stripe = useStripe();
@@ -61,7 +62,29 @@ function PaymentForm({ total, setTotal }) {
       console.error("Error cancelling booking:", error);
     }
   };
+  const [qrCodeUrl, setQrCodeUrl] = useState(null);
+  const handleQrCode = async (e) => {
+    e.preventDefault();
+    setQrCodeUrl(null); // ล้าง QR Code ก่อน
 
+    try {
+      const response = await axios.post("/api/payment/create-payment-qr-code", {
+        amount: Math.round(total * 100),
+        currency: "thb",
+        email: email,
+      });
+
+      const data = response.data.qrCodeUrl;
+
+      if (data.data) {
+        setQrCodeUrl(data.data); // เก็บ URL ของ QR Code ใน state
+      } else {
+        console.log("QR Code URL not found in response");
+      }
+    } catch (error) {
+      console.log("Error:", error.response?.data?.error || error.message);
+    }
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -223,9 +246,12 @@ function PaymentForm({ total, setTotal }) {
               handleInputOwner={handleInputOwner}
             />
           )}
-          {selectedMethod === "QR Code" && <div>QR Code</div>}
+          {selectedMethod === "QR Code" && (
+            <QrCodePayment qrCodeUrl={qrCodeUrl} />
+          )}
         </div>
         <BookingSummary
+          handleQrCode={handleQrCode}
           handleSubmit={handleSubmit}
           isLoading={isLoading}
           errors={errors}
@@ -238,9 +264,10 @@ function PaymentForm({ total, setTotal }) {
           handleTimeout={handleTimeout}
           discount={discount}
           setDiscount={setDiscount}
+          paymentMethod={selectedMethod}
         />
       </div>
-      <Toaster className="md:hidden"/>
+      <Toaster className="md:hidden" />
       {isOpenToastErr && (
         <div className="bg-[#E5364B99] text-white p-2 px-4 mt-10 lg:mr-28 rounded xl:w-[480px] w-full h-28 flex-col justify-center gap-1 hidden md:flex">
           <div className="flex justify-between">
