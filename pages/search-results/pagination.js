@@ -15,7 +15,6 @@ export default function Pagination({
       if (
         i === 1 ||
         i === totalPages ||
-        i === 9 ||
         (i >= leftSiblingIndex && i <= rightSiblingIndex)
       ) {
         pages.push(i);

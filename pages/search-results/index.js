@@ -20,10 +20,12 @@ import Footer from "@/Components/page-sections/footer";
 import Pagination from "./pagination";
 
 function SearchResults() {
-  const { results, loading, date, genre, page, setPage } = useFilter();
+  const { results, loading, date, genre, page, totalPages, setPage } =
+    useFilter();
 
   useEffect(() => {
     console.log("Updated results:", results);
+    console.log("Updated totalPages:", totalPages);
   }, [results]);
 
   const [isShowHall, setIsShowHall] = useState(() => {
@@ -124,7 +126,7 @@ function SearchResults() {
   return (
     <>
       <section className="w-full h-full flex flex-col items-center text-white my-7 gap-10">
-        <FilterBar />
+        <FilterBar setPage={setPage} />
         <div className="md:max-w-[1200px] w-full flex flex-col gap-6">
           {loading ? (
             <div className="flex justify-center items-center gap-3">
@@ -135,7 +137,7 @@ function SearchResults() {
               </div>
               <p>Loading...</p>
             </div>
-          ) : filteredCinemas.length > 0 ? (
+          ) : filteredCinemas.length > 0 && new Date(date) >= new Date(new Date().toDateString()) ? (
             filteredCinemas.map(([cinema_name, halls]) => {
               const relatedMovies = filteredMovies.filter(
                 ([movieName, movieDetails]) =>
@@ -303,7 +305,7 @@ function SearchResults() {
                                   </div>
                                 </div>
                               </div>
-                              <div className="bg-[#070C1B] flex flex-col md:gap-14 gap-4 md:p-10 p-4 py-6">
+                              <div className="bg-[#070C1B] flex flex-col md:gap-14 gap-4 md:px-10 py-6">
                                 {Object.entries(hall)
                                   .filter(([hall_name, hallShows]) =>
                                     hallShows.some(
@@ -413,7 +415,12 @@ function SearchResults() {
           )}
         </div>
         <div>
-          <Pagination totalPages={10} siblingCount={1} page={page} setPage={setPage}/>
+          <Pagination
+            totalPages={totalPages}
+            siblingCount={1}
+            page={page}
+            setPage={setPage}
+          />
         </div>
       </section>
       <Footer />
