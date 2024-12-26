@@ -136,7 +136,7 @@ export default function AddHall() {
       };
       console.log(data);
 
-      const response = await axios.post("/api/addhall/add-hall", data);
+      const response = await axios.post("/api/add-hall/add-hall", data);
 
       setMessage(response.data.message);
       setError("");

@@ -9,12 +9,12 @@ export default function Home() {
   const [filteredMovies, setFilteredMovies] = useState([]);
 
   return (
-    <div>
+    <div className="w-full flex flex-col justify-center items-center">
       <Head>
         <title>หน้าแรก | Minor Cineplex</title>
       </Head>
       <div
-        className="h-[480px] bg-cover bg-center -mt-44"
+        className="h-[480px] bg-cover bg-center -mt-44 w-full"
         style={{
           backgroundImage: "url('/img/header-mobile.jpg')",
           backgroundColor: "rgba(0, 0, 0, 0.6)",
