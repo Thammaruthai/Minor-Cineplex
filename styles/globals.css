@@ -77,3 +77,13 @@ body {
 div .react-datepicker {
   font-size: 14px;
 }
+
+.chakra-select__root.css-1dmqmb7 {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .chakra-select__root.css-1dmqmb7 {
+    display: flex;
+  }
+}
