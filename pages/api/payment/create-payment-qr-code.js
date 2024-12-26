@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         currency,
         payment_method: paymentMethod.id,
         confirm: true,
-        return_url: "http://localhost:3000/payment-success", // เพิ่ม return_url
+        return_url: "http://localhost:3000/payment-success", 
       });
       console.log(paymentIntent);
 

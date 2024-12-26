@@ -17,7 +17,7 @@ import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 import QrCodePayment from "./qr-code-payment";
 
-function PaymentForm({ total, setTotal }) {
+function PaymentForm({ total, setTotal, qrCode, setQrCode }) {
   const stripe = useStripe();
   const router = useRouter();
   const elements = useElements();
@@ -62,10 +62,10 @@ function PaymentForm({ total, setTotal }) {
       console.error("Error cancelling booking:", error);
     }
   };
-  const [qrCodeUrl, setQrCodeUrl] = useState(null);
+
   const handleQrCode = async (e) => {
     e.preventDefault();
-    setQrCodeUrl(null); // ล้าง QR Code ก่อน
+    setQrCode(null); // ล้าง QR Code ก่อน
 
     try {
       const response = await axios.post("/api/payment/create-payment-qr-code", {
@@ -77,7 +77,7 @@ function PaymentForm({ total, setTotal }) {
       const data = response.data.qrCodeUrl;
 
       if (data.data) {
-        setQrCodeUrl(data.data); // เก็บ URL ของ QR Code ใน state
+        setQrCode(data.data); // เก็บ URL ของ QR Code ใน state
       } else {
         console.log("QR Code URL not found in response");
       }
@@ -232,11 +232,9 @@ function PaymentForm({ total, setTotal }) {
                     : "text-[#8B93B0] font-bold"
                 }`}
               >
-
                 {method.label}
               </h2>
             ))}
-
           </div>
           {selectedMethod === "Credit card" && (
             <CreditCard
@@ -246,9 +244,7 @@ function PaymentForm({ total, setTotal }) {
               handleInputOwner={handleInputOwner}
             />
           )}
-          {selectedMethod === "QR Code" && (
-            <QrCodePayment qrCodeUrl={qrCodeUrl} />
-          )}
+          {selectedMethod === "QR Code" && <QrCodePayment />}
         </div>
         <BookingSummary
           handleQrCode={handleQrCode}
