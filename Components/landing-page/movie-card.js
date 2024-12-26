@@ -22,7 +22,6 @@ export default function MoviesCard() {
       try {
         const response = await axios.get("/api/landing-page/fetch-movie-card");
         const data = response.data; // ดึงข้อมูลจาก response
-        console.log(data.movies);
 
         // จัดเรียงหนังตามวันที่
         const sortedMovies = data.movies.sort(
@@ -46,89 +45,91 @@ export default function MoviesCard() {
   return (
     <>
       {/* Header */}
-      <div className="py-5 mx-5 mb-8 mt-16 lg:mt-24 lg:mx-20">
-        <button
-          className={`${
-            isNowShowing ? "text-white " : "text-[#8b93b0]"
-          } pb-2 text-2xl lg:text-4xl font-bold`}
-          onClick={() => setIsNowShowing(true)} // สลับเป็น "Now Showing"
-        >
-          Now showing
-        </button>
-        <button
-          className={`${
-            !isNowShowing ? "text-white " : "text-[#8b93b0]"
-          } text-2xl font-bold px-5 lg:text-4xl`}
-          onClick={() => setIsNowShowing(false)} // สลับเป็น "Coming Soon"
-        >
-          Coming soon
-        </button>
-      </div>
+      <section className="flex flex-col 2xl:w-[1500px] lg:min-w-[1000px] md:mb-5 lg:mb-10">
+        <div className="p-5 py-5 xl:mb-8 mt-16 lg:mt-24 flex w-full gap-5 xl:p-0">
+          <button
+            className={`${
+              isNowShowing ? "text-white border-b border-[#565F7E]" : "text-[#8b93b0]"
+            } pb-2 text-2xl lg:text-4xl font-bold`}
+            onClick={() => setIsNowShowing(true)} // สลับเป็น "Now Showing"
+          >
+            Now showing
+          </button>
+          <button
+            className={`${
+              !isNowShowing ? "text-white border-b border-[#565F7E] " : "text-[#8b93b0]"
+            } text-2xl font-bold lg:text-4xl`}
+            onClick={() => setIsNowShowing(false)} // สลับเป็น "Coming Soon"
+          >
+            Coming soon
+          </button>
+        </div>
 
-      {/* Content */}
-      <div className="mx-5 mb-10 grid grid-cols-2 gap-6  lg:grid-cols-4 lg:mx-20">
-        {(isNowShowing ? nowShowing : comingSoon).map((movie) => (
-          <div key={movie.movie_id} className="flex flex-col">
-            <Link href={`/movies/${movie.movie_id}`}>
-            <div>
-              <img
-                src={movie.poster || "https://via.placeholder.com/300x400"}
-                className="rounded-lg w-full h-[310px] sm:h-[430px] md:h-[500px] xl:h-[480px]  lg:h-[300px] 2xl:h-[550px]"
-                alt={movie.title}
-              />
-            </div>
-            </Link>
-            <div className="flex items-center justify-between pt-4">
-              <span className="text-[#8b93b0] text-base xl:text-xl">
-                {new Date(movie.release_date).toLocaleDateString("en-US", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </span>
-              <div className="flex items-center">
-                <img
-                  src="/img/Star_fill.png"
-                  className="Rating-Star w-3 h-3"
-                  alt="Rating"
-                />
-                <span className="text-[#8b93b0] pl-2 text-base 2xl:text-xl">
-                  {movie.rating > 0 ? movie.rating.toFixed(1) : "N/A"}
+        {/* Content */}
+        <div className="p-5 mb-10 xl:p-0 grid grid-cols-2 xl:gap-6 gap-5 lg:grid-cols-4 ">
+          {(isNowShowing ? nowShowing : comingSoon).map((movie) => (
+            <div key={movie.movie_id} className="flex flex-col">
+              <Link href={`/movies/${movie.movie_id}`}>
+                <div>
+                  <img
+                    src={movie.poster || "https://via.placeholder.com/300x400"}
+                    className="rounded-[4px] w-full h-[235px] sm:h-[430px] md:h-[500px] xl:h-[480px]  lg:h-[300px]"
+                    alt={movie.title}
+                  />
+                </div>
+              </Link>
+              <div className="flex items-center justify-between pt-4">
+                <span className="text-[#8b93b0] text-base xl:text-xl">
+                  {new Date(movie.release_date).toLocaleDateString("en-US", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </span>
+                <div className="flex items-center">
+                  <img
+                    src="/img/Star_fill.png"
+                    className="Rating-Star w-3 h-3"
+                    alt="Rating"
+                  />
+                  <span className="text-[#8b93b0] pl-2 text-base 2xl:text-xl">
+                    {movie.avg_rating > 0 ? movie.avg_rating.toFixed(1) : "N/A"}
+                  </span>
+                </div>
               </div>
-            </div>
-            <Link href={`/movies/${movie.movie_id}`}>
-              <div>
-                <p className="text-white text-xl lg:text-2xl xl:text-3xl font-bold pt-1">
-                  {movie.title}
-                </p>
-              </div>
-            </Link>
+              <Link href={`/movies/${movie.movie_id}`}>
+                <div>
+                  <p className="text-white text-lg lg:text-2xl xl:text-3xl font-bold pt-1">
+                    {movie.title}
+                  </p>
+                </div>
+              </Link>
 
-            {/* Genres and Languages */}
-            <div className="flex gap-2 pt-3 flex-wrap">
-              {movie.genre_names &&
-                movie.genre_names.split(", ").map((genre, index) => (
-                  <button
-                    key={index}
-                    className="text-[#8b93b0] p-2 px-4 bg-[#2a304f] rounded-md"
-                  >
-                    {genre}
-                  </button>
-                ))}
-              {movie.language_names &&
-                movie.language_names.split(", ").map((lang, index) => (
-                  <button
-                    key={index}
-                    className="text-[#c8cedd] p-2 px-4 bg-[#2a304f] rounded-md"
-                  >
-                    {lang}
-                  </button>
-                ))}
+              {/* Genres and Languages */}
+              <div className="flex gap-2 pt-3 flex-wrap">
+                {movie.genre_names &&
+                  movie.genre_names.split(", ").map((genre, index) => (
+                    <button
+                      key={index}
+                      className="text-[#8b93b0] p-2 xl:px-4 bg-[#2a304f] rounded-md"
+                    >
+                      {genre}
+                    </button>
+                  ))}
+                {movie.language_names &&
+                  movie.language_names.split(", ").map((lang, index) => (
+                    <button
+                      key={index}
+                      className="text-[#c8cedd] p-2 px-4 bg-[#2a304f] rounded-md"
+                    >
+                      {lang}
+                    </button>
+                  ))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
     </>
   );
 }
