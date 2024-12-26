@@ -9,14 +9,8 @@ export default function QrCodePayment({ qrCodeUrl }) {
     <div className="flex-1 md:p-8 text-white">
       <h1>QR Code Payment</h1>
       <div className="bg-[#21263F] w-[900px] h-[50px] flex items-center justify-center">
-        "QR Code Payment"
+        QR Code Payment
       </div>
-
-      {qrCodeUrl && (
-        <div className="mt-8">
-          <QRCodeSVG value={qrCodeUrl} size={256} />
-        </div>
-      )}
     </div>
   );
 }
