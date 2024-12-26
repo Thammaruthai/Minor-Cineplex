@@ -93,7 +93,7 @@ export default function MoviesCard() {
                     alt="Rating"
                   />
                   <span className="text-[#8b93b0] pl-2 text-base 2xl:text-xl">
-                    {movie.avg_rating > 0 ? movie.avg_rating.toFixed(1) : "N/A"}
+                    {movie.avg_rating > 0 ? movie?.avg_rating.toFixed(1) : "N/A"}
                   </span>
                 </div>
               </div>
