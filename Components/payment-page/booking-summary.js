@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/progress-circle";
 
 function BookingSummary({
+  handleQrCode,
   handleSubmit,
   handleTimeout,
   handleNext,
@@ -25,6 +26,7 @@ function BookingSummary({
   setIsTimeout,
   discount,
   setDiscount,
+  paymentMethod,
 }) {
   const { booking, timeLeft, setTimeLeft } = useBooking();
   const currentBooking = booking;
@@ -254,7 +256,9 @@ function BookingSummary({
           <div className="relative">
             <input
               placeholder="Coupon"
-              disabled={!isValid || isLoading}
+              disabled={
+                paymentMethod === "QR Code" ? false : !isValid || isLoading
+              }
               value={couponCode}
               onChange={handleCouponInput}
               className={`w-full border ${
@@ -295,7 +299,7 @@ function BookingSummary({
         </div>
         <Button
           type="button"
-          disabled={!isValid || isLoading}
+          disabled={paymentMethod === "QR Code" ? false : !isValid || isLoading}
           onClick={(e) => {
             if (isTimeout) {
               handleTimeout();
@@ -330,7 +334,9 @@ function BookingSummary({
           <ConfirmDialog
             isOpen={isDialogOpen}
             onClose={closeDialog}
-            handleSubmit={handleSubmit}
+            handleSubmit={
+              paymentMethod === "QR Code" ? handleQrCode : handleSubmit
+            }
           />
         )}
       </div>
