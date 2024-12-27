@@ -13,7 +13,7 @@ export default async function handler(req, res) {
             m.title,
             STRING_AGG(DISTINCT g.name, ', ') AS genre_names,
             STRING_AGG(DISTINCT l.name, ', ') AS language_names,
-            ROUND(AVG(r.rating), 1) AS avg_rating,
+            m.average_rating AS avg_rating,
             m.release_date
           FROM movies m
           LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id
