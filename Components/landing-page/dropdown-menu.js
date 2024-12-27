@@ -10,7 +10,7 @@ export default function DropdownMenu({ toggleLogin, setShowMobileMenu }) {
   useEffect(() => {
     const name = userData?.name || "";
     if (name) {
-      setUserName(name)
+      setUserName(name);
     }
   }, [userData]);
 
