@@ -9,9 +9,9 @@ export default function DropdownMenu({ toggleLogin, setShowMobileMenu }) {
 
   // ดึงข้อมูลชื่อผู้ใช้จาก localStorage หรือ sessionStorage
   useEffect(() => {
-    const name = userData?.name || ""
+    const name = userData?.name || "";
     if (name) {
-      setUserName(name)
+      setUserName(name);
     }
   }, [userData]);
 
@@ -47,7 +47,9 @@ export default function DropdownMenu({ toggleLogin, setShowMobileMenu }) {
           height={0}
           alt="Booking"
         />
-        <p className="text-[#c8cedd] text-sm font-normal">Booking History</p>
+        <Link href="/profile">
+          <p className="text-[#c8cedd] text-sm font-normal">Booking History</p>
+        </Link>
       </div>
 
       <div
@@ -62,7 +64,7 @@ export default function DropdownMenu({ toggleLogin, setShowMobileMenu }) {
           height={0}
         />
         <Link href="/profile">
-        <p className="text-[#c8cedd] text-sm font-normal">Profile</p>
+          <p className="text-[#c8cedd] text-sm font-normal">Profile</p>
         </Link>
       </div>
 
