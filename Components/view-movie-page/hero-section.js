@@ -54,7 +54,7 @@ export function HeroSection() {
                 Release date: {convertDate(currentMovie.movies.release_date)}
               </p>
             </div>
-            <Button className="bg-[#4E7BEE] w-40 h-12 md:mt-6">
+            <Button className="bg-[#4E7BEE] w-40 h-12 md:mt-6 cursor-default">
               Movie detail
             </Button>
             <div>
