@@ -170,44 +170,18 @@ export default function MovieSection({ movie, date, loading, setLoading }) {
                 transition={{ duration: 0.5, ease: "easeInOut" }}
                 style={{ overflow: "hidden" }}
               >
-                <div className="md:max-w-[1200px] md:h-[300px] p-6 md:p-0 bg-[#070C1BB2] md:flex-row flex flex-col backdrop-blur-md bg-opacity-70 rounded-lg md:border-b border-[#21263F]">
+                <div className="md:max-w-[1200px] md:h-[200px] p-6 md:p-0 bg-[#070C1BB2] md:flex-row flex flex-col backdrop-blur-md bg-opacity-70 rounded-lg md:border-b border-[#21263F]">
                   <div className="flex">
-                    <Image
-                      src={movieDetails[0]?.movies.poster}
-                      width={174}
-                      height={155}
-                      alt={movieDetails[0]?.movies.title}
-                      className="h-[155px] md:min-h-[300px] md:w-[300px]"
-                    />
-                    <div className="lg:p-5 xl:p-10 lg:px-16 flex flex-col lg:gap-20 gap-5 md:py-5 md:px-16 px-6 w-full">
+                    <div className="lg:p-5 xl:p-10 lg:px-16 flex flex-col lg:gap-20 gap-5 md:py-5 md:px-16 w-full">
                       <div className="flex flex-col gap-6">
-                        <h1 className="md:text-3xl text-xl font-bold">
-                          {movieDetails[0]?.movies.title}
-                        </h1>
                         <div className="xl:flex-row xl:gap-6 lg:gap-4 gap-3 xl:items-center flex flex-col">
-                          <div className="flex flex-wrap md:gap-3 gap-2 items-center">
-                            {movieDetails[0]?.movies.genres.map(
-                              (genre, index) => (
-                                <Button
-                                  key={index}
-                                  className="bg-[#21263F] p-4 text-[#C8CEDD]"
-                                >
-                                  {genre.trim()}
-                                </Button>
-                              )
-                            )}
-                            <Button className="bg-[#21263F] p-4">
-                              {movieDetails[0]?.movies.language}
-                            </Button>
-                          </div>
-                          <div className="hidden md:flex border-l-2 border-gray-500 md:h-3/4 "></div>
-                          <p className="md:text-xl text-sm text-[#C8CEDD]">
+                          <p className="md:text-xl text-base text-[#C8CEDD]">
                             Release date:{" "}
                             {convertDate(movieDetails[0]?.movies.release_date)}
                           </p>
                         </div>
                         <div>
-                          <p className="hidden md:flex text-base xl:mt-6 text-[#C8CEDD]">
+                          <p className="hidden md:flex text-base text-[#C8CEDD]">
                             {movieDetails[0]?.movies.description}
                           </p>
                         </div>
