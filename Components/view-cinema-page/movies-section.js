@@ -145,7 +145,7 @@ export default function MovieSection({ movie, date, loading, setLoading }) {
                     </div>
                   </motion.div>
                 </div>
-                <div className="bg-[#070C1B] flex flex-col md:gap-14 gap-4 md:p-10 p-4 py-6">
+                <div className="bg-[#070C1B] flex flex-col md:gap-14 gap-8 md:p-10 p-4 py-6">
                   {Object.entries(halls).map(([hallName, shows]) => (
                     <div
                       key={hallName}
@@ -185,7 +185,7 @@ export default function MovieSection({ movie, date, loading, setLoading }) {
                               <Button
                                 disabled={isPastShowtime}
                                 key={show.show_id}
-                                className={`${buttonColor} rounded-md md:px-6 px-4 py-3 md:w-32 w-24 h-12 text-xl font-bold`}
+                                className={`${buttonColor} rounded-[4px] md:px-6 px-4 py-3 md:w-32 w-[103px] h-12 text-xl font-bold`}
                               >
                                 {formatShowtime(show.show_date_time)}
                               </Button>
