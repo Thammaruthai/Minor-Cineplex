@@ -28,7 +28,8 @@ export default async function handler(req, res) {
           cinemas.description_2 AS cinema_description2,
           cinemas.address,
           cities.city_name AS city_name,
-          ARRAY_AGG(genres.name) AS genres
+          ARRAY_AGG(DISTINCT genres.name) AS genres,
+          ARRAY_AGG(DISTINCT features.feature_name) AS features
         FROM shows 
         INNER JOIN movies ON movies.movie_id = shows.movie_id
         INNER JOIN movie_genres ON movies.movie_id = movie_genres.movie_id
@@ -37,6 +38,8 @@ export default async function handler(req, res) {
         INNER JOIN halls ON halls.hall_id = shows.hall_id
         INNER JOIN cinemas ON cinemas.cinema_id = halls.cinema_id
         INNER JOIN cities ON cinemas.city_id = cities.city_id
+        LEFT JOIN cinema_features ON cinema_features.cinema_id = cinemas.cinema_id
+        LEFT JOIN features ON features.feature_id = cinema_features.feature_id
         WHERE cinemas.cinema_id = $1
       `;
       let values = [cinemaId];
@@ -76,6 +79,7 @@ export default async function handler(req, res) {
           description: row.cinema_description,
           description2: row.cinema_description2,
           address: row.address,
+          feature: row.features,
         },
         city_name: row.city_name,
         movies: {
