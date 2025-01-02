@@ -229,7 +229,7 @@ export default function Filter({ onFilterApply }) {
               {isDatePickerOpen && (
                 <div
                   ref={datePickerRef}
-                  className="absolute top-full mt-2 z-50 bg-[#21263f] text-white rounded-lg shadow-lg"
+                  className="absolute top-full right-0 md:left-0 mt-2 z-50 bg-[#21263f] text-white rounded-lg shadow-lg"
                 >
                   <ReactDatePicker
                     selected={releaseDate}

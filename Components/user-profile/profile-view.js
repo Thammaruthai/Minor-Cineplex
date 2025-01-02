@@ -18,6 +18,14 @@ export default function ProfileView() {
   const [fileForUpload, setFileForUpload] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [localName, setLocalName] = useState(userData.name);
+  const [localEmail, setLocalEmail] = useState(userData.email);
+
+  useEffect(() => {
+    setLocalName(userData.name);
+    setLocalEmail(userData.email); // Update local state when userData changes
+  }, [userData]);
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -63,14 +71,22 @@ export default function ProfileView() {
       await axios.patch(
         "api/users/update-profile",
         {
-          name: userData.name,
-          email: userData.email,
+          name: localName,
+          email: localEmail,
           profile_image: newImageUrl,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
+      setUserData((prev) => ({
+        ...prev,
+        name: localName,
+        email: localEmail,
+        profile_image: newImageUrl,
+      }));
+
       toast(
         <div>
           <strong>Saved profile</strong>
@@ -194,12 +210,10 @@ export default function ProfileView() {
           <div>
             <label className="block mb-1 text-[#C8CEDD]">Name</label>
             <Input
-              defaultValue={userData.name}
+              defaultValue={localName}
               bg="#21263F"
               className="text-white border border-[#565F7E] px-3 py-6"
-              onChange={(e) =>
-                setUserData((prev) => ({ ...prev, name: e.target.value }))
-              }
+              onChange={(e) => setLocalName(e.target.value)}
             />
           </div>
           <div>
@@ -208,9 +222,7 @@ export default function ProfileView() {
               defaultValue={userData.email}
               bg="#21263F"
               className="text-white border border-[#565F7E] px-3 py-6"
-              onChange={(e) =>
-                setUserData((prev) => ({ ...prev, email: e.target.value }))
-              }
+              onChange={(e) => setLocalEmail(e.target.value)}
             />
           </div>
           <button
