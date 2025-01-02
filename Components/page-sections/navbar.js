@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link"; // Import Link สำหรับลิงก์ไปยังหน้าอื่น
 import DropdownMenu from "../landing-page/dropdown-menu";
 import { useUser } from "@/context/user-context";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -9,7 +11,7 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { userData } = useUser();
-
+  const router = useRouter();
   const mobileMenuRef = useRef(null); // ใช้สำหรับตรวจจับคลิกภายนอก (Mobile Menu)
   const dropdownRef = useRef(null);
   const hamburgerMenuRef = useRef(null); // ใช้สำหรับตรวจจับคลิกภายนอก (Desktop Dropdown)
@@ -21,23 +23,27 @@ export default function Navbar() {
 
   // เมื่อ Component ถูก Mount ให้ดึงข้อมูลชื่อจาก localStorage หรือ sessionStorage
   useEffect(() => {
-
     const isLogin =
       localStorage.getItem("token") || sessionStorage.getItem("token");
-    if (isLogin) {
+    if (isLogin && userData?.name) {
       setIsLoggedIn(true);
       setUserName(userData.name); // อัปเดตชื่อผู้ใช้ใน State
+    } else {
+      setIsLoggedIn(false);
+      setUserName(""); // Reset username if logged out
     }
   }, [userData]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsLoggedIn(false);
-    setUserName(""); // ลบชื่อออกจาก State
-    localStorage.removeItem("name");
-    sessionStorage.removeItem("name");
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-    window.location.href = "/"; // รีเฟรชไปยังหน้าแรก
+    router.push("/");
+    try {
+      await axios.post("/api/auth/logout");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
@@ -156,7 +162,7 @@ export default function Navbar() {
             <div className="flex flex-col items-center">
               <Link href="/login">
                 <button
-                  className="hover:border hover:border-[#8b93b0] text-white text-base font-normal rounded mt-8 py-4 mx-32 w-auto px-10"
+                  className="hover:border hover:border-[#8b93b0] text-white text-base font-normal rounded mt-8 py-4 w-auto px-10"
                   onClick={() => {
                     toggleLogin();
                     setShowMobileMenu(false);
@@ -167,7 +173,7 @@ export default function Navbar() {
               </Link>
               <Link href="/register">
                 <button
-                  className="hover:border hover:border-[#8b93b0] text-white text-base font-bold rounded my-4 mb-6 w-auto py-4 mx-32 px-10"
+                  className="hover:border hover:border-[#8b93b0] text-white text-base font-bold rounded my-4 mb-6 w-auto py-4 px-10"
                   onClick={() => {
                     toggleLogin();
                     setShowMobileMenu(false);
@@ -179,7 +185,7 @@ export default function Navbar() {
             </div>
           ) : (
             <DropdownMenu
-              toggleLogin={toggleLogin}
+              toggleLogin={handleLogout}
               setShowMobileMenu={setShowMobileMenu}
             />
           )}
