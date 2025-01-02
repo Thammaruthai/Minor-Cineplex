@@ -1,10 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProfileView from "@/Components/user-profile/profile-view";
 import ResetPasswordView from "@/Components/user-profile/reset-password-view";
 import Image from "next/image";
-
+import { useRouter } from "next/router";
 export default function Profile() {
   const [activeView, setActiveView] = useState("profile");
+  const router = useRouter();
+  const { view } = router.query;
+
+  useEffect(() => {
+    if (view === "booking-history") setActiveView("booking-history");
+    else if (view === "reset-password") setActiveView("reset-password");
+    else setActiveView("profile");
+  }, [view]);
 
   return (
     <div className="text-white">
