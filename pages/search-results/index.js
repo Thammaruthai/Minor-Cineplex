@@ -18,10 +18,12 @@ import { useFilter } from "@/hooks/useFilter";
 import FilterBar from "./filterbar";
 import Footer from "@/Components/page-sections/footer";
 import Pagination from "./pagination";
+import { convertDate } from "@/utils/date";
 
 function SearchResults() {
   const { results, loading, date, genre, page, totalPages, setPage } =
     useFilter();
+  const [showMovieDetail, setShowMovieDetail] = useState({});
 
   useEffect(() => {
     console.log("Updated results:", results);
@@ -50,6 +52,14 @@ function SearchResults() {
     setIsShowHall((prev) => ({
       ...prev,
       [cinema_name]: !prev[cinema_name],
+    }));
+  };
+
+  const handleShowMovieDetail = (movieId, cinemaName) => {
+    const key = `${movieId}_${cinemaName}`; // Create a unique key for each movie-cinema pair
+    setShowMovieDetail((prev) => ({
+      ...prev,
+      [key]: !prev[key], // Toggle the specific movie-cinema detail
     }));
   };
 
@@ -137,7 +147,8 @@ function SearchResults() {
               </div>
               <p>Loading...</p>
             </div>
-          ) : filteredCinemas.length > 0 && new Date(date) >= new Date(new Date().toDateString()) ? (
+          ) : filteredCinemas.length > 0 &&
+            new Date(date) >= new Date(new Date().toDateString()) ? (
             filteredCinemas.map(([cinema_name, halls]) => {
               const relatedMovies = filteredMovies.filter(
                 ([movieName, movieDetails]) =>
@@ -252,7 +263,7 @@ function SearchResults() {
                     transition={{ duration: 0.5, ease: "easeInOut" }}
                     style={{ overflow: "hidden" }}
                   >
-                    <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col md:gap-14 gap-4 md:p-6 p-4">
+                    <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col p-4">
                       {processedMovies.length > 0 ? (
                         processedMovies.map(({ movieName, movieDetails }) => {
                           const movie = movieDetails;
@@ -262,140 +273,218 @@ function SearchResults() {
                             return null;
                           }
                           return (
-                            <div
-                              key={movieName}
-                              className="flex flex-col md:flex-row w-full bg-[#070C1B] rounded-lg lg:min-h-[488px]"
-                            >
-                              <div className="w-full md:w-60 flex md:flex-col gap-6">
-                                <Link href={`/movies/${movie.movie_id}`}>
-                                  <Image
-                                    src={movie.poster}
-                                    width={174}
-                                    height={254}
-                                    alt={movie.title}
-                                    className="md:h-[254px] md:w-[200px] rounded-md"
-                                  />
-                                </Link>
-                                <div className="w-full md:gap-2 flex flex-col gap-6">
+                            <>
+                              <div
+                                key={movieName}
+                                className="flex flex-col md:flex-row w-full bg-[#070C1B] rounded-lg lg:min-h-[488px]"
+                              >
+                                <div className="w-full md:w-60 flex md:flex-col gap-6">
                                   <Link href={`/movies/${movie.movie_id}`}>
-                                    <h1 className="text-xl font-bold">
-                                      {movieName}
-                                    </h1>
+                                    <Image
+                                      src={movie.poster}
+                                      width={174}
+                                      height={254}
+                                      alt={movie.title}
+                                      className="md:h-[254px] md:w-[192px] rounded-md"
+                                    />
                                   </Link>
-                                  <div className="flex flex-wrap gap-2">
-                                    {movie.genres.map((genre, index) => (
-                                      <Button
-                                        key={index}
-                                        className="bg-[#21263F] p-4 text-[#C8CEDD]"
-                                      >
-                                        {genre.trim()}
+                                  <div className="w-full md:gap-2 flex flex-col gap-6">
+                                    <Link href={`/movies/${movie.movie_id}`}>
+                                      <h1 className="text-xl font-bold">
+                                        {movieName}
+                                      </h1>
+                                    </Link>
+                                    <div className="flex flex-wrap gap-2">
+                                      {movie.genres.map((genre, index) => (
+                                        <Button
+                                          key={index}
+                                          className="bg-[#21263F] p-4 text-[#C8CEDD] cursor-default"
+                                        >
+                                          {genre.trim()}
+                                        </Button>
+                                      ))}
+                                      <Button className="bg-[#21263F] p-4 text-[#C8CEDD] cursor-default">
+                                        {movie.language}
                                       </Button>
-                                    ))}
-                                    <Button className="bg-[#21263F] p-4 text-[#C8CEDD]">
-                                      {movie.language}
-                                    </Button>
+                                    </div>
+                                    <div
+                                      onClick={() =>
+                                        handleShowMovieDetail(movie.movie_id, cinema_name)
+                                      }
+                                      className="underline md:mt-5 cursor-pointer hover:font-bold"
+                                    >
+                                      Movie detail
+                                    </div>
                                   </div>
-                                  <div
-                                    onClick={() =>
-                                      handleShowMovieDetail(movieName)
-                                    }
-                                    className="underline md:mt-5 cursor-pointer hover:font-bold"
-                                  >
-                                    Movie detail
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="bg-[#070C1B] flex flex-col md:gap-14 gap-4 md:px-10 py-6">
-                                {Object.entries(hall)
-                                  .filter(([hall_name, hallShows]) =>
-                                    hallShows.some(
-                                      (show) =>
-                                        show.show_date_time &&
-                                        show.cinema_name === cinema_name &&
-                                        new Date(
-                                          show.show_date_time
-                                        ).toDateString() ===
-                                          new Date(date).toDateString()
-                                    )
-                                  )
-                                  .map(([hall_name, shows]) => {
-                                    return (
-                                      <div
-                                        key={hall_name}
-                                        className="flex flex-col"
-                                      >
-                                        <h2 className="text-2xl font-bold text-[#C8CEDD]">
-                                          {hall_name}
-                                        </h2>
-                                        <div className="flex flex-wrap gap-4 mt-4">
-                                          {shows
-                                            .filter((show) => {
-                                              const showDate = new Date(
-                                                show.show_date_time
-                                              ).toDateString();
-                                              const selectedDateStr = new Date(
-                                                date
-                                              ).toDateString();
-                                              return (
-                                                showDate === selectedDateStr
-                                              );
-                                            })
-                                            .map((show) => {
-                                              const currentTime = new Date();
-                                              const currentDate =
-                                                currentTime.toDateString();
-                                              const selectedDateStr = new Date(
-                                                date
-                                              ).toDateString();
-                                              const showtimeStatus =
-                                                classifyShowtime(
-                                                  show.show_date_time
-                                                );
-                                              const nextShow =
-                                                getNextShowtime(shows, date)
-                                                  ?.show_id === show.show_id;
-                                              const isPastShowtime =
-                                                new Date(show.show_date_time) <
-                                                new Date();
-                                              const buttonColor =
-                                                selectedDateStr !== currentDate
-                                                  ? "bg-[#1E29A8]"
-                                                  : nextShow
-                                                  ? "bg-[#4E7BEE]"
-                                                  : showtimeStatus === "past"
-                                                  ? "border border-[#565F7E] text-[#565F7E] cursor-default"
-                                                  : "bg-[#1E29A8]";
-                                              return (
-                                                <Link
-                                                  key={show.show_id}
-                                                  href={
-                                                    isPastShowtime
-                                                      ? "#"
-                                                      : `/booking/${show.show_id}`
-                                                  }
-                                                >
-                                                  <Button
-                                                    key={show.show_id}
-                                                    disabled={isPastShowtime}
-                                                    className={`${buttonColor} rounded-md md:px-6 px-4 py-3 md:w-32 w-24 h-12 text-xl font-bold hover:border ${
-                                                      isPastShowtime
-                                                        ? null
-                                                        : "hover:bg-blue-400 hover:border-gray-500"
-                                                    } `}
-                                                  >
-                                                    {formatShowtime(
-                                                      show.show_date_time
-                                                    )}
-                                                  </Button>
-                                                </Link>
-                                              );
-                                            })}
+                                  <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={
+                                  showMovieDetail[`${movie.movie_id}_${cinema_name}`]
+                                    ? { height: "auto", opacity: 1 }
+                                    : { height: 0, opacity: 0 }
+                                }
+                                transition={{
+                                  duration: 0.5,
+                                  ease: "easeInOut",
+                                }}
+                                style={{ overflow: "hidden" }}
+                              >
+                                <div className="md:max-w-[1200px] bg-[#070C1BB2] mb-4 md:flex-row flex-col backdrop-blur-md bg-opacity-70 rounded-lg hidden md:flex">
+                                  <div className="flex">
+                                    <div className="flex flex-col gap-5 w-[192px]">
+                                      <div className="flex flex-col gap-3">
+                                        <div className="xl:flex-row xl:gap-6 lg:gap-4 gap-3 xl:items-center flex flex-col">
+                                          <p className="text-base text-[#C8CEDD]">
+                                            Release date:{" "}
+                                            {convertDate(movie.release_date)}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <p className="hidden md:flex text-sm text-[#C8CEDD]">
+                                            {movie.description}
+                                          </p>
                                         </div>
                                       </div>
-                                    );
-                                  })}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <p className="md:hidden text-base lg:mt-6 mt-1 text-[#C8CEDD]">
+                                      {movie.description}
+                                    </p>
+                                  </div>
+                                </div>
+                              </motion.div>
+                                </div>
+                                <div className="bg-[#070C1B] flex flex-col md:gap-14 gap-10 md:px-10 py-6">
+                                  {Object.entries(hall)
+                                    .filter(([hall_name, hallShows]) =>
+                                      hallShows.some(
+                                        (show) =>
+                                          show.show_date_time &&
+                                          show.cinema_name === cinema_name &&
+                                          new Date(
+                                            show.show_date_time
+                                          ).toDateString() ===
+                                            new Date(date).toDateString()
+                                      )
+                                    )
+                                    .map(([hall_name, shows]) => {
+                                      return (
+                                        <div
+                                          key={hall_name}
+                                          className="flex flex-col"
+                                        >
+                                          <h2 className="text-2xl font-bold text-[#C8CEDD]">
+                                            {hall_name}
+                                          </h2>
+                                          <div className="flex flex-wrap gap-4 mt-4">
+                                            {shows
+                                              .filter((show) => {
+                                                const showDate = new Date(
+                                                  show.show_date_time
+                                                ).toDateString();
+                                                const selectedDateStr =
+                                                  new Date(date).toDateString();
+                                                return (
+                                                  showDate === selectedDateStr
+                                                );
+                                              })
+                                              .map((show) => {
+                                                const currentTime = new Date();
+                                                const currentDate =
+                                                  currentTime.toDateString();
+                                                const selectedDateStr =
+                                                  new Date(date).toDateString();
+                                                const showtimeStatus =
+                                                  classifyShowtime(
+                                                    show.show_date_time
+                                                  );
+                                                const nextShow =
+                                                  getNextShowtime(shows, date)
+                                                    ?.show_id === show.show_id;
+                                                const isPastShowtime =
+                                                  new Date(
+                                                    show.show_date_time
+                                                  ) < new Date();
+                                                const buttonColor =
+                                                  selectedDateStr !==
+                                                  currentDate
+                                                    ? "bg-[#1E29A8]"
+                                                    : nextShow
+                                                    ? "bg-[#4E7BEE]"
+                                                    : showtimeStatus === "past"
+                                                    ? "border border-[#565F7E] text-[#565F7E] cursor-default"
+                                                    : "bg-[#1E29A8]";
+                                                return (
+                                                  <Link
+                                                    key={show.show_id}
+                                                    href={
+                                                      isPastShowtime
+                                                        ? "#"
+                                                        : `/booking/${show.show_id}`
+                                                    }
+                                                  >
+                                                    <Button
+                                                      key={show.show_id}
+                                                      disabled={isPastShowtime}
+                                                      className={`${buttonColor} rounded-[4px] md:px-6 px-4 py-3 md:w-32 w-[103px] h-12 text-xl font-bold hover:border ${
+                                                        isPastShowtime
+                                                          ? null
+                                                          : "hover:bg-blue-400 hover:border-gray-500"
+                                                      } `}
+                                                    >
+                                                      {formatShowtime(
+                                                        show.show_date_time
+                                                      )}
+                                                    </Button>
+                                                  </Link>
+                                                );
+                                              })}
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                </div>
                               </div>
-                            </div>
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={
+                                  showMovieDetail[`${movie.movie_id}_${cinema_name}`]
+                                    ? { height: "auto", opacity: 1 }
+                                    : { height: 0, opacity: 0 }
+                                }
+                                transition={{
+                                  duration: 0.5,
+                                  ease: "easeInOut",
+                                }}
+                                style={{ overflow: "hidden" }}
+                              >
+                                <div className="md:max-w-[1200px] md:h-[100px] mb-4 bg-[#070C1BB2] md:flex-row flex flex-col backdrop-blur-md bg-opacity-70 rounded-lg md:hidden">
+                                  <div className="flex">
+                                    <div className="flex flex-col lg:gap-20 gap-5 w-full">
+                                      <div className="flex flex-col gap-3">
+                                        <div className="xl:flex-row xl:gap-6 lg:gap-4 gap-3 xl:items-center flex flex-col">
+                                          <p className="md:text-xl text-base text-[#C8CEDD]">
+                                            Release date:{" "}
+                                            {convertDate(movie.release_date)}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <p className="hidden md:flex text-base text-[#C8CEDD]">
+                                            {movie.description}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <p className="md:hidden text-base lg:mt-6 mt-1 text-[#C8CEDD]">
+                                      {movie.description}
+                                    </p>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            </>
                           );
                         })
                       ) : (

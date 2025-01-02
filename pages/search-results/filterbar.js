@@ -272,7 +272,7 @@ export default function FilterBar({ setPage }) {
               {isDatePickerOpen && (
                 <div
                   ref={datePickerRef}
-                  className="absolute z-50 top-full mt-1 bg-[#21263f] text-white rounded-lg shadow-lg"
+                  className="absolute z-50 top-full right-0 md:left-0 mt-1 bg-[#21263f] text-white rounded-lg shadow-lg"
                 >
                   <ReactDatePicker
                     selected={filterDate}
