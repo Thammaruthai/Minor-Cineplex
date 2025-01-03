@@ -36,12 +36,16 @@ export function HeroSectionCinema() {
                   {currentCinema.cinemas.name}
                 </h1>
                 <div className="flex gap-2 flex-wrap">
-                  <Button className="bg-[#21263F] p-3 text-[14px] text-[#8B93B0] rounded-md">
-                    Hearing assistance
-                  </Button>
-                  <Button className="bg-[#21263F] p-3 text-[14px] text-[#8B93B0] rounded-md">
-                    Wheelchair access
-                  </Button>
+                  {currentCinema.cinemas.feature
+                    .filter((feature) => feature !== null)
+                    .map((feature, index) => (
+                      <div
+                        key={index}
+                        className="bg-[#21263F] p-3 py-2 text-[14px] text-[#8B93B0] rounded-[4px]"
+                      >
+                        {feature}
+                      </div>
+                    ))}
                 </div>
               </div>
               <div className="hidden md:flex md:flex-col">
