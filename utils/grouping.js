@@ -6,22 +6,29 @@ export const groupBy = (items, key) =>
     return acc;
   }, {});
 
-export const groupByCinema = (results, date) => {
-  if (!date) {
-    // Fallback to today's date if no date is provided
-    date = new Date().toISOString();
-  }
+export function groupByCinema(results, date) {
+  return results.reduce((acc, cinema) => {
+    const showDateStr = new Date(date).toDateString();
 
-  const selectedDate = new Date(date).toDateString();
-  return results.reduce((acc, show) => {
-    const showDate = new Date(show.show_date_time).toDateString();
-    if (showDate === selectedDate) {
-      acc[show.cinema_name] = acc[show.cinema_name] || [];
-      acc[show.cinema_name].push(show);
+    const filteredHalls = cinema.halls
+      .map((hall) => {
+        const validShowtimes = hall.showtimes.filter(
+          (show) => new Date(show.show_date_time).toDateString() === showDateStr
+        );
+
+        return validShowtimes.length > 0
+          ? { ...hall, showtimes: validShowtimes }
+          : null;
+      })
+      .filter(Boolean);
+
+    if (filteredHalls.length > 0) {
+      acc[cinema.cinema_name] = filteredHalls;
     }
+
     return acc;
   }, {});
-};
+}
 
 export const groupByHall = (results, date) => {
   if (!date) {
@@ -40,23 +47,19 @@ export const groupByHall = (results, date) => {
   }, {});
 };
 
-export const groupByMovie = (movies, date) => {
-  if (!date) {
-    // Fallback to today's date if no date is provided
-    date = new Date().toDateString();
-  }
-  const selectedDate = new Date(date).toDateString();
-  return movies.reduce((acc, movie) => {
-    const showDate = new Date(movie.show_date_time).toDateString();
-    if (showDate === selectedDate) {
-      const movieTitle = movie.movies.title;
-
-      if (!acc[movieTitle]) {
-        acc[movieTitle] = [];
-      }
-      acc[movieTitle].push(movie);
-    }
-
+export function groupByMovie(results, date) {
+  const showDateStr = new Date(date).toDateString();
+  return results.flatMap((cinema) =>
+    cinema.halls.flatMap((hall) =>
+      hall.showtimes.filter(
+        (show) =>
+          new Date(show.show_date_time).toDateString() === showDateStr
+      )
+    )
+  ).reduce((acc, show) => {
+    if (!acc[show.title]) acc[show.title] = [];
+    acc[show.title].push(show);
     return acc;
   }, {});
-};
+}
+
