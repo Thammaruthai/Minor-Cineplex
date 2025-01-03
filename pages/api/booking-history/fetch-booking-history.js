@@ -13,15 +13,14 @@ export default async function handler(req, res) {
       const token = req.headers.authorization?.split(" ")[1];
       const decoded = jwt.verify(token, process.env.SECRET_KEY);
       const { userId } = decoded;
-      
+
       const client = await connectionPool.connect();
 
       // Extract pagination params
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 4;
       const offset = page * limit;
-        console.log(offset);
-        
+      
       const userQuery = `
         SELECT * FROM users WHERE user_id = $1;
       `;
@@ -123,13 +122,12 @@ LIMIT $2 OFFSET $3;`;
 
       const result = await client.query(query, [userId, limit, offset]);
       client.release();
+console.log(result.rows);
 
-      console.log(result.rows);
-      
       return res.status(200).json({ booking_history: result.rows });
     } catch (error) {
       console.error("Error in confirm-booking API:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).send({ error: "Internal Server Error" });
     }
   });
 }
