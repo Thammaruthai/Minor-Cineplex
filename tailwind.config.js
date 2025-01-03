@@ -17,22 +17,20 @@ module.exports = {
       },
       animation: {
         fadeInFromRight: "fadeInFromRight 0.5s ease-in-out",
+        fadeIn: "fadeIn 0.25s ease-in-out",
+        
       },
       keyframes: {
         fadeInFromRight: {
-          "0%": { opacity: 0, transform: "translateX(50px)" },
+          "0%": { opacity: 0, transform: "translateX(250px)" },
           "100%": { opacity: 1, transform: "translateX(0)" },
         },
-      },
-      animation: {
-        fadeIn: "fadeIn 0.25s ease-in-out",
-      },
-      keyframes: {
         fadeIn: {
-          "0%": { opacity: 0, transform: "translateX(0)" },
-          "100%": { opacity: 1, transform: "translateX(0)" },
+          "0%": { opacity: 0, transform: "translateY(0)" },
+          "100%": { opacity: 1, transform: "translateY(0)" },
         },
       },
+      
     },
     plugins: [],
   },

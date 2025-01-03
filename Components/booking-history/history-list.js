@@ -5,8 +5,9 @@ import axios from "axios";
 import jwtInterceptor from "@/utils/jwt-interceptor";
 import { formatedDate, formatShowtime } from "@/utils/date";
 import { useRouter } from "next/router";
+import { format } from "date-fns";
 
-const BookingHistory = ({ bookings }) => {
+const BookingHistory = () => {
   const router = useRouter();
 
   // State สำหรับเก็บข้อมูล Booking History
@@ -16,11 +17,57 @@ const BookingHistory = ({ bookings }) => {
   const [page, setPage] = useState(0); // Current page for pagination
   const [hasMore, setHasMore] = useState(true); // Whether there is more data to load
 
+  // State สำหรับ cancel booking
+   const [selectedReason, setSelectedReason] = useState("");
+
   // State สำหรับการควบคุม Modal แยกกัน
   const [openModal, setOpenModal] = useState(null);
-  const toggleModal = (id) => {
-    setOpenModal(openModal === id ? null : id); // ถ้าเปิดอยู่ให้ปิด, ถ้าปิดให้เปิด
+  const [cancelModal, setCancelModal] = useState(null);
+  const [isClosing, setIsClosing] = useState(false);
+
+  // const for style
+  const radioStyle =
+    "w-5 h-5 border border-[#C8CEDD] rounded-full appearance-none  checked:bg-[#4E7BEE] checked:border-0 checked:ring-[3px] checked:ring-[#4E7BEE] checked:ring-offset-[3px] checked:ring-offset-[#21263F] checked:w-[10px] checked:h-[10px] checked:mx-[5px] cursor-pointer peer";
+  const radioLabelStyle =
+    "text-[#C8CEDD] text-sm cursor-pointer peer-checked:text-white ";
+
+  const openHistoryModal = (id) => {
+    setOpenModal(id);
   };
+
+  const closeHistoryModal = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setOpenModal(null);
+      setIsClosing(false);
+    }, 300);
+  };
+  const backCancelModal = (id) => {
+    setCancelModal(null);
+    openHistoryModal(id);
+    setSelectedReason("");
+  };
+
+  const openCancelModal = (id) => {
+    setCancelModal(id);
+    setOpenModal(null);
+  };
+
+  const closeCancelModal = (id) => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setCancelModal(null);
+      setIsClosing(false);
+    }, 300);
+    setSelectedReason("");
+  };
+
+  // handle cancel booking
+   const handleReasonChange = (e) => {
+     setSelectedReason(e.target.value); // อัปเดตค่าจาก input
+     console.log(e.target.value);
+     
+   };
 
   // สร้าง ref สำหรับใช้ในการตรวจจับ Element สุดท้ายของ List
   const observer = useRef();
@@ -49,7 +96,7 @@ const BookingHistory = ({ bookings }) => {
         });
         setHasMore(response.data.booking_history.length > 0); // Check if there is more data
       } catch (err) {
-        console.log(err.response?.data?.error || "Something went wrong.");
+        console.log("Something went wrong.");
       } finally {
         setLoading(false);
       }
@@ -76,8 +123,6 @@ const BookingHistory = ({ bookings }) => {
   };
 
   const handlePaynow = async (payment_uuid) => {
-    console.log(payment_uuid);
-
     router.push(`/payments/${payment_uuid}`);
   };
 
@@ -103,8 +148,8 @@ const BookingHistory = ({ bookings }) => {
           <div
             key={index}
             ref={index === bookingHistory.length - 1 ? lastBookingRef : null}
-            onClick={() => toggleModal(booking.booking_id)}
-            className="p-4 bg-[#070C1B] rounded-lg flex flex-col  justify-between items-start gap-4 w-[691px]  animate-fadeInFromRight hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-all duration-300 ease-in-out cursor-pointer "
+            onClick={() => openHistoryModal(booking.booking_id)}
+            className={`p-4 bg-[#070C1B] rounded-lg flex flex-col  justify-between items-start gap-4 w-[691px] animate-fadeInFromRight hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-all duration-300 ease-in-out cursor-pointer `}
           >
             {/* Movie Poster */}
             <div className="flex items-start gap-4 w-full">
@@ -255,16 +300,21 @@ const BookingHistory = ({ bookings }) => {
             {/* Modal */}
 
             {openModal === booking.booking_id && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center cursor-default">
-                {/* พื้นหลังมืด */}
-                <div
-                  className="fixed inset-0 bg-black bg-opacity-15 backdrop-blur-sm "
-                  onClick={() => toggleModal(null)} // ปิด Modal เมื่อคลิกด้านนอก
-                ></div>
-
+              <div
+                className={`fixed inset-0 z-50 flex items-center justify-center cursor-default bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300 ${
+                  isClosing ? "opacity-0" : "opacity-100"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeHistoryModal();
+                }}
+              >
                 {/* หน้าต่าง Modal */}
                 <div
-                  className={`relative bg-[#21263F]  shadow-lg  w-[691px] z-10 rounded-lg border border-[#565F7E] animate-fadeIn cursor-default`}
+                  className={`relative bg-[#21263F]  shadow-lg  w-[691px] z-30 rounded-lg border border-[#565F7E] animate-fadeIn cursor-default transition-opacity duration-300 ${
+                    isClosing ? "opacity-0" : "opacity-100"
+                  }`}
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <div className="flex justify-between items-center h-[50px] px-6 py-3 ">
                     <div className="text-xl font-bold w-[64px]"></div>
@@ -284,29 +334,35 @@ const BookingHistory = ({ bookings }) => {
                         <path
                           d="M18 14.625V14.625C18 15.9056 18 16.5459 17.8077 17.0568C17.5034 17.8653 16.8653 18.5034 16.0568 18.8077C15.5459 19 14.9056 19 13.625 19H10C7.17157 19 5.75736 19 4.87868 18.1213C4 17.2426 4 15.8284 4 13V9.375C4 8.09442 4 7.45413 4.19228 6.94325C4.4966 6.1347 5.1347 5.4966 5.94325 5.19228C6.45413 5 7.09442 5 8.375 5V5"
                           stroke="#C8CEDD"
-                          stroke-linecap="round"
+                          strokeLinecap="round"
                         />
                       </svg>
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
+                      <button
+                        onClick={() => {
+                          closeHistoryModal();
+                        }}
                       >
-                        <path
-                          d="M18 6L6 18"
-                          stroke="#C8CEDD"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M6 6L18 18"
-                          stroke="#C8CEDD"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M18 6L6 18"
+                            stroke="#C8CEDD"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M6 6L18 18"
+                            stroke="#C8CEDD"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                   <div className="bg-[#070C1B] p-6 flex flex-col gap-6">
@@ -490,7 +546,7 @@ const BookingHistory = ({ bookings }) => {
                       <div className="flex justify-between ">
                         <span>Total</span>
                         <span className="text-white">
-                          -THB{formatPrice(booking.final_price)}
+                          THB{formatPrice(booking.final_price)}
                         </span>
                       </div>
                     </div>
@@ -506,11 +562,228 @@ const BookingHistory = ({ bookings }) => {
                             Pay now!
                           </button>
                         )}
-                      { booking.payment_status === "succeeded" && (
-                          <button className=" text-white rounded-lg w-[179px] h-[48px] border border-[#8B93B0] hover:bg-[#C92A42]  ">
-                            Cancel booking
-                          </button>
-                        )}
+
+                      <button
+                        className={` text-white rounded-lg w-[179px] h-[48px] border border-[#8B93B0] hover:bg-[#4E7BEE]  disabled:bg-gray-400 disabled:cursor-not-allowed disabled:border-gray-400 disabled:opacity-40 `}
+                        onClick={() => openCancelModal(booking.booking_id)}
+                        disabled={
+                          booking.payment_status === "succeeded" &&
+                          new Date(booking.show_date_time).getTime() +
+                            24 * 60 * 60 * 1000 <
+                            Date.now()
+                            ? true
+                            : booking.payment_status === "succeeded" &&
+                              new Date(booking.show_date_time).getTime() +
+                                24 * 60 * 60 * 1000 >
+                                Date.now()
+                            ? false
+                            : booking.booking_status === "Active" &&
+                              booking.payment_status === null
+                            ? true
+                            : booking.booking_status === "Cancelled" &&
+                              booking.payment_status === null
+                            ? true
+                            : true
+                        }
+                      >
+                        Cancel booking
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* พื้นหลังมืด + Modal */}
+            {/* Cancel Modal */}
+
+            {cancelModal === booking.booking_id && (
+              <div
+                className={`fixed inset-0 z-50 flex items-center justify-center cursor-default bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300 ${
+                  isClosing ? "opacity-0" : "opacity-100"
+                } `}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeCancelModal();
+                }}
+              >
+                {/* หน้าต่าง Modal */}
+                <div
+                  className={`relative bg-[#21263F]  shadow-lg  w-[691px] z-10 rounded-lg border border-[#565F7E] animate-fadeIn cursor-default`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <div className="flex justify-between items-center h-[50px] px-6 py-3 ">
+                    <div className="text-xl font-bold w-[64px]"></div>
+                    <span className="text-white">Cancel booking</span>
+                    <div
+                      className="flex justify-end gap-4 w-[64px] cursor-pointer"
+                      onClick={closeCancelModal}
+                    >
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M18 6L6 18"
+                          stroke="#C8CEDD"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M6 6L18 18"
+                          stroke="#C8CEDD"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col justify-between items-end bg-[#21263F] p-6 w-full text-base gap-10">
+                    <div className="flex flex-col w-full">
+                      <div className="flex gap-4 justify-between w-full">
+                        <div className="">
+                          {/* choice reaseon selector */}
+                          <div className="flex flex-col gap-3 w-full ">
+                            <p className="text-white text-sm font-bold mb-2">
+                              Reason for cancellation
+                            </p>
+                            <div className="flex flex-col gap-3 ">
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="radio"
+                                  name="reason"
+                                  id="reason1"
+                                  value="I had changed my mind"
+                                  className={radioStyle}
+                                  onChange={handleReasonChange}
+                                />
+                                <label
+                                  htmlFor="reason1"
+                                  className={radioLabelStyle}
+                                >
+                                  I had changed my mind
+                                </label>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="radio"
+                                  name="reason"
+                                  id="reason2"
+                                  value="I found an alternative"
+                                  className={radioStyle}
+                                  onChange={handleReasonChange}
+                                />
+                                <label
+                                  htmlFor="reason2"
+                                  className={radioLabelStyle}
+                                >
+                                  I found an alternative
+                                </label>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="radio"
+                                  name="reason"
+                                  id="reason3"
+                                  value="The booking was created by accident"
+                                  className={radioStyle}
+                                  onChange={handleReasonChange}
+                                />
+                                <label
+                                  htmlFor="reason3"
+                                  className={radioLabelStyle}
+                                >
+                                  The booking was created by accident
+                                </label>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="radio"
+                                  name="reason"
+                                  id="reason4"
+                                  value="Other reasons"
+                                  className={radioStyle}
+                                  onChange={handleReasonChange}
+                                />
+                                <label
+                                  htmlFor="reason4"
+                                  className={radioLabelStyle}
+                                >
+                                  Other reasons
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex  flex-col justify-between gap-2 w-[273px] bg-[#070C1B] p-4 rounded-lg">
+                          <div className="flex justify-between ">
+                            <span>Ticket x{booking.seats.length}</span>
+                            <span className="text-white">
+                              THB{formatPrice(booking.total_price)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between ">
+                            <span>Coupon</span>
+                            <span className="text-[#E5364B]">
+                              -THB{formatPrice(booking.discount_applied)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between ">
+                            <span>Total</span>
+                            <span className="text-white">
+                              THB{formatPrice(booking.final_price)}
+                            </span>
+                          </div>
+                          <div className="w-full h-[1px] bg-[#2D3748] "></div>
+                          <div className="flex justify-between ">
+                            <span>Total refund</span>
+                            <span className="text-white">
+                              THB{formatPrice(booking.final_price)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-start w-full gap-1">
+                      <span className="text-sm text-[#8B93B0]">
+                        Cancel booking before{" "}
+                        {format(
+                          new Date(
+                            new Date(booking.show_date_time).getTime() -
+                              1 * 60 * 60 * 1000
+                          ),
+                          "HH:mm"
+                        )}{" "}
+                        {formatedDate(booking.show_date_time)}, Refunds will be
+                        done according to
+                      </span>
+                      <span className="text-sm text-[#C8CEDD] cursor-pointer underline font-normal">
+                        Cancellation Policy
+                      </span>
+                    </div>
+                    <div className="flex gap-4 justify-between w-full">
+                      <button
+                        className=" text-white rounded-lg w-[112px] h-[48px] border border-[#8B93B0] hover:bg-[#C92A42]  "
+                        onClick={() => {
+                          backCancelModal(booking.booking_id);
+                        }}
+                      >
+                        Back
+                      </button>
+                      {booking.payment_status === "succeeded" && (
+                        <button
+                          className={` text-white rounded-lg w-[179px] h-[48px]  bg-[#4E7BEE] disabled:opacity-40 `}
+                          disabled={selectedReason === "" ? true : false}
+                        >
+                          Cancel booking
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
