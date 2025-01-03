@@ -7,6 +7,7 @@ import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 import { Field } from "@/components/ui/field";
+import RequestResetEmail from "@/Components/reset-password/request-rest-email";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -247,6 +248,7 @@ export default function LoginPage() {
             >
               Forget password?
             </button>
+            <RequestResetEmail />
           </div>
 
           <button
@@ -285,3 +287,6 @@ export default function LoginPage() {
     </div>
   );
 }
+
+{/* <a href="{{ .SiteURL }}/reset-password?email={{.Email}}">Reset Password</a> */}
+// https://minor-cineplex-nine.vercel.app/
