@@ -18,7 +18,7 @@ const BookingHistory = () => {
   const [hasMore, setHasMore] = useState(true); // Whether there is more data to load
 
   // State สำหรับ cancel booking
-   const [selectedReason, setSelectedReason] = useState("");
+  const [selectedReason, setSelectedReason] = useState("");
 
   // State สำหรับการควบคุม Modal แยกกัน
   const [openModal, setOpenModal] = useState(null);
@@ -63,11 +63,27 @@ const BookingHistory = () => {
   };
 
   // handle cancel booking
-   const handleReasonChange = (e) => {
-     setSelectedReason(e.target.value); // อัปเดตค่าจาก input
-     console.log(e.target.value);
-     
-   };
+  const handleReasonChange = (e) => {
+    setSelectedReason(e.target.value); // อัปเดตค่าจาก input
+  };
+
+  const handleCancelBooking = async (bookingId) => {
+    try {
+      jwtInterceptor();
+      const response = await axios.post(`/api/booking-history/cancel-booking`, {
+        bookingId,
+        reason: selectedReason,
+      });
+      if (response.status === 200) {
+        closeCancelModal();
+        router.reload();
+      } else {
+        console.log("Something went wrong.");
+      }
+    } catch (err) {
+      console.log("Something went wrong.");
+    }
+  };
 
   // สร้าง ref สำหรับใช้ในการตรวจจับ Element สุดท้ายของ List
   const observer = useRef();
@@ -257,10 +273,12 @@ const BookingHistory = () => {
 
               <div
                 className={`mt-4 sm:mt-0 px-4 py-1 text-sm font-bold rounded-full ${
-                  booking.payment_status === "succeeded" &&
-                  new Date(booking.show_date_time).getTime() +
-                    24 * 60 * 60 * 1000 <
-                    Date.now()
+                  booking.booking_status === "Refund"
+                    ? "border border-[#21263F] text-white bg-fuchsia-600"
+                    : booking.payment_status === "succeeded" &&
+                      new Date(booking.show_date_time).getTime() +
+                        24 * 60 * 60 * 1000 <
+                        Date.now()
                     ? "border border-[#21263F] text-white"
                     : booking.payment_status === "succeeded" &&
                       new Date(booking.show_date_time).getTime() +
@@ -276,10 +294,12 @@ const BookingHistory = () => {
                     : "bg-[#565F7E]"
                 }`}
               >
-                {booking.payment_status === "succeeded" &&
-                new Date(booking.show_date_time).getTime() +
-                  24 * 60 * 60 * 1000 <
-                  Date.now()
+                {booking.booking_status === "Refund"
+                  ? "Refund"
+                  : booking.payment_status === "succeeded" &&
+                    new Date(booking.show_date_time).getTime() +
+                      24 * 60 * 60 * 1000 <
+                      Date.now()
                   ? "Complete"
                   : booking.payment_status === "succeeded" &&
                     new Date(booking.show_date_time).getTime() +
@@ -474,10 +494,12 @@ const BookingHistory = () => {
 
                       <div
                         className={`mt-4 sm:mt-0 px-4 py-1 text-sm font-bold rounded-full ${
-                          booking.payment_status === "succeeded" &&
-                          new Date(booking.show_date_time).getTime() +
-                            24 * 60 * 60 * 1000 <
-                            Date.now()
+                          booking.booking_status === "Refund"
+                            ? "border border-[#21263F] text-white bg-fuchsia-600"
+                            : booking.payment_status === "succeeded" &&
+                              new Date(booking.show_date_time).getTime() +
+                                24 * 60 * 60 * 1000 <
+                                Date.now()
                             ? "border border-[#21263F] text-white"
                             : booking.payment_status === "succeeded" &&
                               new Date(booking.show_date_time).getTime() +
@@ -493,10 +515,12 @@ const BookingHistory = () => {
                             : "bg-[#565F7E]"
                         }`}
                       >
-                        {booking.payment_status === "succeeded" &&
-                        new Date(booking.show_date_time).getTime() +
-                          24 * 60 * 60 * 1000 <
-                          Date.now()
+                        {booking.booking_status === "Refund"
+                          ? "Refund"
+                          : booking.payment_status === "succeeded" &&
+                            new Date(booking.show_date_time).getTime() +
+                              24 * 60 * 60 * 1000 <
+                              Date.now()
                           ? "Complete"
                           : booking.payment_status === "succeeded" &&
                             new Date(booking.show_date_time).getTime() +
@@ -567,14 +591,16 @@ const BookingHistory = () => {
                         className={` text-white rounded-lg w-[179px] h-[48px] border border-[#8B93B0] hover:bg-[#4E7BEE]  disabled:bg-gray-400 disabled:cursor-not-allowed disabled:border-gray-400 disabled:opacity-40 `}
                         onClick={() => openCancelModal(booking.booking_id)}
                         disabled={
-                          booking.payment_status === "succeeded" &&
-                          new Date(booking.show_date_time).getTime() +
-                            24 * 60 * 60 * 1000 <
-                            Date.now()
+                          booking.booking_status === "Refund"
                             ? true
                             : booking.payment_status === "succeeded" &&
                               new Date(booking.show_date_time).getTime() +
-                                24 * 60 * 60 * 1000 >
+                                0 <
+                                Date.now()
+                            ? true
+                            : booking.payment_status === "succeeded" &&
+                              new Date(booking.show_date_time).getTime() +
+                                0 >
                                 Date.now()
                             ? false
                             : booking.booking_status === "Active" &&
@@ -780,6 +806,9 @@ const BookingHistory = () => {
                         <button
                           className={` text-white rounded-lg w-[179px] h-[48px]  bg-[#4E7BEE] disabled:opacity-40 `}
                           disabled={selectedReason === "" ? true : false}
+                          onClick={() => {
+                            handleCancelBooking(booking.booking_id);
+                          }}
                         >
                           Cancel booking
                         </button>
