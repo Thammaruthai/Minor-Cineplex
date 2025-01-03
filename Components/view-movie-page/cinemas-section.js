@@ -201,165 +201,185 @@ export function CinemaSection({
             <p>Loading...</p>
           </div>
         ) : filteredCinemas.length > 0 ? (
-          filteredCinemas.map(([cinema_name, shows]) => (
-            <div
-              key={cinema_name}
-              className="selectCinema flex flex-col w-full"
-            >
-              <SelectRoot
-                collection={dropdownCities}
-                size="sm"
-                className="bg-[#070C1B] p-4 rounded-md w-full md:max-w-[1200px]"
+          filteredCinemas.map(([cinema_name, shows]) => {
+
+            const uniqueFeatures = [
+              ...new Set(
+                shows.flatMap((show) =>
+                  show.cinema_feature.filter((feature) => feature !== null)
+                )
+              ),
+            ];
+            return (
+              <div
+                key={cinema_name}
+                className="selectCinema flex flex-col w-full"
               >
-                <SelectTrigger icon={null}>
-                  <div className="flex md:justify-between items-start justify-center md:items-center w-full">
-                    <div className="md:flex-row flex flex-col md:items-center gap-5 w-full">
-                      <div className="flex items-center gap-5">
-                        <Image
-                          src="/icon.png"
-                          width={44}
-                          height={44}
-                          alt="Icon"
-                        />
-                        <h1 className="text-2xl font-bold">{cinema_name}</h1>
-                      </div>
-                      <div className="flex gap-5">
-                        <Button className="bg-[#21263F] p-3 text-[14px] text-[#8B93B0] rounded-md">
-                          Hearing assistance
-                        </Button>
-                        <Button className="bg-[#21263F] p-3 text-[14px] text-[#8B93B0] rounded-md">
-                          Wheelchair access
-                        </Button>
-                      </div>
-                    </div>
-                    {isShowHall[cinema_name] ? (
-                      <div
-                        className="flex items-center"
-                        onClick={() => handleShowHall(cinema_name)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="45"
-                          height="45"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="gray"
-                          stroke-width="1.4"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          class="lucide lucide-chevron-up"
-                        >
-                          <path d="m18 15-6-6-6 6" />
-                        </svg>
-                      </div>
-                    ) : (
-                      <div
-                        className="flex items-center"
-                        onClick={() => handleShowHall(cinema_name)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="gray"
-                          className="w-10 h-10"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                <SelectRoot
+                  collection={dropdownCities}
+                  size="sm"
+                  className="bg-[#070C1B] p-4 rounded-md w-full md:max-w-[1200px]"
+                >
+                  <SelectTrigger icon={null}>
+                    <div className="flex md:justify-between items-start justify-center md:items-center w-full">
+                      <div className="md:flex-row flex flex-col md:items-center gap-5 w-full">
+                        <div className="flex items-center gap-5">
+                          <Image
+                            src="/icon.png"
+                            width={44}
+                            height={44}
+                            alt="Icon"
                           />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                </SelectTrigger>
-              </SelectRoot>
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={
-                  isShowHall[cinema_name]
-                    ? { height: "auto", opacity: 1 }
-                    : { height: 0, opacity: 0 }
-                }
-                transition={{ duration: 0.5, ease: "easeInOut" }}
-                style={{ overflow: "hidden" }}
-              >
-                <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col md:gap-14 gap-4 md:p-10 p-4">
-                  {Object.entries(filteredHalls)
-                    .filter(([hall_name, hallShows]) =>
-                      hallShows.some((show) => {
-                        const showDate = new Date(
-                          show.show_date_time
-                        ).toDateString();
-                        const selectedDateStr = new Date(date).toDateString();
-                        return (
-                          showDate === selectedDateStr &&
-                          show.cinema_name === cinema_name
-                        );
-                      })
-                    )
-                    .map(([hall_name, shows]) => (
-                      <div key={hall_name} className="flex flex-col gap-4">
-                        <h2 className="text-2xl font-bold text-[#C8CEDD]">
-                          {hall_name}
-                        </h2>
-                        <div className="flex flex-wrap gap-4 mt-4">
-                          {shows
-                            .filter((show) => {
-                              const showDate = new Date(
-                                show.show_date_time
-                              ).toDateString();
-                              const selectedDateStr = new Date(
-                                date
-                              ).toDateString();
-                              return showDate === selectedDateStr;
-                            })
-                            .map((show) => {
-                              const currentTime = new Date();
-                              const currentDate = currentTime.toDateString();
-                              const selectedDateStr = new Date(
-                                date
-                              ).toDateString();
-                              const showtimeStatus = classifyShowtime(
-                                show.show_date_time
-                              );
-                              const nextShow =
-                                getNextShowtime(shows, date)?.show_id ===
-                                show.show_id;
-                              const isPastShowtime =
-                                new Date(show.show_date_time) < new Date();
-                              const buttonColor =
-                                selectedDateStr !== currentDate
-                                  ? "bg-[#1E29A8]"
-                                  : nextShow
-                                  ? "bg-[#4E7BEE]"
-                                  : showtimeStatus === "past"
-                                  ? "border border-[#565F7E] text-[#565F7E] cursor-default"
-                                  : "bg-[#1E29A8]";
-                              return (
-                                <Link
-                                  key={show.show_id}
-                                  href={isPastShowtime ? "#" : `/booking/${show.show_id}`}
-                                >
-                                  <Button
-                                    key={show.show_id}
-                                    disabled={isPastShowtime}
-                                    className={`${buttonColor} rounded-md md:px-6 px-4 py-3 md:w-32 w-24 h-12 text-xl font-bold hover:border ${isPastShowtime ? null : "hover:bg-blue-400 hover:border-gray-500"} `}
-                                  >
-                                    {formatShowtime(show.show_date_time)}
-                                  </Button>
-                                </Link>
-                              );
-                            })}
+                          <h1 className="text-2xl font-bold">{cinema_name}</h1>
+                        </div>
+                        <div className="flex md:gap-5 gap-2">
+                          {uniqueFeatures.map((feature, index) => (
+                            <div
+                              key={index}
+                              className="bg-[#21263F] p-3 py-2 text-[14px] text-[#8B93B0] rounded-[4px]"
+                            >
+                              {feature}
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
-                </div>
-              </motion.div>
-            </div>
-          ))
+                      {isShowHall[cinema_name] ? (
+                        <div
+                          className="flex items-center"
+                          onClick={() => handleShowHall(cinema_name)}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="45"
+                            height="45"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="gray"
+                            stroke-width="1.4"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-chevron-up"
+                          >
+                            <path d="m18 15-6-6-6 6" />
+                          </svg>
+                        </div>
+                      ) : (
+                        <div
+                          className="flex items-center"
+                          onClick={() => handleShowHall(cinema_name)}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="gray"
+                            className="w-10 h-10"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                            />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  </SelectTrigger>
+                </SelectRoot>
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={
+                    isShowHall[cinema_name]
+                      ? { height: "auto", opacity: 1 }
+                      : { height: 0, opacity: 0 }
+                  }
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  style={{ overflow: "hidden" }}
+                >
+                  <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col md:gap-14 gap-8 md:p-10 p-4">
+                    {Object.entries(filteredHalls)
+                      .filter(([hall_name, hallShows]) =>
+                        hallShows.some((show) => {
+                          const showDate = new Date(
+                            show.show_date_time
+                          ).toDateString();
+                          const selectedDateStr = new Date(date).toDateString();
+                          return (
+                            showDate === selectedDateStr &&
+                            show.cinema_name === cinema_name
+                          );
+                        })
+                      )
+                      .map(([hall_name, shows]) => (
+                        <div key={hall_name} className="flex flex-col gap-4">
+                          <h2 className="text-2xl font-bold text-[#C8CEDD]">
+                            {hall_name}
+                          </h2>
+                          <div className="flex flex-wrap gap-4 mt-4">
+                            {shows
+                              .filter((show) => {
+                                const showDate = new Date(
+                                  show.show_date_time
+                                ).toDateString();
+                                const selectedDateStr = new Date(
+                                  date
+                                ).toDateString();
+                                return showDate === selectedDateStr;
+                              })
+                              .map((show) => {
+                                const currentTime = new Date();
+                                const currentDate = currentTime.toDateString();
+                                const selectedDateStr = new Date(
+                                  date
+                                ).toDateString();
+                                const showtimeStatus = classifyShowtime(
+                                  show.show_date_time
+                                );
+                                const nextShow =
+                                  getNextShowtime(shows, date)?.show_id ===
+                                  show.show_id;
+                                const isPastShowtime =
+                                  new Date(show.show_date_time) < new Date();
+                                const buttonColor =
+                                  selectedDateStr !== currentDate
+                                    ? "bg-[#1E29A8]"
+                                    : nextShow
+                                    ? "bg-[#4E7BEE]"
+                                    : showtimeStatus === "past"
+                                    ? "border border-[#565F7E] text-[#565F7E] cursor-default"
+                                    : "bg-[#1E29A8]";
+                                return (
+                                  <Link
+                                    key={show.show_id}
+                                    href={
+                                      isPastShowtime
+                                        ? "#"
+                                        : `/booking/${show.show_id}`
+                                    }
+                                  >
+                                    <Button
+                                      key={show.show_id}
+                                      disabled={isPastShowtime}
+                                      className={`${buttonColor} rounded-[4px] md:px-6 px-4 py-3 md:w-32 w-[103px] h-12 text-xl font-bold hover:border ${
+                                        isPastShowtime
+                                          ? null
+                                          : "hover:bg-blue-400 hover:border-gray-500"
+                                      } `}
+                                    >
+                                      {formatShowtime(show.show_date_time)}
+                                    </Button>
+                                  </Link>
+                                );
+                              })}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </motion.div>
+              </div>
+            );
+          })
         ) : (
           <div className="flex justify-center items-center">
             <p>No cinema found.</p>
