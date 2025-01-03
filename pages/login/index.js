@@ -7,7 +7,6 @@ import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 import { Field } from "@/components/ui/field";
-import RequestResetEmail from "@/Components/reset-password/request-rest-email";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,16 +33,13 @@ export default function LoginPage() {
 
       if (response.data.success) {
         const { token, name, userUUID } = response.data; // สมมติ API ส่ง `name` กลับมา
-        
-        
+
         if (rememberMe) {
           localStorage.setItem("token", token);
           localStorage.setItem("name", name); // เก็บชื่อผู้ใช้ใน localStorage
-          
         } else {
           sessionStorage.setItem("token", token);
           sessionStorage.setItem("name", name); // เก็บชื่อผู้ใช้ใน sessionStorage
-          
         }
 
         toast(
@@ -89,6 +85,20 @@ export default function LoginPage() {
           <strong>
             Account locked due to too many failed login attempts. Please try
             again after 5 minutes
+          </strong>,
+          {
+            position: "bottom-right",
+            style: {
+              borderRadius: "4px",
+              backgroundColor: "#E5364B99",
+              color: "white",
+            },
+          }
+        );
+      } else if (error.response.status === 422) {
+        toast(
+          <strong>
+            Email not verified. Please verify your email before logging in.
           </strong>,
           {
             position: "bottom-right",
@@ -237,7 +247,6 @@ export default function LoginPage() {
             >
               Forget password?
             </button>
-            <RequestResetEmail />
           </div>
 
           <button
@@ -276,6 +285,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-{/* <a href="{{ .SiteURL }}/reset-password?email={{.Email}}">Reset Password</a> */}
-// https://minor-cineplex-nine.vercel.app/
