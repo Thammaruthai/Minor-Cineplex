@@ -80,7 +80,9 @@ export default function Profile() {
           </div>
 
           {/* Main Content */}
-          <div className="p-4 md:p-8 w-full md:mt-0 mt-6">
+          <div
+            className={`${activeView === "booking-history" ? 'p-0 ': 'p-4'} md:p-8 w-full md:mt-0 mt-6`}
+          >
             {activeView === "profile" ? (
               <ProfileView />
             ) : activeView === "reset-password" ? (

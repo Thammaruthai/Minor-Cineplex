@@ -77,6 +77,9 @@ export default async function handler(req, res) {
         reason: "requested_by_customer", // เหตุผลที่คืนเงิน
       });
 
+      console.log(refund);
+      
+
       if (!refund) {
         client.release();
         return res.status(500).json({ error: "Failed to process refund." });
