@@ -18,7 +18,6 @@ module.exports = {
       animation: {
         fadeInFromRight: "fadeInFromRight 0.5s ease-in-out",
         fadeIn: "fadeIn 0.25s ease-in-out",
-        
       },
       keyframes: {
         fadeInFromRight: {
@@ -30,7 +29,10 @@ module.exports = {
           "100%": { opacity: 1, transform: "translateY(0)" },
         },
       },
-      
+      boxShadow: {
+        share:
+          "4px 4px 30px 0 rgb(0 0 0 / 0.5)",
+      },
     },
     plugins: [],
   },
