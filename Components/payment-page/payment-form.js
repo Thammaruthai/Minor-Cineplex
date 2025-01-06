@@ -16,6 +16,7 @@ import { CreditCard } from "./credit-card";
 import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 import QrCodePayment from "./qr-code-payment";
+import jwtInterceptor from "@/utils/jwt-interceptor";
 
 function PaymentForm({
   total,
@@ -53,7 +54,9 @@ function PaymentForm({
     { id: 2, label: "QR Code" },
   ];
   const [selectedMethod, setSelectedMethod] = useState(paymentMethod[0].label);
-
+  const [notLogin, setNotLogin] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+  const [showCountdown, setShowCountdown] = useState(false);
   const handleMethodSelect = (label) => {
     setSelectedMethod(label);
   };
@@ -192,6 +195,15 @@ function PaymentForm({
 
   const handleNext = async (event) => {
     event.preventDefault();
+    const token =
+      sessionStorage.getItem("token") || localStorage.getItem("token");
+
+    if (!token) {
+      setNotLogin(true);
+      return;
+    }
+
+    jwtInterceptor();
     try {
       const response = await axios.post("/api/payment", {
         amount: total * 100, // Convert to satang
@@ -228,9 +240,53 @@ function PaymentForm({
     setIsValid(allFieldsFilled && noErrors);
   }, [cardOwner, errors, elements]);
 
+  useEffect(() => {
+    if (notLogin) {
+      setShowCountdown(true); // Trigger the countdown display
+      const interval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            router.push(`/login`); // Redirect after countdown
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval); // Cleanup interval on unmount
+    }
+  }, [notLogin]);
+
+  if (notLogin) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-6 text-white bg-[#101525] min-h-[640px] w-full animate-fade-in">
+        <div className="flex flex-col gap-6 w-[380px] rounded-lg text-center max-sm:w-11/12 animate-scale-up">
+          <div className="flex flex-col items-center justify-center ">
+            <div className="flex flex-col items-center justify-center w-[80px] h-[80px] rounded-full text-[44px] text-white bg-blue-400 animate-bounce">
+              {"➜"}
+            </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            <h1 className="text-4xl font-semibold">Login Required</h1>
+            <p className="text-base text-gray-400">
+              Redirecting to the login page in{" "}
+              <span className="text-green-500">{countdown} seconds</span>.
+            </p>
+          </div>
+          <button
+            className="bg-[#4E7BEE] w-full py-3 mt-4 hover:bg-[#1E29A8]"
+            onClick={() => (window.location.href = "/login")}
+          >
+            Go to Login Now
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
-      <div className="xl:flex-row flex flex-col lg:gap-24 gap-10 w-full justify-center items-center xl:items-start lg:p-0">
+      <div className="2xl:flex-row flex flex-col lg:gap-24 gap-10 w-full justify-center items-center 2xl:items-start lg:p-0">
         <div className="w-full xl:w-auto">
           <div className="flex gap-5 p-4 lg:p-0">
             {paymentMethod.map((method) => (
