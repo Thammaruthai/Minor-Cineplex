@@ -13,14 +13,12 @@ export default async function handler(req, res) {
       const token = req.headers.authorization?.split(" ")[1];
       const decoded = jwt.verify(token, process.env.SECRET_KEY);
       const { userId } = decoded;
-
       const client = await connectionPool.connect();
 
       // Extract pagination params
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 4;
       const offset = page * limit;
-
       const userQuery = `
         SELECT * FROM users WHERE user_id = $1;
       `;
