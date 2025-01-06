@@ -1,73 +1,75 @@
 import Stripe from "stripe";
 import connectionPool from "@/utils/db";
-import { method } from "lodash";
+import protect from "@/utils/protect";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    try {
-      const { amount, booking_id } = req.body;
+    protect(req, res, async () => {
+      try {
+        const { amount, booking_id } = req.body;
 
-      const booking = await connectionPool.query(
-        `SELECT * FROM bookings WHERE booking_id = $1 AND booking_status = 'Active'`,
-        [booking_id]
-      );
-
-      if (booking.rows.length === 0) {
-        return res
-          .status(400)
-          .json({ error: "Booking not found or already expired." });
-      }
-
-      // Step 1: Check for existing payments with the same booking_id
-      const existingPayment = await connectionPool.query(
-        `SELECT * FROM payments WHERE booking_id = $1`,
-        [booking_id]
-      );
-
-      if (existingPayment.rows.length > 0) {
-        const existingPendingPayment = existingPayment.rows.find(
-          (payment) => payment.payment_status === "Pending"
+        const booking = await connectionPool.query(
+          `SELECT * FROM bookings WHERE booking_id = $1 AND booking_status = 'Active'`,
+          [booking_id]
         );
 
-        if (existingPendingPayment) {
-          return res.status(200).json({
-            message: "Pending payment already exists.",
-            paymentDetails: existingPendingPayment,
+        if (booking.rows.length === 0) {
+          return res
+            .status(400)
+            .json({ error: "Booking not found or already expired." });
+        }
+
+        // Step 1: Check for existing payments with the same booking_id
+        const existingPayment = await connectionPool.query(
+          `SELECT * FROM payments WHERE booking_id = $1`,
+          [booking_id]
+        );
+
+        if (existingPayment.rows.length > 0) {
+          const existingPendingPayment = existingPayment.rows.find(
+            (payment) => payment.payment_status === "Pending"
+          );
+
+          if (existingPendingPayment) {
+            return res.status(200).json({
+              message: "Pending payment already exists.",
+              paymentDetails: existingPendingPayment,
+            });
+          }
+
+          return res.status(400).json({
+            error: "A completed payment for this booking already exists.",
           });
         }
 
-        return res.status(400).json({
-          error: "A completed payment for this booking already exists.",
+        // Step 2: Insert a Pending payment record into the database
+        const result = await connectionPool.query(
+          `INSERT INTO payments 
+        (booking_id, payment_method, payment_status, payment_amount, payment_date)
+      VALUES ($1, $2, $3, $4, NOW()) RETURNING *`,
+          [
+            booking_id,
+            "card", // Default payment method type
+            "Pending", // Initial status
+            amount / 100, // Convert satang to Baht
+          ]
+        );
+
+        const pendingPayment = result.rows[0];
+
+        // Step 3: Return the pending payment details (including temp_payment_uuid)
+        return res.status(201).json({
+          message: "Pending payment created successfully.",
+          paymentDetails: pendingPayment,
+        });
+      } catch (error) {
+        return res.status(500).json({
+          error: error.message,
         });
       }
-
-      // Step 2: Insert a Pending payment record into the database
-      const result = await connectionPool.query(
-        `INSERT INTO payments 
-          (booking_id, payment_method, payment_status, payment_amount, payment_date)
-        VALUES ($1, $2, $3, $4, NOW()) RETURNING *`,
-        [
-          booking_id,
-          "card", // Default payment method type
-          "Pending", // Initial status
-          amount / 100, // Convert satang to Baht
-        ]
-      );
-
-      const pendingPayment = result.rows[0];
-
-      // Step 3: Return the pending payment details (including temp_payment_uuid)
-      return res.status(201).json({
-        message: "Pending payment created successfully.",
-        paymentDetails: pendingPayment,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        error: error.message,
-      });
-    }
+    });
   } else if (req.method === "PATCH") {
     try {
       const {

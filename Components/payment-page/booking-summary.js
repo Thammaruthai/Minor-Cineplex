@@ -12,6 +12,7 @@ import {
   ProgressCircleRing,
   ProgressCircleRoot,
 } from "@/components/ui/progress-circle";
+import CustomSkeleton from "@/utils/skeleton";
 
 function BookingSummary({
   handleQrCode,
@@ -28,7 +29,7 @@ function BookingSummary({
   setDiscount,
   paymentMethod,
 }) {
-  const { booking, timeLeft, setTimeLeft } = useBooking();
+  const { booking, timeLeft, loading, setTimeLeft } = useBooking();
   const currentBooking = booking;
   const [couponCode, setCouponCode] = useState("");
   const [couponIsValid, setCouponIsValid] = useState(true);
@@ -158,6 +159,10 @@ function BookingSummary({
 
   if (isTimeout) {
     handleTimeout();
+  }
+
+  if (loading) {
+    return <CustomSkeleton />
   }
 
   return (
