@@ -102,9 +102,14 @@ export default function BookingSuccess() {
               Back to home
             </Button>
           </Link>
-          <Button className="bg-[#4E7BEE] md:px-10 md:w-[185px] w-[164px] px-5 ">
-            Booking detail
-          </Button>
+
+          <Link
+            href={{ pathname: "/profile", query: { view: "booking-history" } }}
+          >
+            <Button className="bg-[#4E7BEE] md:px-10 md:w-[185px] w-[164px] px-5 ">
+              Booking detail
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

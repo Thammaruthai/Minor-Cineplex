@@ -505,7 +505,7 @@ const SeatSelectionPage = () => {
                                     : "text-green-500"
                                 }
                               >
-                                {seat.booking_status}
+                                {seat.booking_status=== "Locked"? "Reserved": seat.booking_status}
                               </span>
                               <p className="text-yellow-500">
                                 {seat.booking_status === "Locked"
@@ -706,7 +706,9 @@ const SeatSelectionPage = () => {
                                     : "text-green-500"
                                 }
                               >
-                                {seat.booking_status}
+                                {seat.booking_status === "Locked"
+                                  ? "Reserved"
+                                  : seat.booking_status}
                               </span>
                               <p className="text-yellow-500">
                                 {seat.booking_status === "Locked"
