@@ -23,6 +23,7 @@ export default async function handler(req, res) {
           ARRAY_AGG(DISTINCT features.feature_name) AS cinema_features,
           JSON_AGG(
             DISTINCT JSONB_BUILD_OBJECT(
+              'hall_id', halls.hall_id,
               'hall_name', halls.name,
               'showtimes', (
                 SELECT JSON_AGG(
@@ -38,6 +39,7 @@ export default async function handler(req, res) {
                     'language', languages.name,
                     'cinema_name', cinemas.name,
                     'hall_name', halls.name,
+                    'hall_id', halls.hall_id,
                     'genres', (
                       SELECT ARRAY_AGG(DISTINCT genres.name)
                       FROM genres
