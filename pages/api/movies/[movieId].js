@@ -27,7 +27,7 @@ export default async function handler(req, res) {
           cinemas.name AS cinema_name,
           cinemas.address, 
           cities.city_name AS city_name,
-          ARRAY_AGG(DISTINCT genres.name) AS genres,
+          ARRAY_AGG(genres.name) AS genres,
           ARRAY_AGG(DISTINCT features.feature_name) AS features
         FROM shows 
         INNER JOIN movies ON movies.movie_id = shows.movie_id
