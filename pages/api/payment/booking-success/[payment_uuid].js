@@ -13,6 +13,7 @@ export default async function handler(req, res) {
       let query = `
       SELECT
         payments.payment_id,
+        payments.payment_method,
         payments.temp_payment_uuid,
         users.user_id,
         bookings.booking_id,
@@ -47,7 +48,7 @@ export default async function handler(req, res) {
       const result = await connectionPool.query(query, values);
 
       return res.status(200).json({
-        data: result.rows
+        data: result.rows,
       });
     } catch (error) {
       return res.status(500).json({
