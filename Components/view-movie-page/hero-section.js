@@ -16,8 +16,6 @@ export function HeroSection() {
           src={currentMovie.movies.banner}
           alt={currentMovie.movies.title}
           layout="fill"
-          objectFit="cover"
-          objectPosition="center"
           className="w-full h-full opacity-60"
         />
       </div>

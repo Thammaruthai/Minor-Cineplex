@@ -69,10 +69,13 @@ export function CinemaSection({
         (city === "All" || movie.city_name === city) &&
         showDate === selectedDate
       ) {
-        if (!acc[movie.hall_name]) {
-          acc[movie.hall_name] = [];
+        if (!acc[movie.hall_id]) {
+          acc[movie.hall_id] = {
+            hall_name: movie.hall_name,
+            shows: [],
+          };
         }
-        acc[movie.hall_name].push(movie);
+        acc[movie.hall_id].shows.push(movie);
       }
       return acc;
     }, {});
@@ -92,7 +95,6 @@ export function CinemaSection({
   const handleSearchChange = (e) => setInputSearch(e.target.value);
   const cinemas = groupBy(movie, "cinema_name");
   const filteredHalls = groupByHall(movie);
-  console.log(`Cinemas from gruopby`, cinemas);
 
   const filteredCinemas = Object.entries(cinemas).filter(
     ([cinema_name, shows]) => {
@@ -109,9 +111,6 @@ export function CinemaSection({
       return matchesCity && matchesSearch && matchesDate;
     }
   );
-
-  console.log(`Filtered cinemas`, filteredCinemas);
-  console.log(`Movies`, movie);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -202,7 +201,6 @@ export function CinemaSection({
           </div>
         ) : filteredCinemas.length > 0 ? (
           filteredCinemas.map(([cinema_name, shows]) => {
-
             const uniqueFeatures = [
               ...new Set(
                 shows.flatMap((show) =>
@@ -299,8 +297,8 @@ export function CinemaSection({
                 >
                   <div className="bg-[#070C1B] border-t border-[#21263F] flex flex-col md:gap-14 gap-8 md:p-10 p-4">
                     {Object.entries(filteredHalls)
-                      .filter(([hall_name, hallShows]) =>
-                        hallShows.some((show) => {
+                      .filter(([hall_id, hallData]) =>
+                        hallData.shows.some((show) => {
                           const showDate = new Date(
                             show.show_date_time
                           ).toDateString();
@@ -311,13 +309,13 @@ export function CinemaSection({
                           );
                         })
                       )
-                      .map(([hall_name, shows]) => (
-                        <div key={hall_name} className="flex flex-col gap-4">
+                      .map(([hall_id, hallData]) => (
+                        <div key={hall_id} className="flex flex-col gap-4">
                           <h2 className="text-2xl font-bold text-[#C8CEDD]">
-                            {hall_name}
+                            {hallData.hall_name}
                           </h2>
                           <div className="flex flex-wrap gap-4 mt-4">
-                            {shows
+                            {hallData.shows
                               .filter((show) => {
                                 const showDate = new Date(
                                   show.show_date_time
@@ -337,8 +335,8 @@ export function CinemaSection({
                                   show.show_date_time
                                 );
                                 const nextShow =
-                                  getNextShowtime(shows, date)?.show_id ===
-                                  show.show_id;
+                                  getNextShowtime(hallData.shows, date)
+                                    ?.show_id === show.show_id;
                                 const isPastShowtime =
                                   new Date(show.show_date_time) < new Date();
                                 const buttonColor =
