@@ -17,7 +17,14 @@ import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 import QrCodePayment from "./qr-code-payment";
 
-function PaymentForm({ total, setTotal, qrCode, setQrCode }) {
+function PaymentForm({
+  total,
+  setTotal,
+  qrCode,
+  setQrCode,
+  setDiscountAmount,
+  discountAmount,
+}) {
   const stripe = useStripe();
   const router = useRouter();
   const elements = useElements();
@@ -51,7 +58,6 @@ function PaymentForm({ total, setTotal, qrCode, setQrCode }) {
     setSelectedMethod(label);
   };
 
-  const [activeView, setActiveView] = useState("credit-card");
   const handleTimeout = async () => {
     try {
       // Notify backend to cancel the booking
@@ -65,19 +71,23 @@ function PaymentForm({ total, setTotal, qrCode, setQrCode }) {
 
   const handleQrCode = async (e) => {
     e.preventDefault();
-    setQrCode(null); // ล้าง QR Code ก่อน
+    setQrCode(null); // ล้าง QR Code
 
     try {
-      const response = await axios.post("/api/payment/create-payment-qr-code", {
-        amount: Math.round(total * 100),
-        currency: "thb",
-        email: email,
-      });
+      const response = await axios.post(
+        "/api/payment/qr-code/create-payment-qr-code",
+        {
+          amount: Math.round(total * 100),
+          currency: "thb",
+          email: email,
+        }
+      );
 
-      const data = response.data.qrCodeUrl;
+      const data = response.data;
 
-      if (data.data) {
-        setQrCode(data.data); // เก็บ URL ของ QR Code ใน state
+      if (data) {
+        setQrCode(data);
+        setDiscountAmount(discount);
       } else {
         console.log("QR Code URL not found in response");
       }
@@ -186,6 +196,7 @@ function PaymentForm({ total, setTotal, qrCode, setQrCode }) {
       const response = await axios.post("/api/payment", {
         amount: total * 100, // Convert to satang
         booking_id: currentBooking.booking_id,
+        payment_method: selectedMethod,
       });
 
       setPaymentDetails(response.data.paymentDetails);

@@ -21,9 +21,8 @@ export default async function handler(req, res) {
         currency,
         payment_method: paymentMethod.id,
         confirm: true,
-        return_url: "http://localhost:3000/payment-success", 
+        return_url: "https://minor-cineplex-nine.vercel.app/",
       });
-      console.log(paymentIntent);
 
       const qrCodeUrl = paymentIntent.next_action?.promptpay_display_qr_code;
 
