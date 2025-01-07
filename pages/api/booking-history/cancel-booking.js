@@ -89,9 +89,9 @@ export default async function handler(req, res) {
       const cancelBookingQuery = `
         UPDATE bookings
         SET booking_status = 'Refund'
-        WHERE booking_id = $1;
+        WHERE booking_id = $1 returning temp_booking_uuid;
       `;
-      await client.query(cancelBookingQuery, [bookingId]);
+      const cancelQueryResult = await client.query(cancelBookingQuery, [bookingId]);
 
       const refundBookingQuery = `
         INSERT INTO refunds (booking_id, refund_amount, refund_status,refund_date, reason)
@@ -108,9 +108,11 @@ export default async function handler(req, res) {
 
       client.release();
 
-      return res
-        .status(200)
-        .json({ success: true, message: "Booking cancelled successfully." });
+      return res.status(200).json({
+        success: true,
+        message: "Booking cancelled successfully.",
+        booking_uuid: cancelQueryResult.rows[0].temp_booking_uuid,
+      });
     } catch (error) {
       console.error("Error in cancel-booking API:", error);
       res.status(500).json({ error: "Internal Server Error" });
