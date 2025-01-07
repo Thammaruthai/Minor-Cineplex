@@ -6,7 +6,10 @@ import jwtInterceptor from "@/utils/jwt-interceptor";
 import { formatedDate, formatShowtime } from "@/utils/date";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
+
 import ShareModal from "./share-modal";
+import LoadingPage from "./loading-page";
+import CancellationPolicyModal from "./cancel-policy-modal";
 
 const BookingHistory = () => {
   const router = useRouter();
@@ -23,10 +26,16 @@ const BookingHistory = () => {
   const [cancelModal, setCancelModal] = useState(null);
   const [isClosing, setIsClosing] = useState(false);
 
+  // Calcel policy
+  const [openCalcelPolicy, setOpenCalcelPolicy] = useState(false);
+  const closeCalcelPolicy = () => {
+    setOpenCalcelPolicy(false);
+  };
   //Share modal
   const [isShareModalOpen, setShareModalOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const shareButtonRef = useRef(null);
+
   const openShareModal = () => {
     if (shareButtonRef.current) {
       const rect = shareButtonRef.current.getBoundingClientRect();
@@ -92,9 +101,13 @@ const BookingHistory = () => {
         bookingId,
         reason: selectedReason,
       });
+
+
       if (response.status === 200) {
         closeCancelModal();
-        router.reload();
+        console.log(response.data);
+        
+        router.push(`/cancel/${response.data.booking_uuid}`);
       } else {
         console.log("Something went wrong.");
       }
@@ -161,17 +174,7 @@ const BookingHistory = () => {
   };
 
   if (loading && page === 0) {
-    return (
-      <div className="p-6 text-[#C8CEDD] rounded-lg w-[691px]">
-        <h2 className="text-2xl font-bold mb-6">Booking history</h2>
-        <div className="flex items-center justify-center">
-          <div className="flex flex-col items-center justify-center text-white gap-4">
-            <div className="w-16 h-16 border-4 border-blue-500 border-solid rounded-full border-t-transparent animate-spin"></div>
-            <p className="animate-pulse">{loadingText}</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   return (
@@ -929,7 +932,10 @@ const BookingHistory = () => {
                         )}{" "}
                         {formatedDate(booking.show_date_time)}, Refunds will be
                         done according to
-                        <span className="text-sm text-[#C8CEDD] cursor-pointer underline font-normal max-sm:ml-1">
+                        <span
+                          className="text-sm text-[#C8CEDD] cursor-pointer underline font-normal ml-1 cursor-pointer"
+                          onClick={() => setOpenCalcelPolicy(true)}
+                        >
                           Cancellation Policy
                         </span>
                       </span>
@@ -958,6 +964,13 @@ const BookingHistory = () => {
                   </div>
                 </div>
               </div>
+            )}
+
+            {openCalcelPolicy === true && (
+              <CancellationPolicyModal
+                isOpen={openCalcelPolicy}
+                onClose={closeCalcelPolicy}
+              />
             )}
           </div>
         ))}
