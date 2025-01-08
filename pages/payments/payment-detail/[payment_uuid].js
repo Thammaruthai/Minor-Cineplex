@@ -86,7 +86,11 @@ export default function BookingSuccess() {
             </div>
             <div className="flex gap-2">
               <p className="w-[130px]">Payment method</p>
-              <p className="text-white font-bold">Credit card</p>
+              <p className="text-white font-bold">
+                {currentPayment?.payment_method === "card"
+                  ? "Credit card"
+                  : "QR Code"}
+              </p>
             </div>
             <div className="flex gap-2">
               <p className="w-[130px]">Total</p>

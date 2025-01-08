@@ -74,7 +74,9 @@ FROM
 JOIN 
     public.bookings b ON bs.booking_id = b.booking_id
 WHERE 
-   b.booking_status != 'Cancelled' and bs.status!='Cancelled' and b.show_id = $1;
+    b.booking_status NOT IN ('Cancelled', 'Refund') 
+    AND bs.status != 'Cancelled' 
+    AND b.show_id = $1;
 
     `;
     const bookingsResult = await client.query(bookingsQuery, [show_Id]);

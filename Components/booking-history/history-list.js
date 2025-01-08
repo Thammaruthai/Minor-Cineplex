@@ -293,6 +293,8 @@ const BookingHistory = () => {
                     <p className="max-w-[350px] text-[#C8CEDD]">
                       {booking.payment_method === "card"
                         ? "Credit Card"
+                        : booking.payment_method === "QR Code"
+                        ? "QR Code"
                         : booking.booking_status === "Active" &&
                           booking.payment_status === null
                         ? "Waiting for payment"
@@ -577,6 +579,8 @@ const BookingHistory = () => {
                             <p className="max-w-[350px] text-[#C8CEDD]">
                               {booking.payment_method === "card"
                                 ? "Credit Card"
+                                : booking.payment_method === "QR Code"
+                                ? "QR Code"
                                 : booking.booking_status === "Active" &&
                                   booking.payment_status === null
                                 ? "Waiting for payment"
@@ -687,6 +691,8 @@ const BookingHistory = () => {
                         <span className="text-white">
                           {booking.payment_method === "card"
                             ? "Credit Card"
+                            : booking.payment_method === "QR Code"
+                            ? "QR Code"
                             : booking.booking_status === "Active" &&
                               booking.payment_status === null
                             ? "Waiting for payment"
