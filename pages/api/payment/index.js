@@ -7,8 +7,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
-      const { amount, booking_id } = req.body;
-
+      const { amount, booking_id, payment_method } = req.body;
+      let method = "";
+      if (payment_method === "Credit card") {
+        method = "card";
+      } else {
+        method = "QR Code";
+      }
       const booking = await connectionPool.query(
         `SELECT * FROM bookings WHERE booking_id = $1 AND booking_status = 'Active'`,
         [booking_id]
@@ -50,7 +55,7 @@ export default async function handler(req, res) {
         VALUES ($1, $2, $3, $4, NOW()) RETURNING *`,
         [
           booking_id,
-          "card", // Default payment method type
+          method, // Default payment method type
           "Pending", // Initial status
           amount / 100, // Convert satang to Baht
         ]
