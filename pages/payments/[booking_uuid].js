@@ -18,9 +18,12 @@ export default function PaymentPage() {
   const [total, setTotal] = useState(0);
   const { booking, timeLeft, setTimeLeft } = useBooking();
   const [qrCode, setQrCode] = useState(null);
-  const [paymentStatus, setPaymentStatus] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [isExpiredOpen, setIsExpiredOpen] = useState(false);
   const bookingId = booking.booking_id;
+  const handleExpiredModal = () => {
+    router.push(`/booking/${booking.show_id}`);
+  };
   //time remaining
   useEffect(() => {
     const timer = setInterval(() => {
@@ -54,7 +57,7 @@ export default function PaymentPage() {
   //timeout
   useEffect(() => {
     if (isTimeout) {
-      router.push(`/booking/${booking.show_id}`);
+      setIsExpiredOpen(true);
     }
   }, [isTimeout, router, bookingId]);
   //sse
@@ -63,9 +66,6 @@ export default function PaymentPage() {
 
     sse.onmessage = async (event) => {
       const data = JSON.parse(event.data);
-      console.log("SSE Message:", data);
-      setPaymentStatus(data.status); // Update payment status from SSE response
-
       if (data.status === "payment_intent.succeeded") {
         try {
           console.log("id inside", total, discountAmount);
@@ -74,18 +74,18 @@ export default function PaymentPage() {
             `/api/payment/qr-code/update-payment`,
             {
               paymentIntent: data.referenceNumber,
-              booking_id: bookingId, // booking_id ปัจจุบัน
+              booking_id: bookingId,
               payment_amount: total,
               discount: discountAmount,
               status: "succeeded",
             }
           );
           console.log("Payment updated successfully");
-          const { temp_payment_uuid } = response.data; // Get temp_payment_uuid from the response
+          const { temp_payment_uuid } = response.data;
           if (temp_payment_uuid) {
-            router.push(`/payments/payment-detail/${temp_payment_uuid}`); // Redirect using temp_payment_uuid
+            router.push(`/payments/payment-detail/${temp_payment_uuid}`);
           } else {
-            console.error("temp_payment_uuid is missing.");
+            console.log("temp_payment_uuid is missing.");
           }
         } catch (error) {
           console.log("Error updating payment:", error);
@@ -99,22 +99,7 @@ export default function PaymentPage() {
             discount: discountAmount,
             status: "Failed",
           });
-          toast(
-            <strong>
-              Payment Failed. Please try again or book your seat again.
-            </strong>,
-            {
-              position:
-                window.innerWidth <= 1024 ? "bottom-center" : "bottom-right", // ถ้าหน้าจอเล็กกว่า 1024px จะให้ toast อยู่กลางล่าง
-              style: {
-                borderRadius: "4px",
-                backgroundColor: "#E5364B99",
-                color: "white",
-              },
-            }
-          );
-
-          router.push(`/booking/${booking.show_id}`);
+          setIsExpiredOpen(true);
         } catch (error) {}
       }
     };
@@ -149,6 +134,29 @@ export default function PaymentPage() {
           <p>Minor Cineplex Public limited company</p>
           <p className="font-bold text-xl">THB{Number(total).toFixed(0)}</p>
         </section>
+        {isExpiredOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="relative bg-[#21263F] border border-[#565F7E] text-white p-4 rounded-lg shadow-lg w-full max-w-xs">
+              <button
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-200"
+                onClick={handleExpiredModal}
+              >
+                ✕
+              </button>
+              <h2 className="text-xl font-bold text-center">Booking expired</h2>
+              <p className="text-sm mt-4 text-center text-[#C8CEDD]">
+                You did not complete the checkout process in time, please start
+                again.
+              </p>
+              <button
+                className="bg-[#4E7BEE] text-white font-bold px-4 py-2 mt-6 rounded hover:bg-[#1E29A8] w-full"
+                onClick={handleExpiredModal}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
         <Toaster />
       </div>
     );

@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
       event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
     } catch (err) {
-      console.error("Webhook signature verification failed.", err.message);
+      console.log("Webhook signature verification failed.", err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
@@ -47,6 +47,7 @@ export default async function handler(req, res) {
           status: "payment_intent.requires_action",
           referenceNumber: event.data.object.id,
         });
+        res.json({ status: "requires_action" });
         break;
       case "payment_intent.created":
         console.log("PaymentIntent created:", event.data.object);
@@ -54,6 +55,7 @@ export default async function handler(req, res) {
           status: "payment_intent.created",
           referenceNumber: event.data.object.id,
         });
+        res.json({ status: "created" });
         break;
       case "payment_intent.succeeded":
         console.log("PaymentIntent succeeded:", event.data.object);
@@ -61,6 +63,7 @@ export default async function handler(req, res) {
           status: "payment_intent.succeeded",
           referenceNumber: event.data.object.id,
         });
+        res.json({ status: "succeeded" });
         break;
       case "payment_intent.payment_failed":
         console.log("PaymentIntent failed:", event.data.object);
@@ -68,12 +71,19 @@ export default async function handler(req, res) {
           status: "payment_intent.payment_failed",
           referenceNumber: event.data.object.id,
         });
+        res.json({ status: "failed" });
         break;
       case "charge.succeeded":
         console.log("Charge succeeded:", event.data.object);
+        sendSSEUpdate({
+          status: "charge.succeeded",
+          referenceNumber: event.data.object.id,
+        });
+        res.json({ status: "succeeded" });
         break;
       case "charge.updated":
         console.log("Charge updated:", event.data.object);
+        res.json({ status: "updated" });
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);
