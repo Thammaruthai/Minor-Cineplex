@@ -34,7 +34,7 @@ const SeatSelectionPage = () => {
   const buttonStyleDisabled = "bg-gray-500 w-full py-3 cursor-not-allowed";
   const buttonStyleEnabled =
     "bg-[#4E7BEE] w-full py-3 hover:bg-[#1E29A8] active:[#0C1580]";
-  const seatStyle = "max-sm:w-full max-sm:h-auto w-10 h-10";
+  const seatStyle = "max-sm:w-full max-sm:h-auto w-10 h-10 max-sm:max-w-12";
 
   // Animate the loading text
   useEffect(() => {
@@ -968,7 +968,7 @@ const SeatSelectionPage = () => {
         </div>
       </div>
 
-      <Toaster />
+      {!isBooked && (<Toaster />)}
     </div>
   );
 };
