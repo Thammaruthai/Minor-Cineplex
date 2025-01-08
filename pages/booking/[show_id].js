@@ -28,12 +28,13 @@ const SeatSelectionPage = () => {
   const [countdown, setCountdown] = useState(3); // Set initial countdown value
   const [showCountdown, setShowCountdown] = useState(false);
   const [isChanged, setIsChanged] = useState(0);
+  const [isBooked, setisBooked] = useState(false);
 
   //style
   const buttonStyleDisabled = "bg-gray-500 w-full py-3 cursor-not-allowed";
   const buttonStyleEnabled =
     "bg-[#4E7BEE] w-full py-3 hover:bg-[#1E29A8] active:[#0C1580]";
-  const seatStyle = "max-sm:w-full max-sm:h-auto w-10 h-10";
+  const seatStyle = "max-sm:w-full max-sm:h-auto w-10 h-10 max-sm:max-w-12";
 
   // Animate the loading text
   useEffect(() => {
@@ -214,6 +215,7 @@ const SeatSelectionPage = () => {
       // Ensure JWT interceptor is active
       jwtInterceptor();
 
+      setisBooked(true);
       // POST request to the confirm booking API
       const response = await axios.post("/api/booking/confirm-booking", data);
 
@@ -505,7 +507,9 @@ const SeatSelectionPage = () => {
                                     : "text-green-500"
                                 }
                               >
-                                {seat.booking_status=== "Locked"? "Reserved": seat.booking_status}
+                                {seat.booking_status === "Locked"
+                                  ? "Reserved"
+                                  : seat.booking_status}
                               </span>
                               <p className="text-yellow-500">
                                 {seat.booking_status === "Locked"
@@ -955,7 +959,7 @@ const SeatSelectionPage = () => {
                   ? `border-t border-gray-700 pt-4 `
                   : "hidden"
               }`}
-              disabled={selectedSeats.length === 0}
+              disabled={selectedSeats.length === 0 || isBooked}
               onClick={handleSubmit}
             >
               Next
@@ -964,7 +968,7 @@ const SeatSelectionPage = () => {
         </div>
       </div>
 
-      <Toaster />
+      {!isBooked && (<Toaster />)}
     </div>
   );
 };
