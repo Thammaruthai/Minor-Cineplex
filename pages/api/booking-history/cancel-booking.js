@@ -62,23 +62,39 @@ export default async function handler(req, res) {
         });
       }
 
-      const paymentIntentId = paymentResult.rows[0].transaction_reference;
+      // pay with credit card
+      if (paymentResult.rows[0].payment_method === "card") {
+        const paymentIntentId = paymentResult.rows[0].transaction_reference;
 
-      if (!paymentIntentId) {
-        client.release();
-        return res
-          .status(400)
-          .json({ error: "Payment Intent ID is missing for this booking." });
+        if (!paymentIntentId) {
+          client.release();
+          return res
+            .status(400)
+            .json({ error: "Payment Intent ID is missing for this booking." });
+        }
+
+        const refund = await stripe.refunds.create({
+          payment_intent: paymentIntentId,
+          amount: booking.final_price * 100, // ใส่จำนวนเงินที่คืน เป็นสตางค์
+          reason: "requested_by_customer", // เหตุผลที่คืนเงิน
+        });
+      } 
+      // pay with QR
+      else if (paymentResult.rows[0].payment_method === "QR code") {
+        const paymentIntentId = paymentResult.rows[0].transaction_reference;
+
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          paymentIntentId
+        );
+        const chargeId = paymentIntent.charges.data[0].id;
+
+        const refund = await stripe.refunds.create({
+          charge: chargeId, // ใช้ charge ID
+          amount: booking.final_price * 100, // ใส่จำนวนเงินที่คืน เป็นสตางค์
+          reason: "requested_by_customer", // เหตุผลที่คืนเงิน
+        });
       }
-
-      const refund = await stripe.refunds.create({
-        payment_intent: paymentIntentId,
-        amount: booking.final_price * 100, // ใส่จำนวนเงินที่คืน เป็นสตางค์
-        reason: "requested_by_customer", // เหตุผลที่คืนเงิน
-      });
-
       console.log(refund);
-      
 
       if (!refund) {
         client.release();
@@ -91,9 +107,11 @@ export default async function handler(req, res) {
         SET booking_status = 'Refund'
         WHERE booking_id = $1 returning temp_booking_uuid;
       `;
-      const cancelQueryResult = await client.query(cancelBookingQuery, [bookingId]);
+      const cancelQueryResult = await client.query(cancelBookingQuery, [
+        bookingId,
+      ]);
 
-       const updateBookingSeatQuery = `
+      const updateBookingSeatQuery = `
       UPDATE booking_seats
       SET status = 'Cancelled'
       WHERE booking_id = $1
@@ -101,10 +119,10 @@ export default async function handler(req, res) {
         AND lock_expiry > NOW();
     `;
 
-       const updateBookingSeatQueryResult = await client.query(
-         updateBookingSeatQuery,
-         [bookingId]
-       );
+      const updateBookingSeatQueryResult = await client.query(
+        updateBookingSeatQuery,
+        [bookingId]
+      );
 
       const refundBookingQuery = `
         INSERT INTO refunds (booking_id, refund_amount, refund_status,refund_date, reason)
