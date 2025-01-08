@@ -124,19 +124,6 @@ export default async function handler(req, res) {
         [bookingId]
       );
 
-       const updateBookingSeatQuery = `
-      UPDATE booking_seats
-      SET status = 'Cancelled'
-      WHERE booking_id = $1
-        AND status NOT IN ('Cancelled', 'Refunded')
-        AND lock_expiry > NOW();
-    `;
-
-       const updateBookingSeatQueryResult = await client.query(
-         updateBookingSeatQuery,
-         [bookingId]
-       );
-
       const refundBookingQuery = `
         INSERT INTO refunds (booking_id, refund_amount, refund_status,refund_date, reason)
         VALUES ($1, $2, $3, $4, $5);
