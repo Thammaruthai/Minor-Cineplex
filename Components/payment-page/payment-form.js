@@ -313,22 +313,22 @@ function PaymentForm({
           )}
           {selectedMethod === "QR Code" && <QrCodePayment />}
         </div>
-        <BookingSummary
-          handleQrCode={handleQrCode}
-          handleSubmit={handleSubmit}
-          isLoading={isLoading}
-          errors={errors}
-          setTotal={setTotal}
-          total={total}
-          isValid={isValid}
-          handleNext={handleNext}
-          isTimeout={isTimeout}
-          setIsTimeout={setIsTimeout}
-          handleTimeout={handleTimeout}
-          discount={discount}
-          setDiscount={setDiscount}
-          paymentMethod={selectedMethod}
-        />
+          <BookingSummary
+            handleQrCode={handleQrCode}
+            handleSubmit={handleSubmit}
+            isLoading={isLoading}
+            errors={errors}
+            setTotal={setTotal}
+            total={total}
+            isValid={isValid}
+            handleNext={handleNext}
+            isTimeout={isTimeout}
+            setIsTimeout={setIsTimeout}
+            handleTimeout={handleTimeout}
+            discount={discount}
+            setDiscount={setDiscount}
+            paymentMethod={selectedMethod}
+          />
       </div>
       <Toaster className="md:hidden" />
       {isOpenToastErr && (
