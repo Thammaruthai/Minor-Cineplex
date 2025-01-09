@@ -32,11 +32,11 @@ const BookingHistory = () => {
     setOpenCalcelPolicy(false);
   };
   //Share modal
-  const [isShareModalOpen, setShareModalOpen] = useState(false);
+  const [isShareModalOpen, setShareModalOpen] = useState(null);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const shareButtonRef = useRef(null);
 
-  const openShareModal = () => {
+  const openShareModal = (bookingID) => {
     if (shareButtonRef.current) {
       const rect = shareButtonRef.current.getBoundingClientRect();
 
@@ -44,7 +44,7 @@ const BookingHistory = () => {
         top: rect.top,
         left: rect.left,
       });
-      setShareModalOpen(true);
+      setShareModalOpen(bookingID);
     }
   };
 
@@ -102,11 +102,10 @@ const BookingHistory = () => {
         reason: selectedReason,
       });
 
-
       if (response.status === 200) {
         closeCancelModal();
         console.log(response.data);
-        
+
         router.push(`/cancel/${response.data.booking_uuid}`);
       } else {
         console.log("Something went wrong.");
@@ -139,7 +138,7 @@ const BookingHistory = () => {
                   existingBooking.booking_id === newBooking.booking_id
               )
           );
-           
+
           return [...prev, ...newBookings];
         });
         setHasMore(response.data.booking_history.length > 0); // Check if there is more data
@@ -147,8 +146,6 @@ const BookingHistory = () => {
         console.log("Something went wrong.");
       } finally {
         setLoading(false);
-       ;
-        
       }
     };
 
@@ -315,13 +312,11 @@ const BookingHistory = () => {
                   booking.booking_status === "Refund"
                     ? "border border-[#21263F] text-white bg-[#565F7E]"
                     : booking.payment_status === "succeeded" &&
-                      new Date(booking.show_date_time).getTime() +
-                        0 * 60 * 60 * 1000 <
+                      new Date(booking.show_date_time).getTime() + 0 <
                         Date.now()
                     ? "border border-[#21263F] text-white"
                     : booking.payment_status === "succeeded" &&
-                      new Date(booking.show_date_time).getTime() +
-                        0 * 60 * 60 * 1000 >
+                      new Date(booking.show_date_time).getTime() + 0 >
                         Date.now()
                     ? "bg-[#00A372] text-white"
                     : booking.booking_status === "Active" &&
@@ -336,14 +331,10 @@ const BookingHistory = () => {
                 {booking.booking_status === "Refund"
                   ? "Canceled"
                   : booking.payment_status === "succeeded" &&
-                    new Date(booking.show_date_time).getTime() +
-                      0 * 60 * 60 * 1000 <
-                      Date.now()
+                    new Date(booking.show_date_time).getTime() + 0 < Date.now()
                   ? "Complete"
                   : booking.payment_status === "succeeded" &&
-                    new Date(booking.show_date_time).getTime() +
-                      0 * 60 * 60 * 1000 >
-                      Date.now()
+                    new Date(booking.show_date_time).getTime() + 0 > Date.now()
                   ? "Paid"
                   : booking.booking_status === "Active" &&
                     booking.payment_status === null
@@ -361,13 +352,11 @@ const BookingHistory = () => {
                   booking.booking_status === "Refund"
                     ? "border border-[#21263F] text-white bg-[#565F7E]"
                     : booking.payment_status === "succeeded" &&
-                      new Date(booking.show_date_time).getTime() +
-                        0 * 60 * 60 * 1000 <
+                      new Date(booking.show_date_time).getTime() + 0 <
                         Date.now()
                     ? "border border-[#21263F] text-white"
                     : booking.payment_status === "succeeded" &&
-                      new Date(booking.show_date_time).getTime() +
-                        0 * 60 * 60 * 1000 >
+                      new Date(booking.show_date_time).getTime() + 0 >
                         Date.now()
                     ? "bg-[#00A372] text-white"
                     : booking.booking_status === "Active" &&
@@ -382,14 +371,10 @@ const BookingHistory = () => {
                 {booking.booking_status === "Refund"
                   ? "Canceled"
                   : booking.payment_status === "succeeded" &&
-                    new Date(booking.show_date_time).getTime() +
-                      0 * 60 * 60 * 1000 <
-                      Date.now()
+                    new Date(booking.show_date_time).getTime() + 0 < Date.now()
                   ? "Complete"
                   : booking.payment_status === "succeeded" &&
-                    new Date(booking.show_date_time).getTime() +
-                      0 * 60 * 60 * 1000 >
-                      Date.now()
+                    new Date(booking.show_date_time).getTime() + 0 > Date.now()
                   ? "Paid"
                   : booking.booking_status === "Active" &&
                     booking.payment_status === null
@@ -397,7 +382,7 @@ const BookingHistory = () => {
                   : booking.booking_status === "Cancelled" &&
                     booking.payment_status === null
                   ? "Expired"
-                  : "Cancelled"}
+                  : "nled"}
               </div>
             </div>
 
@@ -428,7 +413,7 @@ const BookingHistory = () => {
                       <button
                         ref={shareButtonRef}
                         onClick={() => {
-                          openShareModal();
+                          openShareModal(booking.booking_id);
                         }}
                       >
                         <svg
@@ -601,13 +586,11 @@ const BookingHistory = () => {
                           booking.booking_status === "Refund"
                             ? "border border-[#21263F] text-white bg-[#565F7E]"
                             : booking.payment_status === "succeeded" &&
-                              new Date(booking.show_date_time).getTime() +
-                                0 * 60 * 60 * 1000 <
+                              new Date(booking.show_date_time).getTime() + 0 <
                                 Date.now()
                             ? "border border-[#21263F] text-white"
                             : booking.payment_status === "succeeded" &&
-                              new Date(booking.show_date_time).getTime() +
-                                0 * 60 * 60 * 1000 >
+                              new Date(booking.show_date_time).getTime() + 0 >
                                 Date.now()
                             ? "bg-[#00A372] text-white"
                             : booking.booking_status === "Active" &&
@@ -622,13 +605,11 @@ const BookingHistory = () => {
                         {booking.booking_status === "Refund"
                           ? "Canceled"
                           : booking.payment_status === "succeeded" &&
-                            new Date(booking.show_date_time).getTime() +
-                              0 * 60 * 60 * 1000 <
+                            new Date(booking.show_date_time).getTime() + 0 <
                               Date.now()
                           ? "Complete"
                           : booking.payment_status === "succeeded" &&
-                            new Date(booking.show_date_time).getTime() +
-                              0 * 60 * 60 * 1000 >
+                            new Date(booking.show_date_time).getTime() + 0 >
                               Date.now()
                           ? "Paid"
                           : booking.booking_status === "Active" &&
@@ -667,13 +648,11 @@ const BookingHistory = () => {
                         {booking.booking_status === "Refund"
                           ? "Canceled"
                           : booking.payment_status === "succeeded" &&
-                            new Date(booking.show_date_time).getTime() +
-                              0 * 60 * 60 * 1000 <
+                            new Date(booking.show_date_time).getTime() + 0 <
                               Date.now()
                           ? "Complete"
                           : booking.payment_status === "succeeded" &&
-                            new Date(booking.show_date_time).getTime() +
-                              0 * 60 * 60 * 1000 >
+                            new Date(booking.show_date_time).getTime() + 0 >
                               Date.now()
                           ? "Paid"
                           : booking.booking_status === "Active" &&
@@ -768,12 +747,14 @@ const BookingHistory = () => {
                 </div>
               </div>
             )}
-            <ShareModal
-              isOpen={isShareModalOpen}
-              onClose={closeShareModal}
-              position={modalPosition}
-              bookingData={booking}
-            />
+            {isShareModalOpen === booking.booking_id && (
+              <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={closeShareModal}
+                position={modalPosition}
+                bookingData={booking}
+              />
+            )}
             {/*---------------------------------------- Cancel Modal ----------------------------------------*/}
 
             {cancelModal === booking.booking_id && (

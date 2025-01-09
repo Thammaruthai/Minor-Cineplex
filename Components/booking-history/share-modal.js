@@ -1,6 +1,7 @@
 // share modal
 export default function ShareModal({ isOpen, onClose, position, bookingData }) {
   if (!isOpen) return null;
+
   const shareUrl =
     "https://minor-cineplex-nine.vercel.app/booking/" + bookingData.show_id; // URL ที่ต้องการแชร์
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -10,7 +11,9 @@ export default function ShareModal({ isOpen, onClose, position, bookingData }) {
   const handleLineShare = () => {
     if (isMobile) {
       // Mobile: ใช้ Deep Link
-      const lineDeepLink = `line://msg/text/${encodeURIComponent(text+ shareUrl)}`;
+      const lineDeepLink = `line://msg/text/${encodeURIComponent(
+        text + shareUrl
+      )}`;
       window.location.href = lineDeepLink;
     } else {
       // Desktop: ใช้ Web URL
@@ -78,7 +81,7 @@ export default function ShareModal({ isOpen, onClose, position, bookingData }) {
       >
         <div className="flex justify-center items-center ">
           <h2 className="text-white text-base font-bold">
-            Share Booking {bookingData.show_id}
+            Share Booking
           </h2>
         </div>
 

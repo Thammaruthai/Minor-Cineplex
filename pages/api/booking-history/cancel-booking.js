@@ -9,6 +9,7 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: `Method ${req.method} not allowed.` });
   }
+  let refundResult;
 
   protect(req, res, async () => {
     try {
@@ -78,7 +79,9 @@ export default async function handler(req, res) {
           amount: booking.final_price * 100, // ใส่จำนวนเงินที่คืน เป็นสตางค์
           reason: "requested_by_customer", // เหตุผลที่คืนเงิน
         });
-      } 
+
+        refundResult = refund;
+      }
       // pay with QR
       else if (paymentResult.rows[0].payment_method === "QR code") {
         const paymentIntentId = paymentResult.rows[0].transaction_reference;
@@ -93,10 +96,11 @@ export default async function handler(req, res) {
           amount: booking.final_price * 100, // ใส่จำนวนเงินที่คืน เป็นสตางค์
           reason: "requested_by_customer", // เหตุผลที่คืนเงิน
         });
-      }
-      console.log(refund);
 
-      if (!refund) {
+        refundResult = refund;
+      }
+
+      if (!refundResult) {
         client.release();
         return res.status(500).json({ error: "Failed to process refund." });
       }
