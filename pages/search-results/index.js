@@ -503,8 +503,19 @@ function SearchResults() {
                           );
                         })
                       ) : (
-                        <div className="flex justify-center items-center">
-                          <p>No movie found.</p>
+                        <div className="flex justify-center items-center px-4 md:px-0">
+                          <p className="flex gap-5 justify-center items-center md:text-xl md:font-medium">
+                            <div className="animate-bounce">
+                              <Image
+                                src="/img/popcorn.png"
+                                width={40}
+                                height={40}
+                                alt="popcorn"
+                              />
+                            </div>
+                            No movies available at this cinema on the selected
+                            date.
+                          </p>
                         </div>
                       )}
                     </div>
@@ -513,8 +524,18 @@ function SearchResults() {
               ) : null;
             })
           ) : (
-            <div className="flex justify-center items-center">
-              <p>No cinema found.</p>
+            <div className="flex justify-center items-center px-4 md:px-0">
+              <p className="flex gap-5 justify-center items-center md:text-xl md:font-medium">
+                <div className="animate-bounce">
+                  <Image
+                    src="/img/cinema.png"
+                    width={40}
+                    height={40}
+                    alt="popcorn"
+                  />
+                </div>
+                No cinemas showing this movie on the selected date.
+              </p>
             </div>
           )}
         </div>
