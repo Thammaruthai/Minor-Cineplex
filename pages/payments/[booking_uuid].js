@@ -7,8 +7,6 @@ import { StepsHeader } from "@/Components/page-sections/steps-header";
 import { QRCodeSVG } from "qrcode.react";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { toast } from "react-hot-toast";
-import { Toaster } from "react-hot-toast";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISABLE_KEY);
 
 export default function PaymentPage() {
@@ -68,8 +66,6 @@ export default function PaymentPage() {
       const data = JSON.parse(event.data);
       if (data.status === "payment_intent.succeeded") {
         try {
-          console.log("id inside", total, discountAmount);
-
           const response = await axios.patch(
             `/api/payment/qr-code/update-payment`,
             {
@@ -80,15 +76,15 @@ export default function PaymentPage() {
               status: "succeeded",
             }
           );
-          console.log("Payment updated successfully");
+          //console.log("Payment updated successfully");
           const { temp_payment_uuid } = response.data;
           if (temp_payment_uuid) {
             router.push(`/payments/payment-detail/${temp_payment_uuid}`);
           } else {
-            console.log("temp_payment_uuid is missing.");
+            console.log("Server error, Please try again later.");
           }
         } catch (error) {
-          console.log("Error updating payment:", error);
+          console.log("Error updating payment");
         }
       } else if (data.status === "payment_intent.payment_failed") {
         try {
@@ -100,11 +96,12 @@ export default function PaymentPage() {
             status: "Failed",
           });
           setIsExpiredOpen(true);
-        } catch (error) {}
+        } catch (error) {
+          console.log("Error updating payment");
+        }
       }
     };
     sse.onerror = (error) => {
-      console.error("SSE Error:", error);
       sse.close(); // Close SSE connection if an error occurs
     };
     return () => {
@@ -157,7 +154,6 @@ export default function PaymentPage() {
             </div>
           </div>
         )}
-        <Toaster />
       </div>
     );
   } else {
