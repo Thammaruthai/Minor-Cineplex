@@ -415,7 +415,7 @@ const BookingHistory = () => {
               >
                 {/* หน้าต่าง Modal */}
                 <div
-                  className={`relative bg-[#21263F]  shadow-lg  w-[691px] z-30 rounded-lg border border-[#565F7E] animate-fadeIn cursor-default transition-opacity duration-300 max-sm:w-11/12 ${
+                  className={`relative bg-[#21263F]  shadow-lg  w-[691px] z-30 rounded-lg border border-[#565F7E] animate-fadeIn cursor-default transition-opacity duration-300 max-sm:w-11/12 overflow-y-auto max-h-screen ${
                     isClosing ? "opacity-0" : "opacity-100"
                   }`}
                   onClick={(e) => e.stopPropagation()}
