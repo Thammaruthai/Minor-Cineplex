@@ -1,39 +1,44 @@
 // share modal
-export default function ShareModal({ isOpen, onClose, position, bookingLink }) {
+export default function ShareModal({ isOpen, onClose, position, bookingData }) {
   if (!isOpen) return null;
-  const shareUrl = "https://example.com"; // URL ที่ต้องการแชร์
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+  const shareUrl =
+    "https://minor-cineplex-nine.vercel.app/sharing/" + temp_booking_uuid ; // URL ที่ต้องการแชร์
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const text = `🎥 ชวนมาดู "${bookingData.title}" ด้วยกัน! 🥳
+✨ จองตั๋วได้ง่ายๆ ที่นี่: `;
 
   const handleLineShare = () => {
     if (isMobile) {
       // Mobile: ใช้ Deep Link
-      const lineDeepLink = `line://msg/text/${encodeURIComponent(url)}`;
+      const lineDeepLink = `line://msg/text/${encodeURIComponent(
+        text + shareUrl
+      )}`;
       window.location.href = lineDeepLink;
     } else {
       // Desktop: ใช้ Web URL
       const lineShareUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(
         shareUrl
       )}`;
-      window.open(lineShareUrl, "_blank", "width=600,height=400");
+      window.open(lineShareUrl, "_blank");
     }
   };
 
   const handleMessengerShare = () => {
     if (isMobile) {
-      // Mobile: ใช้ Deep Link
+      // สำหรับ Mobile: ใช้ Messenger Deep Link
       const messengerDeepLink = `fb-messenger://share?link=${encodeURIComponent(
         shareUrl
       )}`;
       window.location.href = messengerDeepLink;
     } else {
-      // Desktop: ใช้ Facebook Web URL
-      const appId = "YOUR_APP_ID"; // ใส่ App ID
-      const redirectUrl = "https://example.com";
-      const messengerShareUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
-        url
-      )}&app_id=${appId}&redirect_uri=${encodeURIComponent(redirectUrl)}`;
-      window.open(messengerShareUrl, "_blank", "width=600,height=400");
+      // สำหรับ Desktop: ใช้ Facebook Messenger Web URL
+      const appId = "1113441710515558"; // แทนที่ด้วย AppID ของคุณ
+
+      const messengerShareUrl = `https://www.messenger.com/t/?link=${encodeURIComponent(
+        shareUrl
+      )}&text=${encodeURIComponent(text + shareUrl)}`;
+      window.open(messengerShareUrl, "_blank");
     }
   };
 
@@ -41,15 +46,15 @@ export default function ShareModal({ isOpen, onClose, position, bookingLink }) {
     const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
       shareUrl
     )}`;
-    window.open(facebookShareUrl, "_blank", "width=600,height=400");
+    window.open(facebookShareUrl, "_blank");
   };
 
- const handleTwitterShare = () => {
-   const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-     shareUrl
-   )}&text=${encodeURIComponent(text)}`;
-   window.open(twitterShareUrl, "_blank", "width=600,height=400");
- };
+  const handleTwitterShare = () => {
+    const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+      shareUrl
+    )}&text=${encodeURIComponent(text)}`;
+    window.open(twitterShareUrl, "_blank");
+  };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(bookingLink);
@@ -75,7 +80,9 @@ export default function ShareModal({ isOpen, onClose, position, bookingLink }) {
         }}
       >
         <div className="flex justify-center items-center ">
-          <h2 className="text-white text-base font-bold">Share Booking</h2>
+          <h2 className="text-white text-base font-bold">
+            Share Booking
+          </h2>
         </div>
 
         <div className="flex justify-between items-center gap-1 text-sm max-sm:grid max-sm:grid-cols-3  ">

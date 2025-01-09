@@ -133,7 +133,7 @@ const SeatSelectionPage = () => {
         setSelectedSeats(validSelectedSeats);
 
         // Render toast notification for removed seats
-        if (removedSeats.length > 0) {
+        if (removedSeats.length > 0 && !isBooked) {
           toast(
             <div>
               <strong>Seats are booked by other.</strong>
@@ -688,7 +688,7 @@ const SeatSelectionPage = () => {
                           </button>
 
                           <div
-                            className={`absolute top-full left-1/2 transform -translate-x-1/2 w-40 p-2 bg-[#21263F] text-white rounded-lg shadow-lg z-50 transition-opacity duration-200  ${
+                            className={`absolute top-full left-1/3 transform -translate-x-1/2 w-[109px] p-2 bg-[#21263F] text-white rounded-lg shadow-lg z-50 transition-opacity duration-200  ${
                               hoveredSeat?.seat_id === seat.seat_id
                                 ? "opacity-100 scale-100 visible"
                                 : "opacity-0  invisible"
@@ -950,8 +950,8 @@ const SeatSelectionPage = () => {
               </div>
             </div>
             <button
-              className={`${
-                selectedSeats.length > 0
+              className={` flex gap-2 justify-center ${
+                selectedSeats.length > 0 && !isBooked
                   ? buttonStyleEnabled
                   : buttonStyleDisabled
               }  text-white ${
@@ -962,13 +962,17 @@ const SeatSelectionPage = () => {
               disabled={selectedSeats.length === 0 || isBooked}
               onClick={handleSubmit}
             >
-              Next
+              {isBooked && (
+                <div className="w-6 h-6 border-4 border-grey-500 border-solid rounded-full border-t-transparent animate-spin"></div>
+              )}
+
+              <span>Next</span>
             </button>
           </div>
         </div>
       </div>
 
-      {!isBooked && (<Toaster />)}
+      {!isBooked && <Toaster />}
     </div>
   );
 };

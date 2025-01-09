@@ -143,7 +143,7 @@ export default function Register() {
 
   return (
     <>
-      <div className="w-full flex flex-col h-screen items-center justify-center bg-[#070C1B] min-h-[500px] min-w-[300px] max-sm:justify-start max-sm:pt-8">
+      <div className="w-full flex flex-col h-screen items-center justify-center min-h-[500px] min-w-[300px] max-sm:justify-start max-sm:pt-8">
         <div className="container w-[380px] text-white rounded-lg max-sm:w-11/12">
           <h1 className="mb-10 text-4xl text-center font-bold h-11 ">
             Register
