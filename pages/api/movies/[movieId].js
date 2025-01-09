@@ -16,6 +16,7 @@ export default async function handler(req, res) {
           show_id, 
           show_date_time, 
           halls.name AS hall_name, 
+          halls.hall_id, 
           movies.title, 
           movies.description, 
           movies.release_date, 
@@ -26,7 +27,7 @@ export default async function handler(req, res) {
           cinemas.name AS cinema_name,
           cinemas.address, 
           cities.city_name AS city_name,
-          ARRAY_AGG(genres.name) AS genres,
+          ARRAY_AGG(DISTINCT genres.name) AS genres,
           ARRAY_AGG(DISTINCT features.feature_name) AS features
         FROM shows 
         INNER JOIN movies ON movies.movie_id = shows.movie_id
@@ -60,6 +61,7 @@ export default async function handler(req, res) {
         show_id, 
         show_date_time, 
         halls.name, 
+        halls.hall_id, 
         movies.title, 
         movies.description, 
         movies.release_date, 
@@ -77,6 +79,7 @@ export default async function handler(req, res) {
       const formattedData = result.rows.map((row) => ({
         show_id: row.show_id,
         show_date_time: row.show_date_time,
+        hall_id: row.hall_id,
         hall_name: row.hall_name,
         cinema_id: row.cinema_id,
         cinema_name: row.cinema_name,
