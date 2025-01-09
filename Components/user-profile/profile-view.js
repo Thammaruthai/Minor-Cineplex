@@ -101,7 +101,6 @@ export default function ProfileView() {
           },
         }
       );
-      loadUserProfile();
     } catch (error) {
       toast(
         <strong>An unexpected error occurred. Please try again later.</strong>,
@@ -223,6 +222,7 @@ export default function ProfileView() {
               bg="#21263F"
               className="text-white border border-[#565F7E] px-3 py-6"
               onChange={(e) => setLocalEmail(e.target.value)}
+              disabled
             />
           </div>
           <button
