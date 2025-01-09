@@ -326,6 +326,7 @@ function BookingSummary({
           type="button"
           disabled={paymentMethod === "QR Code" ? false : !isValid || isLoading}
           onClick={(e) => {
+            e.preventDefault();
             if (isTimeout) {
               handleTimeout();
               openDialog();
