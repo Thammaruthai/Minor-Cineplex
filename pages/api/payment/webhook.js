@@ -18,6 +18,7 @@ export default async function handler(req, res) {
     try {
       const buf = await buffer(req);
       const sig = req.headers["stripe-signature"];
+      console.log("Stripe Signature:", req.headers["stripe-signature"]);
 
       event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
     } catch (err) {
@@ -79,11 +80,15 @@ export default async function handler(req, res) {
           status: "charge.succeeded",
           referenceNumber: event.data.object.id,
         });
-        res.json({ status: "succeeded" });
+        res.json({ status: "charge.succeeded" });
         break;
       case "charge.updated":
         console.log("Charge updated:", event.data.object);
         res.json({ status: "updated" });
+        break;
+      case "charge.failed":
+        console.log("Charge.failed", event.data.object);
+        res.json({ status: "charge.failed" });
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);
