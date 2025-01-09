@@ -136,7 +136,7 @@ export default async function handler(req, res) {
       await client.query(refundBookingQuery, [
         bookingId,
         booking.final_price,
-        "Pending",
+        "Completed",
         new Date(),
         reason,
       ]);
