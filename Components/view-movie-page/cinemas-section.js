@@ -25,6 +25,7 @@ import { groupBy } from "@/utils/grouping";
 import axios from "axios";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import RocketIcon from "@mui/icons-material/Rocket";
 
 export function CinemaSection({
   movie,
@@ -50,7 +51,6 @@ export function CinemaSection({
     return initialState;
   });
 
-  console.log(`isShowHall:`, isShowHall);
   useEffect(() => {
     if (movie) {
       const initialState = {};
@@ -116,7 +116,6 @@ export function CinemaSection({
     const fetchCities = async () => {
       try {
         const response = await axios.get("/api/movies/cities");
-        console.log(`Response`, response);
 
         const fetchedItems = response.data.data.map((city) => ({
           label: city,
@@ -379,8 +378,18 @@ export function CinemaSection({
             );
           })
         ) : (
-          <div className="flex justify-center items-center">
-            <p>No cinema found.</p>
+          <div className="flex justify-center items-center px-4 md:px-0">
+            <p className="flex gap-5 justify-center items-center md:text-xl md:font-medium">
+              <div className="animate-bounce">
+                <Image
+                  src="/img/cinema.png"
+                  width={40}
+                  height={40}
+                  alt="popcorn"
+                />
+              </div>
+              No cinemas showing this movie on the selected date.
+            </p>
           </div>
         )}
       </div>
