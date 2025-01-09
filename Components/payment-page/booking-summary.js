@@ -12,6 +12,7 @@ import {
   ProgressCircleRing,
   ProgressCircleRoot,
 } from "@/components/ui/progress-circle";
+import CustomSkeleton from "@/utils/skeleton";
 
 function BookingSummary({
   handleQrCode,
@@ -28,7 +29,7 @@ function BookingSummary({
   setDiscount,
   paymentMethod,
 }) {
-  const { booking, timeLeft, setTimeLeft } = useBooking();
+  const { booking, timeLeft, loading, setTimeLeft } = useBooking();
   const currentBooking = booking;
   const [couponCode, setCouponCode] = useState("");
   const [couponIsValid, setCouponIsValid] = useState(true);
@@ -39,6 +40,24 @@ function BookingSummary({
   useEffect(() => {
     if (currentBooking) {
       setTotal(currentBooking.total_price);
+      console.log(timeLeft);
+      const expiryTime = Date.now() + timeLeft * 1000; // Convert seconds to milliseconds
+      localStorage.setItem("expiryTime", expiryTime); // Save to localStorage to persist between renders
+
+      const timer = setInterval(() => {
+        const remainingTime = Math.max(
+          Math.floor((expiryTime - Date.now()) / 1000),
+          0
+        );
+        setTimeLeft(remainingTime);
+
+        if (remainingTime === 0) {
+          setIsTimeout(true);
+          clearInterval(timer);
+        }
+      }, 1000);
+
+      return () => clearInterval(timer);
     }
   }, [currentBooking]);
 
@@ -50,17 +69,19 @@ function BookingSummary({
   }, [couponCode]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        const newTime = Math.max(prev - 1, 0);
-        if (newTime === 0) {
-          setIsTimeout(true);
-        }
-        return newTime;
-      });
-    }, 1000);
+    const savedExpiryTime = localStorage.getItem("expiryTime");
 
-    return () => clearInterval(timer);
+    if (savedExpiryTime) {
+      const remainingTime = Math.max(
+        Math.floor((savedExpiryTime - Date.now()) / 1000),
+        0
+      );
+      setTimeLeft(remainingTime);
+
+      if (remainingTime === 0) {
+        setIsTimeout(true);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -138,6 +159,10 @@ function BookingSummary({
 
   if (isTimeout) {
     handleTimeout();
+  }
+
+  if (loading) {
+    return <CustomSkeleton />
   }
 
   return (
