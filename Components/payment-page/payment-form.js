@@ -211,7 +211,10 @@ function PaymentForm({
         payment_method: selectedMethod,
       });
 
-      setPaymentDetails(response.data.paymentDetails);
+      if (response.status === 201) {
+        setPaymentDetails(response.data.paymentDetails);
+        setIsOpenToastErr(false);
+      }
     } catch (err) {
       console.error(
         "Error creating pending payment:",
@@ -286,7 +289,7 @@ function PaymentForm({
 
   return (
     <>
-      <div className="2xl:flex-row flex flex-col lg:gap-24 gap-10 w-full justify-center items-center 2xl:items-start lg:p-0">
+      <div className="2xl:flex-row flex flex-col gap-10 w-full justify-center items-center 2xl:items-start lg:p-0">
         <div className="w-full xl:w-auto">
           <div className="flex gap-5 p-4 lg:p-0">
             {paymentMethod.map((method) => (
@@ -313,6 +316,7 @@ function PaymentForm({
           )}
           {selectedMethod === "QR Code" && <QrCodePayment />}
         </div>
+        <div className="flex flex-col justify-center items-center md:max-w-[450px] w-full p-4 lg:p-0">
           <BookingSummary
             handleQrCode={handleQrCode}
             handleSubmit={handleSubmit}
@@ -329,34 +333,35 @@ function PaymentForm({
             setDiscount={setDiscount}
             paymentMethod={selectedMethod}
           />
-      </div>
-      <Toaster className="md:hidden" />
-      {isOpenToastErr && (
-        <div className="bg-[#E5364B99] text-white p-2 px-4 mt-10 lg:mr-28 rounded xl:w-[480px] w-full h-28 flex-col justify-center gap-1 hidden md:flex">
-          <div className="flex justify-between">
-            <strong>Payment failed.</strong>
-            <svg
-              onClick={() => setIsOpenToastErr(!isOpenToastErr)}
-              style={{ cursor: "pointer" }}
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-x"
-            >
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </div>
-          <span>{errMsg}</span>
-          Please try again
+          <Toaster className="md:hidden" />
+          {isOpenToastErr && (
+            <div className="bg-[#E5364B99] text-white p-2 px-4 mt-10 rounded xl:w-[480px] w-full h-28 flex-col justify-center gap-1 hidden md:flex">
+              <div className="flex justify-between">
+                <strong>Payment failed.</strong>
+                <svg
+                  onClick={() => setIsOpenToastErr(false)}
+                  style={{ cursor: "pointer" }}
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-x"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </div>
+              <span>{errMsg}</span>
+              Please try again
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </>
   );
 }
