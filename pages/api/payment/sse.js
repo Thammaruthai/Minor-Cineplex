@@ -3,7 +3,7 @@ import Cors from "cors";
 // สร้าง middleware สำหรับ CORS
 const cors = Cors({
   methods: ["GET", "POST"],
-  origin: "https://your-production-domain.com", // กำหนด origin ที่อนุญาตให้เข้าถึง API ของคุณ
+  origin: "https://minor-cineplex-nine.vercel.app/", // กำหนด origin ที่อนุญาตให้เข้าถึง API ของคุณ
 });
 
 // ใช้งาน CORS middleware
