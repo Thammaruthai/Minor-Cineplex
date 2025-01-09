@@ -316,12 +316,12 @@ const BookingHistory = () => {
                     ? "border border-[#21263F] text-white bg-[#565F7E]"
                     : booking.payment_status === "succeeded" &&
                       new Date(booking.show_date_time).getTime() +
-                        24 * 60 * 60 * 1000 <
+                        0 * 60 * 60 * 1000 <
                         Date.now()
                     ? "border border-[#21263F] text-white"
                     : booking.payment_status === "succeeded" &&
                       new Date(booking.show_date_time).getTime() +
-                        24 * 60 * 60 * 1000 >
+                        0 * 60 * 60 * 1000 >
                         Date.now()
                     ? "bg-[#00A372] text-white"
                     : booking.booking_status === "Active" &&
@@ -337,12 +337,12 @@ const BookingHistory = () => {
                   ? "Canceled"
                   : booking.payment_status === "succeeded" &&
                     new Date(booking.show_date_time).getTime() +
-                      24 * 60 * 60 * 1000 <
+                      0 * 60 * 60 * 1000 <
                       Date.now()
                   ? "Complete"
                   : booking.payment_status === "succeeded" &&
                     new Date(booking.show_date_time).getTime() +
-                      24 * 60 * 60 * 1000 >
+                      0 * 60 * 60 * 1000 >
                       Date.now()
                   ? "Paid"
                   : booking.booking_status === "Active" &&
@@ -362,12 +362,12 @@ const BookingHistory = () => {
                     ? "border border-[#21263F] text-white bg-[#565F7E]"
                     : booking.payment_status === "succeeded" &&
                       new Date(booking.show_date_time).getTime() +
-                        24 * 60 * 60 * 1000 <
+                        0 * 60 * 60 * 1000 <
                         Date.now()
                     ? "border border-[#21263F] text-white"
                     : booking.payment_status === "succeeded" &&
                       new Date(booking.show_date_time).getTime() +
-                        24 * 60 * 60 * 1000 >
+                        0 * 60 * 60 * 1000 >
                         Date.now()
                     ? "bg-[#00A372] text-white"
                     : booking.booking_status === "Active" &&
@@ -383,12 +383,12 @@ const BookingHistory = () => {
                   ? "Canceled"
                   : booking.payment_status === "succeeded" &&
                     new Date(booking.show_date_time).getTime() +
-                      24 * 60 * 60 * 1000 <
+                      0 * 60 * 60 * 1000 <
                       Date.now()
                   ? "Complete"
                   : booking.payment_status === "succeeded" &&
                     new Date(booking.show_date_time).getTime() +
-                      24 * 60 * 60 * 1000 >
+                      0 * 60 * 60 * 1000 >
                       Date.now()
                   ? "Paid"
                   : booking.booking_status === "Active" &&
@@ -602,12 +602,12 @@ const BookingHistory = () => {
                             ? "border border-[#21263F] text-white bg-[#565F7E]"
                             : booking.payment_status === "succeeded" &&
                               new Date(booking.show_date_time).getTime() +
-                                24 * 60 * 60 * 1000 <
+                                0 * 60 * 60 * 1000 <
                                 Date.now()
                             ? "border border-[#21263F] text-white"
                             : booking.payment_status === "succeeded" &&
                               new Date(booking.show_date_time).getTime() +
-                                24 * 60 * 60 * 1000 >
+                                0 * 60 * 60 * 1000 >
                                 Date.now()
                             ? "bg-[#00A372] text-white"
                             : booking.booking_status === "Active" &&
@@ -623,12 +623,12 @@ const BookingHistory = () => {
                           ? "Canceled"
                           : booking.payment_status === "succeeded" &&
                             new Date(booking.show_date_time).getTime() +
-                              24 * 60 * 60 * 1000 <
+                              0 * 60 * 60 * 1000 <
                               Date.now()
                           ? "Complete"
                           : booking.payment_status === "succeeded" &&
                             new Date(booking.show_date_time).getTime() +
-                              24 * 60 * 60 * 1000 >
+                              0 * 60 * 60 * 1000 >
                               Date.now()
                           ? "Paid"
                           : booking.booking_status === "Active" &&
@@ -668,12 +668,12 @@ const BookingHistory = () => {
                           ? "Canceled"
                           : booking.payment_status === "succeeded" &&
                             new Date(booking.show_date_time).getTime() +
-                              24 * 60 * 60 * 1000 <
+                              0 * 60 * 60 * 1000 <
                               Date.now()
                           ? "Complete"
                           : booking.payment_status === "succeeded" &&
                             new Date(booking.show_date_time).getTime() +
-                              24 * 60 * 60 * 1000 >
+                              0 * 60 * 60 * 1000 >
                               Date.now()
                           ? "Paid"
                           : booking.booking_status === "Active" &&
