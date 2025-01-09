@@ -34,8 +34,6 @@ export default function Register() {
     }
   }, [booking_uuid]);
 
-  console.log(`Refund`, refund)
-
   if (1) {
     return (
       <div className="flex flex-col items-center justify-center gap-6 text-white h-screen bg-slate-900 min-h-[640px] min-w-[300px] animate-fade-in font-robotoCondensed ">
@@ -52,8 +50,7 @@ export default function Register() {
                 The cancellation is complete.
               </p>
               <p className="text-sm text-gray-400">
-                You will receive an email with a detail and refund within 48
-                hours.
+              Your cancellation is confirmed, and the refund process is ongoing.
               </p>
             </div>
             <div className="flex justify-center gap-1">
