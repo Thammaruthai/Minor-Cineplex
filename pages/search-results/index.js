@@ -15,9 +15,9 @@ import { motion } from "framer-motion";
 import { Button } from "@chakra-ui/react";
 import Link from "next/link";
 import { useFilter } from "@/hooks/useFilter";
-import FilterBar from "./filterbar";
+import FilterBar from "@/Components/search-result/filterbar";
 import Footer from "@/Components/page-sections/footer";
-import Pagination from "./pagination";
+import Pagination from "@/Components/search-result/pagination";
 import { convertDate } from "@/utils/date";
 
 function SearchResults() {
@@ -116,10 +116,15 @@ function SearchResults() {
     return relatedMovies.map(([movieName, movieDetails]) => {
       const groupedByHall = movieDetails.reduce((acc, show) => {
         const hallName = show.hall_name.trim();
-        if (!acc[hallName]) {
-          acc[hallName] = [];
+        const hallId = show.hall_id;
+
+        if (!acc[hallId]) {
+          acc[hallId] = {
+            hall_name: hallName,
+            shows: [],
+          };
         }
-        acc[hallName].push(show);
+        acc[hallId].shows.push(show);
         return acc;
       }, {});
 
@@ -294,7 +299,7 @@ function SearchResults() {
                                         {movieName}
                                       </h1>
                                     </Link>
-                                    <div className="flex flex-wrap gap-2">
+                                    <div className="flex flex-wrap gap-2 md:w-[192px]">
                                       {movie.genres.map((genre, index) => (
                                         <Button
                                           key={index}
@@ -309,7 +314,10 @@ function SearchResults() {
                                     </div>
                                     <div
                                       onClick={() =>
-                                        handleShowMovieDetail(movie.movie_id, cinema_name)
+                                        handleShowMovieDetail(
+                                          movie.movie_id,
+                                          cinema_name
+                                        )
                                       }
                                       className="underline md:mt-5 cursor-pointer hover:font-bold"
                                     >
@@ -317,48 +325,52 @@ function SearchResults() {
                                     </div>
                                   </div>
                                   <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={
-                                  showMovieDetail[`${movie.movie_id}_${cinema_name}`]
-                                    ? { height: "auto", opacity: 1 }
-                                    : { height: 0, opacity: 0 }
-                                }
-                                transition={{
-                                  duration: 0.5,
-                                  ease: "easeInOut",
-                                }}
-                                style={{ overflow: "hidden" }}
-                              >
-                                <div className="md:max-w-[1200px] bg-[#070C1BB2] mb-4 md:flex-row flex-col backdrop-blur-md bg-opacity-70 rounded-lg hidden md:flex">
-                                  <div className="flex">
-                                    <div className="flex flex-col gap-5 w-[192px]">
-                                      <div className="flex flex-col gap-3">
-                                        <div className="xl:flex-row xl:gap-6 lg:gap-4 gap-3 xl:items-center flex flex-col">
-                                          <p className="text-base text-[#C8CEDD]">
-                                            Release date:{" "}
-                                            {convertDate(movie.release_date)}
-                                          </p>
-                                        </div>
-                                        <div>
-                                          <p className="hidden md:flex text-sm text-[#C8CEDD]">
-                                            {movie.description}
-                                          </p>
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={
+                                      showMovieDetail[
+                                        `${movie.movie_id}_${cinema_name}`
+                                      ]
+                                        ? { height: "auto", opacity: 1 }
+                                        : { height: 0, opacity: 0 }
+                                    }
+                                    transition={{
+                                      duration: 0.5,
+                                      ease: "easeInOut",
+                                    }}
+                                    style={{ overflow: "hidden" }}
+                                  >
+                                    <div className="md:max-w-[1200px] bg-[#070C1BB2] mb-4 md:flex-row flex-col backdrop-blur-md bg-opacity-70 rounded-lg hidden md:flex">
+                                      <div className="flex">
+                                        <div className="flex flex-col gap-5 w-[192px]">
+                                          <div className="flex flex-col gap-3">
+                                            <div className="xl:flex-row xl:gap-6 lg:gap-4 gap-3 xl:items-center flex flex-col">
+                                              <p className="text-base text-[#C8CEDD]">
+                                                Release date:{" "}
+                                                {convertDate(
+                                                  movie.release_date
+                                                )}
+                                              </p>
+                                            </div>
+                                            <div>
+                                              <p className="hidden md:flex text-sm text-[#C8CEDD]">
+                                                {movie.description}
+                                              </p>
+                                            </div>
+                                          </div>
                                         </div>
                                       </div>
+                                      <div>
+                                        <p className="md:hidden text-base lg:mt-6 mt-1 text-[#C8CEDD]">
+                                          {movie.description}
+                                        </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                  <div>
-                                    <p className="md:hidden text-base lg:mt-6 mt-1 text-[#C8CEDD]">
-                                      {movie.description}
-                                    </p>
-                                  </div>
-                                </div>
-                              </motion.div>
+                                  </motion.div>
                                 </div>
                                 <div className="bg-[#070C1B] flex flex-col md:gap-14 gap-10 md:px-10 py-6">
                                   {Object.entries(hall)
-                                    .filter(([hall_name, hallShows]) =>
-                                      hallShows.some(
+                                    .filter(([hallId, hallData]) =>
+                                      hallData.shows.some(
                                         (show) =>
                                           show.show_date_time &&
                                           show.cinema_name === cinema_name &&
@@ -368,10 +380,11 @@ function SearchResults() {
                                             new Date(date).toDateString()
                                       )
                                     )
-                                    .map(([hall_name, shows]) => {
+                                    .map(([hallId, hallData]) => {
+                                      const { hall_name, shows } = hallData;
                                       return (
                                         <div
-                                          key={hall_name}
+                                          key={hallId}
                                           className="flex flex-col"
                                         >
                                           <h2 className="text-2xl font-bold text-[#C8CEDD]">
@@ -449,7 +462,9 @@ function SearchResults() {
                               <motion.div
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={
-                                  showMovieDetail[`${movie.movie_id}_${cinema_name}`]
+                                  showMovieDetail[
+                                    `${movie.movie_id}_${cinema_name}`
+                                  ]
                                     ? { height: "auto", opacity: 1 }
                                     : { height: 0, opacity: 0 }
                                 }
