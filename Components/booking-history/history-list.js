@@ -382,7 +382,7 @@ const BookingHistory = () => {
                   : booking.booking_status === "Cancelled" &&
                     booking.payment_status === null
                   ? "Expired"
-                  : "nled"}
+                  : "Cancelled"}
               </div>
             </div>
 
