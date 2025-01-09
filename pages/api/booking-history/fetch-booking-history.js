@@ -79,6 +79,7 @@ export default async function handler(req, res) {
     b.booking_date,
     b.total_price,
     b.booking_status,
+    b.show_id,
     sh.show_date_time,
     m.title,
     m.poster,
@@ -120,7 +121,7 @@ LIMIT $2 OFFSET $3;`;
 
       const result = await client.query(query, [userId, limit, offset]);
       client.release();
-      // console.log(result.rows);
+      //console.log(result.rows);
 
       return res.status(200).json({ booking_history: result.rows });
     } catch (error) {

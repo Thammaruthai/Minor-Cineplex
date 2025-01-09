@@ -139,6 +139,7 @@ const BookingHistory = () => {
                   existingBooking.booking_id === newBooking.booking_id
               )
           );
+           
           return [...prev, ...newBookings];
         });
         setHasMore(response.data.booking_history.length > 0); // Check if there is more data
@@ -146,6 +147,8 @@ const BookingHistory = () => {
         console.log("Something went wrong.");
       } finally {
         setLoading(false);
+       ;
+        
       }
     };
 
@@ -188,7 +191,7 @@ const BookingHistory = () => {
             key={index}
             ref={index === bookingHistory.length - 1 ? lastBookingRef : null}
             onClick={() => openHistoryModal(booking.booking_id)}
-            className={`p-4 bg-[#070C1B] rounded-lg flex flex-col  justify-between items-start gap-4 w-[691px] animate-fadeInFromRight hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-all duration-300 ease-in-out cursor-pointer max-sm:w-full max-sm:p-4`}
+            className={`p-4 bg-[#070C1B] rounded-lg flex flex-col  justify-between items-start gap-4 w-[691px]  hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-all duration-300 ease-in-out cursor-pointer max-sm:w-full max-sm:p-4`}
           >
             {/* Movie Poster */}
             <div className="flex items-start gap-4 w-full">
@@ -769,7 +772,7 @@ const BookingHistory = () => {
               isOpen={isShareModalOpen}
               onClose={closeShareModal}
               position={modalPosition}
-              bookingLink="https://example.com/booking/12345"
+              bookingData={booking}
             />
             {/*---------------------------------------- Cancel Modal ----------------------------------------*/}
 
