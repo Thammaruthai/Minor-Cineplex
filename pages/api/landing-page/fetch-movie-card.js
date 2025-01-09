@@ -4,9 +4,22 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     try {
       // ใช้ Promise.all เพื่อรัน Query หลายตัวพร้อมกัน
-      const [moviesResult, languagesResult, genresResult, citiesResult] =
-        await Promise.all([
-          connectionPool.query(`
+
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 12;
+      const safePage = Math.max(1, page);
+      const safeLimit = Math.max(1, Math.min(100, limit));
+      const offset = (safePage - 1) * safeLimit;
+
+      const [
+        moviesResult,
+        totalCountResult,
+        languagesResult,
+        genresResult,
+        citiesResult,
+      ] = await Promise.all([
+        connectionPool.query(
+          `
           SELECT 
             m.movie_id,
             m.poster,
@@ -21,19 +34,26 @@ export default async function handler(req, res) {
           LEFT JOIN reviews r ON m.movie_id = r.movie_id
           LEFT JOIN languages l ON m.language_id = l.language_id
           GROUP BY m.movie_id
-          ORDER BY m.release_date ASC;
+          ORDER BY m.release_date ASC
+          LIMIT $1 OFFSET $2;
+        `,
+          [safeLimit, offset]
+        ),
+        connectionPool.query(`
+          SELECT COUNT(*) AS total_count
+          FROM movies;
         `),
-          connectionPool.query(`
+        connectionPool.query(`
           SELECT language_id, name
           FROM languages
           ORDER BY name;
         `),
-          connectionPool.query(`
+        connectionPool.query(`
           SELECT DISTINCT g.genre_id, g.name
           FROM genres g
           ORDER BY g.name;
         `),
-          connectionPool.query(`
+        connectionPool.query(`
           SELECT DISTINCT
             c.city_id,
             c.city_name AS name
@@ -43,10 +63,16 @@ export default async function handler(req, res) {
           ORDER BY
             c.city_name;
         `),
-        ]);
+      ]);
+
+      const totalMovies = parseInt(totalCountResult.rows[0].total_count, 10);
+      const totalPages = Math.ceil(totalMovies / safeLimit);
 
       // ส่ง response เป็น JSON รวมข้อมูลทั้งหมด
       res.status(200).json({
+        totalMovies,
+        totalPages,
+        currentPage: safePage,
         movies: moviesResult.rows,
         languages: languagesResult.rows,
         genres: genresResult.rows,
