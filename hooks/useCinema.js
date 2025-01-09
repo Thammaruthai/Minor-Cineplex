@@ -35,7 +35,7 @@ export function useCinema() {
       fetchData();
     }
   }, [cinemaId, date]);
-  console.log(`data from useCinema`, movie)
+
   return {
     movie,
     city,

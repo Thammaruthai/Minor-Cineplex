@@ -9,7 +9,7 @@ export function useMovie() {
   const [city, setCity] = useState("All");
   const [cinema, setCinema] = useState("");
   const [inputSearch, setInputSearch] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [date, setDate] = useState(new Date().toDateString());
 
   useEffect(() => {

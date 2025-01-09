@@ -7,6 +7,7 @@ import { StepsHeader } from "@/Components/page-sections/steps-header";
 import { QRCodeSVG } from "qrcode.react";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Image from "next/image";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISABLE_KEY);
 
 export default function PaymentPage() {
@@ -14,7 +15,7 @@ export default function PaymentPage() {
   const [dots, setDots] = useState("");
   const [isTimeout, setIsTimeout] = useState(false);
   const [total, setTotal] = useState(0);
-  const { booking, timeLeft, setTimeLeft } = useBooking();
+  const { booking, timeLeft, isError, setTimeLeft } = useBooking();
   const [qrCode, setQrCode] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [isExpiredOpen, setIsExpiredOpen] = useState(false);
@@ -111,11 +112,33 @@ export default function PaymentPage() {
 
   if (
     booking?.booking_status === "Cancelled" ||
-    booking?.booking_status === "Paid"
+    booking?.booking_status === "Paid" ||
+    isError
   ) {
     return (
-      <section className="flex items-start justify-center gap-24 px-28 py-20 h-full w-full text-white">
-        <p>404 This page could not be found</p>
+      <section className="fixed top-0 left-0 flex items-center justify-center h-full w-full text-white">
+        <div className="flex justify-center items-center">
+          <div className="flex flex-col gap-2 justify-center items-center text-xl font-medium">
+            <div className="flex justify-center items-center animate-bounce gap-5">
+              <Image
+                src="/img/404-error.png"
+                width={60}
+                height={60}
+                alt="popcorn"
+              />
+              <h1 className="text-3xl font-bold">404</h1>
+            </div>
+            <div className="animate-pulse flex flex-col gap-1 justify-center items-center">
+              <p className="text-xl font-medium">
+                This page could not be found.
+              </p>
+              <p className="font-normal">
+                You did not complete the checkout process in time, please start
+                again.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
     );
   }
