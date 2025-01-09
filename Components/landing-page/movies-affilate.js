@@ -40,7 +40,7 @@ export default function MoviesAffiliate() {
                   href={`/cinemas/${cinema.cinema_id}`}
                 >
                   {/* Cinema 1 */}
-                  <div className="flex items-center border border-[#21263f] rounded-lg p-5 shadow-md">
+                  <div className="flex border border-[#21263f] rounded-lg p-5 shadow-md">
                     <div className="flex-none bg-[#2a304f] w-14 h-14 rounded-full flex items-center justify-center">
                       <img
                         src="/img/location.png"
