@@ -3,7 +3,8 @@ export default function ShareModal({ isOpen, onClose, position, bookingData }) {
   if (!isOpen) return null;
 
   const shareUrl =
-    "https://minor-cineplex-nine.vercel.app/sharing/" + temp_booking_uuid ; // URL ที่ต้องการแชร์
+    "https://minor-cineplex-nine.vercel.app/sharing/" +
+    bookingData.temp_booking_uuid; ; // URL ที่ต้องการแชร์
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const text = `🎥 ชวนมาดู "${bookingData.title}" ด้วยกัน! 🥳
 ✨ จองตั๋วได้ง่ายๆ ที่นี่: `;
