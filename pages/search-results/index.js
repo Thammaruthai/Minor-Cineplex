@@ -290,7 +290,7 @@ function SearchResults() {
                                       width={174}
                                       height={254}
                                       alt={movie.title}
-                                      className="md:h-[254px] md:w-[192px] rounded-md"
+                                      className="md:h-[254px] md:w-[192px] min-h-[150px] rounded"
                                     />
                                   </Link>
                                   <div className="w-full md:gap-2 flex flex-col gap-6">
