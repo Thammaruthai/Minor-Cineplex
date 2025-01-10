@@ -8,6 +8,8 @@ import { QRCodeSVG } from "qrcode.react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISABLE_KEY);
 
 export default function PaymentPage() {
@@ -20,9 +22,68 @@ export default function PaymentPage() {
   const [discountAmount, setDiscountAmount] = useState(0);
   const [isExpiredOpen, setIsExpiredOpen] = useState(false);
   const bookingId = booking.booking_id;
+  const [isRequireAction, setIsRequireAction] = useState(false);
   const handleExpiredModal = () => {
     router.push(`/booking/${booking.show_id}`);
   };
+  async function handleCheckPaymentStatus(paymentIntentId) {
+    try {
+      const paymentIntentId = qrCode.paymentIntentId;
+      const response = await axios.post("/api/payment/qr-code/check-status", {
+        paymentIntentId: paymentIntentId,
+      });
+
+      const result = response.data;
+      // ตรวจสอบสถานะการชำระเงิน
+      if (result.status === "succeeded") {
+        try {
+          const response = await axios.patch(
+            `/api/payment/qr-code/update-payment`,
+            {
+              paymentIntent: paymentIntentId,
+              booking_id: bookingId,
+              payment_amount: total,
+              discount: discountAmount,
+              status: "succeeded",
+            }
+          );
+          const { temp_payment_uuid } = response.data;
+          if (temp_payment_uuid) {
+            router.push(`/payments/payment-detail/${temp_payment_uuid}`);
+          }
+        } catch (error) {
+          toast.error("Payment error. Please try again later.", {
+            position: "bottom-right",
+          });
+        }
+      } else if (result.status === "requires_action") {
+        setIsRequireAction(true);
+      } else if (result.status === "payment_expired") {
+        try {
+          await axios.patch(`/api/payment/qr-code/update-payment`, {
+            paymentIntent: paymentIntentId,
+            booking_id: bookingId,
+            payment_amount: total,
+            discount: discountAmount,
+            status: "Failed",
+          });
+          setIsExpiredOpen(true);
+        } catch (error) {
+          toast.error("Payment error. Please try again later.", {
+            position: "bottom-right",
+          });
+        }
+      } else {
+        toast.error("Payment error. Please try again later.", {
+          position: "bottom-right",
+        });
+      }
+    } catch (error) {
+      toast.error("Payment error. Please try again later.", {
+        position: "bottom-right",
+      });
+    }
+  }
   //time remaining
   useEffect(() => {
     const timer = setInterval(() => {
@@ -60,7 +121,7 @@ export default function PaymentPage() {
     }
   }, [isTimeout, router, bookingId]);
   //sse
-  useEffect(() => {
+  /*   useEffect(() => {
     const sse = new EventSource(`/api/payment/sse`);
 
     sse.onmessage = async (event) => {
@@ -108,7 +169,7 @@ export default function PaymentPage() {
     return () => {
       sse.close(); // Clean up the SSE connection on component unmount
     };
-  }, [bookingId, total, discountAmount]);
+  }, [bookingId, total, discountAmount]); */
 
   if (
     booking?.booking_status === "Cancelled" ||
@@ -145,6 +206,7 @@ export default function PaymentPage() {
   if (qrCode) {
     return (
       <div className="mt-36">
+        <Toaster />
         <section className="bg-[#21263F] text-white mx-auto max-w-4xl py-24 px-8 flex flex-col justify-center items-center gap-5 ">
           <p className="text-[#8B93B0] text-sm">
             Time remaining:{" "}
@@ -153,6 +215,12 @@ export default function PaymentPage() {
           <QRCodeSVG value={qrCode.qrCodeUrl.data} size={256} />
           <p>Minor Cineplex Public limited company</p>
           <p className="font-bold text-xl">THB{Number(total).toFixed(0)}</p>
+          <button
+            className="bg-[#4E7BEE] text-white font-bold px-8 py-2 mt-2 rounded hover:bg-[#1E29A8]"
+            onClick={handleCheckPaymentStatus}
+          >
+            Confirm Payment
+          </button>
         </section>
         {isExpiredOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -171,6 +239,25 @@ export default function PaymentPage() {
               <button
                 className="bg-[#4E7BEE] text-white font-bold px-4 py-2 mt-6 rounded hover:bg-[#1E29A8] w-full"
                 onClick={handleExpiredModal}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
+        {isRequireAction && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="relative bg-[#21263F] border border-[#565F7E] text-white p-4 rounded-lg shadow-lg w-full max-w-xs">
+              <h2 className="text-xl font-bold text-center">
+                Complete Your Payment
+              </h2>
+              <p className="text-sm mt-4 text-center text-[#C8CEDD]">
+                Your payment is pending. Please complete the payment within the
+                specified time to confirm your booking.
+              </p>
+              <button
+                className="bg-[#4E7BEE] text-white font-bold px-4 py-2 mt-6 rounded hover:bg-[#1E29A8] w-full"
+                onClick={() => setIsRequireAction(false)}
               >
                 OK
               </button>
