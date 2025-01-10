@@ -84,7 +84,7 @@ export default function Filter({ onFilterApply }) {
   };
 
   return (
-    <section className="bg-[#070C1B] rounded-[4px] shadow-lg -mt-52 w-[344px] md:w-[450px] lg:min-w-[1000px] lg:-mt-12 2xl:w-[1500px] flex justify-center items-center">
+    <section className="bg-[#070C1B] rounded-[4px] shadow-lg -mt-52 w-[344px] md:w-[450px] lg:min-w-[1000px] xl:min-w-[1280px] lg:-mt-12 2xl:w-[1500px] flex justify-center items-center">
       <div className="p-5 xl:p-10 rounded-lg mx-auto xl:h-[128px] flex flex-col justify-center w-full">
         <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
           {/* Movie Dropdown */}
