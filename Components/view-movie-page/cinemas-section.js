@@ -25,7 +25,6 @@ import { groupBy } from "@/utils/grouping";
 import axios from "axios";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import RocketIcon from "@mui/icons-material/Rocket";
 
 export function CinemaSection({
   movie,
