@@ -9,6 +9,10 @@
       "destination": "/page/payments/payment-detail/[payment_uuid].js"
     },
     {
+      "source": "/pages/sharing/:booking_uuid",
+      "destination": "/pages/sharing/[booking_uuid].js"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }
