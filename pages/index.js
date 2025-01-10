@@ -22,8 +22,11 @@ export default function Home() {
         }}
       ></div>
       <Filter onFilterApply={(movies) => setFilteredMovies(movies)} />
-      <MoviesCard />
-      <MoviesAffiliate />
+      <div className="flex flex-col p-4 md:p-8 2xl:p-0 max-w-[1500px] md:w-full">
+        <MoviesCard />
+        <MoviesAffiliate />
+      </div>
+
       <Footer />
     </div>
   );
