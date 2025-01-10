@@ -90,14 +90,14 @@ export default function MoviesCard() {
   return (
     <>
       {/* Header */}
-      <section className="flex flex-col 2xl:w-[1500px] lg:min-w-[1000px] xl:min-w-[1200px] md:mb-5 lg:mb-10 p-4 2xl:p-0">
-        <div className=" py-5 xl:mb-8 mt-16 lg:mt-24 flex w-full gap-5">
+      <section className="flex flex-col w-full max-w-[1500px] md:mb-5 lg:mb-10 2xl:p-0">
+        <div className=" py-5 xl:mb-8 mt-16 lg:mt-24 flex w-full gap-5 items-center">
           <button
             className={`${
               isNowShowing
                 ? "text-white border-b border-[#565F7E]"
                 : "text-[#8b93b0]"
-            } pb-2 text-2xl lg:text-4xl font-bold`}
+            } pb-1 text-2xl lg:text-4xl font-bold`}
             onClick={() => setIsNowShowing(true)} // สลับเป็น "Now Showing"
           >
             Now showing
@@ -107,7 +107,7 @@ export default function MoviesCard() {
               !isNowShowing
                 ? "text-white border-b border-[#565F7E] "
                 : "text-[#8b93b0]"
-            } text-2xl font-bold lg:text-4xl`}
+            } pb-1 text-2xl font-bold lg:text-4xl`}
             onClick={() => setIsNowShowing(false)} // สลับเป็น "Coming Soon"
           >
             Coming soon
@@ -115,14 +115,14 @@ export default function MoviesCard() {
         </div>
 
         {/* Content */}
-        <div className=" mb-10 xl:p-0 grid grid-cols-2 xl:gap-6 gap-5 lg:grid-cols-4 ">
+        <div className=" mb-10 xl:p-0 grid grid-cols-2 xl:gap-6 gap-5 lg:grid-cols-4">
           {(isNowShowing ? nowShowing : comingSoon).map((movie) => (
             <div key={movie.movie_id} className="flex flex-col">
               <Link href={`/movies/${movie.movie_id}`}>
                 <div>
                   <img
                     src={movie.poster || "https://via.placeholder.com/300x400"}
-                    className="rounded-[4px] w-full h-[235px] sm:h-[430px] md:h-[500px] xl:h-[480px]  lg:h-[300px]"
+                    className="rounded-[4px] w-full h-[235px] sm:h-[430px] md:h-[500px] xl:h-[480px] lg:h-[300px]"
                     alt={movie.title}
                   />
                 </div>
