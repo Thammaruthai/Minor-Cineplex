@@ -40,7 +40,7 @@ function BookingSummary({
   useEffect(() => {
     if (currentBooking) {
       setTotal(currentBooking.total_price);
-      console.log(timeLeft);
+
       const expiryTime = Date.now() + timeLeft * 1000; // Convert seconds to milliseconds
       localStorage.setItem("expiryTime", expiryTime); // Save to localStorage to persist between renders
 

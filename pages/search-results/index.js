@@ -25,11 +25,6 @@ function SearchResults() {
     useFilter();
   const [showMovieDetail, setShowMovieDetail] = useState({});
 
-  useEffect(() => {
-    console.log("Updated results:", results);
-    console.log("Updated totalPages:", totalPages);
-  }, [results]);
-
   const [isShowHall, setIsShowHall] = useState(() => {
     const initialState = {};
     results?.forEach((show) => {
