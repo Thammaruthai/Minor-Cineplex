@@ -238,9 +238,14 @@ export default function MovieSection({ movie, date, loading, setLoading }) {
           );
         })
       ) : (
-        <div className="flex justify-center items-center">
-          <p>No movie found.</p>
-        </div>
+        <div className="flex justify-center items-center px-4 md:px-0">
+            <p className="flex gap-5 justify-center items-center md:text-xl md:font-medium">
+              <div className="animate-bounce">
+                <Image src="/img/popcorn.png" width={40} height={40} alt="popcorn"/>
+              </div>
+              No movies available at this cinema on the selected date.
+            </p>
+          </div>
       )}
     </article>
   );

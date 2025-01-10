@@ -41,13 +41,10 @@ export function DateSection({ setDate, date, setLoading }) {
     }
   };
 
-  console.log(`Current Date`, currentDate);
-  console.log(`Selected Date`, selectedDate);
-
   const visibleDays = days.slice(startIndex, startIndex + limitDays);
 
   return (
-    <div className="md:w-full w-full p-4 h-28 bg-[#070C1B] md:gap-1 flex justify-center items-center">
+    <div className="md:w-full w-full p-4 h-28 bg-[#070C1B] md:gap-1 flex justify-center items-center md:my-0 mt-20">
       {startIndex === 0 ? null : (
         <button
           className="text-gray-300 p-2 hover:text-white"
