@@ -58,7 +58,7 @@ export default function ShareModal({ isOpen, onClose, position, bookingData }) {
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(bookingLink);
+    navigator.clipboard.writeText(shareUrl);
     alert("Link copied to clipboard!");
   };
 

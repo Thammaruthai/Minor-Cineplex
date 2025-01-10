@@ -57,7 +57,7 @@ export default function SharingPage() {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-center items-center h-[50px] px-6 py-3 ">
-            <span className="text-white">Booking Deatail</span>
+            <span className="text-white">Booking Detail</span>
           </div>
           <div className="bg-[#070C1B] p-6 flex flex-col gap-6 max-sm:p-4 max-sm:gap-4">
             {/* Modal Movie Poster */}
