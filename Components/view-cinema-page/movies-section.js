@@ -13,7 +13,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { convertDate } from "@/utils/date";
-import RocketIcon from "@mui/icons-material/Rocket";
 
 export default function MovieSection({ movie, date, loading, setLoading }) {
   const [showMovieDetail, setShowMovieDetail] = useState({});
