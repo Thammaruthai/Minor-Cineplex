@@ -48,7 +48,6 @@ export function useFilter() {
     date,
     feature,
     page,
-    totalPages,
   ]);
 
   return {
