@@ -219,20 +219,24 @@ export function CinemaSection({
                   <SelectTrigger icon={null}>
                     <div className="flex md:justify-between items-start justify-center md:items-center w-full">
                       <div className="md:flex-row flex flex-col md:items-center gap-5 w-full">
-                        <div className="flex items-center gap-5">
-                          <Image
-                            src="/icon.png"
-                            width={44}
-                            height={44}
-                            alt="Icon"
-                          />
-                          <h1 className="text-2xl font-bold">{cinema_name}</h1>
-                        </div>
+                        <Link href={`/cinemas/${shows[0].cinema_id}`}>
+                          <div className="flex items-center gap-5">
+                            <Image
+                              src="/icon.png"
+                              width={44}
+                              height={44}
+                              alt="Icon"
+                            />
+                            <h1 className="text-2xl font-bold">
+                              {cinema_name}
+                            </h1>
+                          </div>
+                        </Link>
                         <div className="flex md:gap-5 gap-2">
                           {uniqueFeatures.map((feature, index) => (
                             <div
                               key={index}
-                              className="bg-[#21263F] p-3 py-2 text-[14px] text-[#8B93B0] rounded-[4px]"
+                              className="bg-[#21263F] p-3 py-2 text-[14px] text-[#8B93B0] rounded-[4px] cursor-default"
                             >
                               {feature}
                             </div>

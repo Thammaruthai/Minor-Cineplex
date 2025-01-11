@@ -185,7 +185,11 @@ export default function MovieSection({ movie, date, loading, setLoading }) {
                               <Button
                                 disabled={isPastShowtime}
                                 key={show.show_id}
-                                className={`${buttonColor} rounded-[4px] md:px-6 px-4 py-3 md:w-32 w-[103px] h-12 text-xl font-bold`}
+                                className={`${buttonColor} rounded-[4px] md:px-6 px-4 py-3 md:w-32 w-[103px] h-12 text-xl font-bold hover:border ${
+                                  isPastShowtime
+                                    ? null
+                                    : "hover:bg-blue-400 hover:border-gray-500"
+                                } `}
                               >
                                 {formatShowtime(show.show_date_time)}
                               </Button>
