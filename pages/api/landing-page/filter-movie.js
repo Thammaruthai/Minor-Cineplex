@@ -29,7 +29,7 @@ export default async function handler(req, res) {
                 SELECT JSON_AGG(
                   JSONB_BUILD_OBJECT(
                     'show_id', shows.show_id,
-                    'show_date_time', (shows.show_date_time AT TIME ZONE 'UTC+7')::TEXT,
+                    'show_date_time', shows.show_date_time,
                     'movie_id', movies.movie_id,
                     'title', movies.title,
                     'description', movies.description,
