@@ -70,7 +70,7 @@ export default async function handler(req, res) {
       const formattedData = result.rows.map((row) => ({
         movie_name: row.title,
         show_id: row.show_id,
-        show_date_time: row.show_date_time,
+        show_date_time: row.show_date_time.toISOString().split(".")[0],
         hall_name: row.hall_name,
         cinemas: {
           name: row.cinema_name,
