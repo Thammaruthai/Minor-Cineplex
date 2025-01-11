@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       let query = `
         SELECT 
           show_id,
-          shows.show_date_time AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Bangkok' AS show_date_time, 
+          shows.show_date_time,
           halls.name AS hall_name, 
           halls.hall_id, 
           movies.title, 
@@ -78,7 +78,7 @@ export default async function handler(req, res) {
 
       const formattedData = result.rows.map((row) => ({
         show_id: row.show_id,
-        show_date_time: row.show_date_time.toISOString().split(".")[0],
+        show_date_time: row.show_date_time,
         hall_id: row.hall_id,
         hall_name: row.hall_name,
         cinema_id: row.cinema_id,

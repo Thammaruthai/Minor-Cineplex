@@ -20,7 +20,6 @@ export default async function handler(req, res) {
           cinemas.description AS cinema_description,
           cinemas.description_2 AS cinema_description2,
           cities.city_name,
-          shows.show_date_time,
           ARRAY_AGG(DISTINCT features.feature_name) AS cinema_features,
           JSON_AGG(
             DISTINCT JSONB_BUILD_OBJECT(
@@ -30,7 +29,7 @@ export default async function handler(req, res) {
                 SELECT JSON_AGG(
                   JSONB_BUILD_OBJECT(
                     'show_id', shows.show_id,
-                    'show_date_time', shows.show_date_time,
+                    'show_date_time', (shows.show_date_time AT TIME ZONE 'UTC-7')::TEXT,
                     'movie_id', movies.movie_id,
                     'title', movies.title,
                     'description', movies.description,
@@ -134,7 +133,7 @@ export default async function handler(req, res) {
       }
 
       query += `
-      GROUP BY cinemas.cinema_id, cities.city_name, shows.show_date_time
+      GROUP BY cinemas.cinema_id, cities.city_name
       ORDER BY cinemas.cinema_id ASC
       LIMIT $${values.length + 1} OFFSET $${values.length + 2};
       `;
@@ -157,7 +156,6 @@ export default async function handler(req, res) {
         cinema_banner: row.cinema_banner,
         cinema_description: row.cinema_description,
         cinema_features: row.cinema_features,
-        show_date_time: row.show_date_time,
         halls: row.halls,
       }));
 
