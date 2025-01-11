@@ -223,7 +223,7 @@ export default function Filter({ onFilterApply }) {
                         month: "short",
                         year: "numeric",
                       })
-                    : "Release Date"}
+                    : "All Date"}
                 </option>
               </select>
               {isDatePickerOpen && (
