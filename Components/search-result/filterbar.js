@@ -357,7 +357,7 @@ export default function FilterBar({ setPage }) {
         </div>
         <div>
           <p onClick={handleClear} className="underline cursor-pointer">
-            Clear
+            Fixed bug
           </p>
         </div>
       </div>

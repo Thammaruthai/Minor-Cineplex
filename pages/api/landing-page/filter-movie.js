@@ -29,7 +29,7 @@ export default async function handler(req, res) {
                 SELECT JSON_AGG(
                   JSONB_BUILD_OBJECT(
                     'show_id', shows.show_id,
-                    'show_date_time', (shows.show_date_time AT TIME ZONE 'UTC-7')::TEXT,
+                    'show_date_time', (shows.show_date_time AT TIME ZONE 'UTC+7')::TEXT,
                     'movie_id', movies.movie_id,
                     'title', movies.title,
                     'description', movies.description,
@@ -153,7 +153,7 @@ export default async function handler(req, res) {
           ...hall,
           showtimes: hall.showtimes.map((showtime) => ({
             ...showtime,
-            show_date_time: new Date(showtime.show_date_time).toISOString(), // แปลงเป็น ISO 8601
+            show_date_time: new Date(showtime.show_date_time).toISOString(),
           })),
         }));
 
