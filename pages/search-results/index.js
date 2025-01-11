@@ -133,8 +133,6 @@ function SearchResults() {
     });
   };
 
-  console.log(`Movie:`, movies)
-
   return (
     <>
       <section className="w-full h-full flex flex-col items-center text-white my-7 gap-10">

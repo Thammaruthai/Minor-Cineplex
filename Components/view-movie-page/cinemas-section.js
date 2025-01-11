@@ -143,8 +143,6 @@ export function CinemaSection({
     }));
   };
 
-  console.log(`Movie:`, movie)
-
   return (
     <article className="md:max-w-[1200px] w-full md:my-10 my-5 flex flex-col">
       <form>
