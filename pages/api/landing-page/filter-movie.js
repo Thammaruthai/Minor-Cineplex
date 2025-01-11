@@ -30,7 +30,7 @@ export default async function handler(req, res) {
                   JSONB_BUILD_OBJECT(
                     'show_id', shows.show_id,
                     'show_date_time', shows.show_date_time,
-                    'movie_id', movies.movie_id,
+                    'movie_id', shows.movie_id,
                     'title', movies.title,
                     'description', movies.description,
                     'release_date', movies.release_date,
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
                   ORDER BY shows.show_date_time
                 )
                 FROM shows
-                WHERE shows.hall_id = halls.hall_id
+                WHERE shows.hall_id = halls.hall_id AND shows.movie_id = movies.movie_id
               )
             )
           ) AS halls
