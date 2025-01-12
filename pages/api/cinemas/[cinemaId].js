@@ -12,7 +12,7 @@ export default async function handler(req, res) {
       let query = `
         SELECT 
           show_id, 
-          show_date_time, 
+          shows.show_date_time, 
           halls.name AS hall_name, 
           movies.movie_id,
           movies.title, 
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
       const formattedData = result.rows.map((row) => ({
         movie_name: row.title,
         show_id: row.show_id,
-        show_date_time: row.show_date_time.toISOString().split(".")[0],
+        show_date_time: row.show_date_time,
         hall_name: row.hall_name,
         cinemas: {
           name: row.cinema_name,
