@@ -1,6 +1,12 @@
 import connectionPool from "@/utils/db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
+);
 
 const JWT_SECRET = process.env.SECRET_KEY;
 const MAX_FAILED_ATTEMPTS = 5; // จำนวนครั้งที่อนุญาตให้ล็อกอินผิด
@@ -26,6 +32,34 @@ export default async function handler(req, res) {
   const client = await connectionPool.connect();
 
   try {
+
+    const { data, error } = await supabase.auth.admin.listUsers();
+
+    if (error) {
+      console.error("Error fetching users from Supabase:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Failed to verify email with Supabase.",
+      });
+    }
+
+    // verify the email matches with Supabase Auth
+    const userInSupabase = data.users.find((user) => user.email === email);
+
+    if (!userInSupabase) {
+      return res.status(404).json({
+        success: false,
+        error: "Email not found in Supabase Authentication.",
+      });
+    }
+
+    if (!userInSupabase.email_confirmed_at) {
+      return res.status(422).json({
+        success: false,
+        error: "Email not verified. Please verify your email before logging in.",
+      });
+    }
+
     const result = await client.query(
       "SELECT user_id, password_hash, locked_until, supabase_uuid FROM users WHERE email = $1", // เพิ่ม user uuid เพื่อทำ audit log หรือดึงเผื่อให้รู้ว่า user คนไหนดึง ที่ไม่ดึง name เพราะมีโอกาศซ้ำกัน
       [email]

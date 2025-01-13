@@ -16,8 +16,6 @@ export function HeroSection() {
           src={currentMovie.movies.banner}
           alt={currentMovie.movies.title}
           layout="fill"
-          objectFit="cover"
-          objectPosition="center"
           className="w-full h-full opacity-60"
         />
       </div>
@@ -39,12 +37,12 @@ export function HeroSection() {
                 {currentMovie.movies.genres.map((genre, index) => (
                   <Button
                     key={index}
-                    className="bg-[#21263F] p-4 text-[#C8CEDD]"
+                    className="bg-[#21263F] p-4 text-[#C8CEDD] cursor-default"
                   >
                     {genre.trim()}
                   </Button>
                 ))}
-                <Button className="bg-[#21263F] p-4">
+                <Button className="bg-[#21263F] p-4 cursor-default">
                   {currentMovie.movies.language}
                 </Button>
                 <div className="xl:hidden border-l-2 border-gray-500 md:h-full h-3/4 "></div>
@@ -54,7 +52,7 @@ export function HeroSection() {
                 Release date: {convertDate(currentMovie.movies.release_date)}
               </p>
             </div>
-            <Button className="bg-[#4E7BEE] w-40 h-12 md:mt-6">
+            <Button className="bg-[#4E7BEE] w-40 h-12 md:mt-6 cursor-default">
               Movie detail
             </Button>
             <div>

@@ -33,16 +33,13 @@ export default function LoginPage() {
 
       if (response.data.success) {
         const { token, name, userUUID } = response.data; // สมมติ API ส่ง `name` กลับมา
-        
-        
+
         if (rememberMe) {
           localStorage.setItem("token", token);
           localStorage.setItem("name", name); // เก็บชื่อผู้ใช้ใน localStorage
-          
         } else {
           sessionStorage.setItem("token", token);
           sessionStorage.setItem("name", name); // เก็บชื่อผู้ใช้ใน sessionStorage
-          
         }
 
         toast(
@@ -88,6 +85,20 @@ export default function LoginPage() {
           <strong>
             Account locked due to too many failed login attempts. Please try
             again after 5 minutes
+          </strong>,
+          {
+            position: "bottom-right",
+            style: {
+              borderRadius: "4px",
+              backgroundColor: "#E5364B99",
+              color: "white",
+            },
+          }
+        );
+      } else if (error.response.status === 422) {
+        toast(
+          <strong>
+            Email not verified. Please verify your email before logging in.
           </strong>,
           {
             position: "bottom-right",
@@ -184,10 +195,11 @@ export default function LoginPage() {
                   }}
                   variant="filled"
                   bg="#21263F"
+                  height="48px"
                   className={
                     error
-                      ? "text-white border border-red-500 px-3 animate-shake"
-                      : "text-white border border-[#565F7E] px-3"
+                      ? "text-white border border-red-500 px-3 pl-4 animate-shake py-3"
+                      : "text-white border border-[#565F7E] px-3 pl-4"
                   }
                   key={shakeKey}
                 />
@@ -209,10 +221,11 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   variant="filled"
                   bg="#21263F"
+                  height="48px"
                   className={
                     error
-                      ? "text-white border border-red-500 px-3 animate-shake"
-                      : "text-white border border-[#565F7E] px-3"
+                      ? "text-white border border-red-500 px-3 pl-4 animate-shake"
+                      : "text-white border border-[#565F7E] px-3 pl-4"
                   }
                   key={shakeKey}
                 />
@@ -232,7 +245,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleForgotPassword}
-              className=" text-white hover:underline font-bold"
+              className=" text-white hover:underline font-bold underline"
             >
               Forget password?
             </button>
@@ -255,7 +268,7 @@ export default function LoginPage() {
             Don&apos;t have any account?{" "}
             <Link
               href="/register"
-              className="text-white hover:underline font-bold"
+              className="text-white hover:underline font-bold underline"
             >
               Register
             </Link>

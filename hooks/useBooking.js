@@ -7,6 +7,7 @@ export function useBooking() {
   const { booking_uuid } = router.query;
   const [booking, setBooking] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isError, setIsError] = useState(false)
   const [timeLeft, setTimeLeft] = useState(15 * 60);
 
   useEffect(() => {
@@ -16,11 +17,15 @@ export function useBooking() {
         const response = await axios.get(
           `/api/payment/booking-summary/${booking_uuid}`
         );
-        setBooking(response.data.data);
-        setTimeLeft(response.data.remaining_time)
+        if (response.status === 200) {
+          setBooking(response.data.data);
+          setTimeLeft(response.data.remaining_time)
+          setIsError(false)
+        } 
         
       } catch (error) {
         console.log(error);
+        setIsError(true)
       } finally {
         setLoading(false);
       }
@@ -38,6 +43,7 @@ export function useBooking() {
     booking,
     loading,
     timeLeft,
+    isError,
     setBooking,
     setLoading,
     setTimeLeft,

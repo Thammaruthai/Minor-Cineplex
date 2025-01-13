@@ -104,6 +104,15 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["@chakra-ui/react"],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/sharing/:booking_uuid",
+        destination: "/sharing/[booking_uuid]",
+      },
+      // คุณสามารถเพิ่ม rewrites อื่น ๆ ได้ที่นี่
+    ];
+  },
 };
 
 export default nextConfig;

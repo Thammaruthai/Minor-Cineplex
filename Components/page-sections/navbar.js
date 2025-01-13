@@ -1,15 +1,20 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link"; // Import Link สำหรับลิงก์ไปยังหน้าอื่น
-import DropdownNavMenu from "../landing-page/dropdown-menu";
+import DropdownMenu from "../landing-page/dropdown-menu";
+import { useUser } from "@/context/user-context";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState(""); // State สำหรับเก็บชื่อผู้ใช้
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-
+  const { userData } = useUser();
+  const router = useRouter();
   const mobileMenuRef = useRef(null); // ใช้สำหรับตรวจจับคลิกภายนอก (Mobile Menu)
-  const dropdownRef = useRef(null); // ใช้สำหรับตรวจจับคลิกภายนอก (Desktop Dropdown)
+  const dropdownRef = useRef(null);
+  const hamburgerMenuRef = useRef(null); // ใช้สำหรับตรวจจับคลิกภายนอก (Desktop Dropdown)
 
   const toggleLogin = () => {
     setIsLoggedIn(!isLoggedIn);
@@ -18,34 +23,42 @@ export default function Navbar() {
 
   // เมื่อ Component ถูก Mount ให้ดึงข้อมูลชื่อจาก localStorage หรือ sessionStorage
   useEffect(() => {
-    const name = localStorage.getItem("name") || sessionStorage.getItem("name");
-    if (name) {
+    const isLogin =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (isLogin && userData?.name) {
       setIsLoggedIn(true);
-      setUserName(name); // อัปเดตชื่อผู้ใช้ใน State
+      setUserName(userData.name); // อัปเดตชื่อผู้ใช้ใน State
+    } else {
+      setIsLoggedIn(false);
+      setUserName(""); // Reset username if logged out
     }
-  }, []);
+  }, [userData]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsLoggedIn(false);
-    setUserName(""); // ลบชื่อออกจาก State
-    localStorage.removeItem("name");
-    sessionStorage.removeItem("name");
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-    window.location.href = "/"; // รีเฟรชไปยังหน้าแรก
+    router.push("/");
+    try {
+      await axios.post("/api/auth/logout");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
-  const toggleMobileMenu = () => setShowMobileMenu((prev) => !prev);
+  const toggleMobileMenu = () => setShowMobileMenu(!showMobileMenu);
 
-  // ปิด Mobile Menu เมื่อคลิกภายนอก
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // ถ้าคลิกนอกทั้ง Mobile Menu และ Hamburger Menu
       if (
         mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target)
+        !mobileMenuRef.current.contains(event.target) &&
+        hamburgerMenuRef.current &&
+        !hamburgerMenuRef.current.contains(event.target)
       ) {
-        setShowMobileMenu(false);
+        setShowMobileMenu(false); // ปิดเมนู
       }
     };
 
@@ -84,16 +97,17 @@ export default function Navbar() {
         </Link>
 
         {/* Mobile Menu Button */}
-        <button
-          className="rounded-sm border-none flex items-center justify-center mt-2 active:scale-95 transition-transform duration-150 lg:hidden"
+        <div
+          ref={hamburgerMenuRef}
+          className="rounded-sm border-none flex items-center justify-center mt-2 active:scale-95 transition-transform duration-150 lg:hidden z-[60]"
           onClick={toggleMobileMenu}
         >
           <img
             src="/img/Ham.png"
             alt="Menu"
-            className="w-6 h-5 m-1 z-50 relative"
+            className="w-6 h-5 m-1 z-[60] relative"
           />
-        </button>
+        </div>
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex space-x-4 lg:items-center z-50">
@@ -117,7 +131,7 @@ export default function Navbar() {
                 onClick={toggleDropdown}
               >
                 <img
-                  src="https://via.placeholder.com/40"
+                  src={userData?.profile_image || "/img/default-profile.png"}
                   className="w-10 h-10 rounded-full object-cover mr-3"
                   alt="Profile"
                 />
@@ -130,7 +144,7 @@ export default function Navbar() {
               {/* Dropdown Menu for Desktop */}
               {showDropdown && (
                 <div className="absolute right-0 mt-3 h-44 w-[182px] bg-[#21263f] rounded shadow-lg z-50">
-                  <DropdownNavMenu toggleLogin={handleLogout} />
+                  <DropdownMenu toggleLogin={handleLogout} />
                 </div>
               )}
             </div>
@@ -142,13 +156,13 @@ export default function Navbar() {
       {showMobileMenu && (
         <div
           ref={mobileMenuRef} // ใช้ ref เพื่อตรวจจับการคลิกภายนอก
-          className="absolute z-50 w-screen top-[64px] sm:hidden lg:hidden bg-[#21263f] border border-[#21263f] bg-opacity-5 backdrop-blur-lg flex flex-col px-5"
+          className="absolute z-[100] w-screen top-[64px] sm:hidden lg:hidden bg-[#21263f] border border-[#21263f] bg-opacity-5 backdrop-blur-lg flex flex-col px-5"
         >
           {!isLoggedIn ? (
             <div className="flex flex-col items-center">
               <Link href="/login">
                 <button
-                  className="hover:border hover:border-[#8b93b0] text-white text-base font-normal rounded mt-12 mb-12 py-4 mx-32 w-auto px-10"
+                  className="hover:border hover:border-[#8b93b0] text-white text-base font-normal rounded mt-8 py-4 w-auto px-10"
                   onClick={() => {
                     toggleLogin();
                     setShowMobileMenu(false);
@@ -159,7 +173,7 @@ export default function Navbar() {
               </Link>
               <Link href="/register">
                 <button
-                  className="hover:border hover:border-[#8b93b0] text-white text-base font-bold rounded my-4 mb-6 w-auto py-4 mx-32 px-10"
+                  className="hover:border hover:border-[#8b93b0] text-white text-base font-bold rounded my-4 mb-6 w-auto py-4 px-10"
                   onClick={() => {
                     toggleLogin();
                     setShowMobileMenu(false);
@@ -170,8 +184,8 @@ export default function Navbar() {
               </Link>
             </div>
           ) : (
-            <DropdownNavMenu
-              toggleLogin={toggleLogin}
+            <DropdownMenu
+              toggleLogin={handleLogout}
               setShowMobileMenu={setShowMobileMenu}
             />
           )}

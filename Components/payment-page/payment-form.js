@@ -15,8 +15,17 @@ import { useBooking } from "@/hooks/useBooking";
 import { CreditCard } from "./credit-card";
 import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
+import QrCodePayment from "./qr-code-payment";
+import jwtInterceptor from "@/utils/jwt-interceptor";
 
-function PaymentForm({ total, setTotal }) {
+function PaymentForm({
+  total,
+  setTotal,
+  qrCode,
+  setQrCode,
+  setDiscountAmount,
+  discountAmount,
+}) {
   const stripe = useStripe();
   const router = useRouter();
   const elements = useElements();
@@ -45,7 +54,9 @@ function PaymentForm({ total, setTotal }) {
     { id: 2, label: "QR Code" },
   ];
   const [selectedMethod, setSelectedMethod] = useState(paymentMethod[0].label);
-
+  const [notLogin, setNotLogin] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+  const [showCountdown, setShowCountdown] = useState(false);
   const handleMethodSelect = (label) => {
     setSelectedMethod(label);
   };
@@ -61,6 +72,32 @@ function PaymentForm({ total, setTotal }) {
     }
   };
 
+  const handleQrCode = async (e) => {
+    e.preventDefault();
+    setQrCode(null); // ล้าง QR Code
+
+    try {
+      const response = await axios.post(
+        "/api/payment/qr-code/create-payment-qr-code",
+        {
+          amount: Math.round(total * 100),
+          currency: "thb",
+          email: email,
+        }
+      );
+
+      const data = response.data;
+
+      if (data) {
+        setQrCode(data);
+        setDiscountAmount(discount);
+      } else {
+        console.log("QR Code URL not found in response");
+      }
+    } catch (error) {
+      console.log("Error:", error.response?.data?.error || error.message);
+    }
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -158,13 +195,26 @@ function PaymentForm({ total, setTotal }) {
 
   const handleNext = async (event) => {
     event.preventDefault();
+    const token =
+      sessionStorage.getItem("token") || localStorage.getItem("token");
+
+    if (!token) {
+      setNotLogin(true);
+      return;
+    }
+
+    jwtInterceptor();
     try {
       const response = await axios.post("/api/payment", {
         amount: total * 100, // Convert to satang
         booking_id: currentBooking.booking_id,
+        payment_method: selectedMethod,
       });
 
-      setPaymentDetails(response.data.paymentDetails);
+      if (response.status === 201) {
+        setPaymentDetails(response.data.paymentDetails);
+        setIsOpenToastErr(false);
+      }
     } catch (err) {
       console.error(
         "Error creating pending payment:",
@@ -193,9 +243,53 @@ function PaymentForm({ total, setTotal }) {
     setIsValid(allFieldsFilled && noErrors);
   }, [cardOwner, errors, elements]);
 
+  useEffect(() => {
+    if (notLogin) {
+      setShowCountdown(true); // Trigger the countdown display
+      const interval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            router.push(`/login`); // Redirect after countdown
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval); // Cleanup interval on unmount
+    }
+  }, [notLogin]);
+
+  if (notLogin) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-6 text-white bg-[#101525] min-h-[640px] w-full animate-fade-in">
+        <div className="flex flex-col gap-6 w-[380px] rounded-lg text-center max-sm:w-11/12 animate-scale-up">
+          <div className="flex flex-col items-center justify-center ">
+            <div className="flex flex-col items-center justify-center w-[80px] h-[80px] rounded-full text-[44px] text-white bg-blue-400 animate-bounce">
+              {"➜"}
+            </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            <h1 className="text-4xl font-semibold">Login Required</h1>
+            <p className="text-base text-gray-400">
+              Redirecting to the login page in{" "}
+              <span className="text-green-500">{countdown} seconds</span>.
+            </p>
+          </div>
+          <button
+            className="bg-[#4E7BEE] w-full py-3 mt-4 hover:bg-[#1E29A8]"
+            onClick={() => (window.location.href = "/login")}
+          >
+            Go to Login Now
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
-      <div className="xl:flex-row flex flex-col lg:gap-24 gap-10 w-full justify-center items-center xl:items-start lg:p-0">
+      <div className="2xl:flex-row flex flex-col gap-10 w-full justify-center items-center 2xl:items-start lg:p-0">
         <div className="w-full xl:w-auto">
           <div className="flex gap-5 p-4 lg:p-0">
             {paymentMethod.map((method) => (
@@ -208,11 +302,9 @@ function PaymentForm({ total, setTotal }) {
                     : "text-[#8B93B0] font-bold"
                 }`}
               >
-
                 {method.label}
               </h2>
             ))}
-
           </div>
           {selectedMethod === "Credit card" && (
             <CreditCard
@@ -222,50 +314,54 @@ function PaymentForm({ total, setTotal }) {
               handleInputOwner={handleInputOwner}
             />
           )}
-          {selectedMethod === "QR Code" && <div>QR Code</div>}
+          {selectedMethod === "QR Code" && <QrCodePayment />}
         </div>
-        <BookingSummary
-          handleSubmit={handleSubmit}
-          isLoading={isLoading}
-          errors={errors}
-          setTotal={setTotal}
-          total={total}
-          isValid={isValid}
-          handleNext={handleNext}
-          isTimeout={isTimeout}
-          setIsTimeout={setIsTimeout}
-          handleTimeout={handleTimeout}
-          discount={discount}
-          setDiscount={setDiscount}
-        />
+        <div className="flex flex-col justify-center items-center md:max-w-[450px] w-full p-4 lg:p-0">
+          <BookingSummary
+            handleQrCode={handleQrCode}
+            handleSubmit={handleSubmit}
+            isLoading={isLoading}
+            errors={errors}
+            setTotal={setTotal}
+            total={total}
+            isValid={isValid}
+            handleNext={handleNext}
+            isTimeout={isTimeout}
+            setIsTimeout={setIsTimeout}
+            handleTimeout={handleTimeout}
+            discount={discount}
+            setDiscount={setDiscount}
+            paymentMethod={selectedMethod}
+          />
+          <Toaster className="md:hidden" />
+          {isOpenToastErr && (
+            <div className="bg-[#E5364B99] text-white p-2 px-4 mt-10 rounded xl:w-[480px] w-full h-28 flex-col justify-center gap-1 hidden md:flex">
+              <div className="flex justify-between">
+                <strong>Payment failed.</strong>
+                <svg
+                  onClick={() => setIsOpenToastErr(false)}
+                  style={{ cursor: "pointer" }}
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-x"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </div>
+              <span>{errMsg}</span>
+              Please try again
+            </div>
+          )}
+        </div>
       </div>
-      <Toaster className="md:hidden"/>
-      {isOpenToastErr && (
-        <div className="bg-[#E5364B99] text-white p-2 px-4 mt-10 lg:mr-28 rounded xl:w-[480px] w-full h-28 flex-col justify-center gap-1 hidden md:flex">
-          <div className="flex justify-between">
-            <strong>Payment failed.</strong>
-            <svg
-              onClick={() => setIsOpenToastErr(!isOpenToastErr)}
-              style={{ cursor: "pointer" }}
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-x"
-            >
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </div>
-          <span>{errMsg}</span>
-          Please try again
-        </div>
-      )}
     </>
   );
 }

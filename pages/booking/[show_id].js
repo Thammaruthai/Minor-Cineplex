@@ -28,12 +28,13 @@ const SeatSelectionPage = () => {
   const [countdown, setCountdown] = useState(3); // Set initial countdown value
   const [showCountdown, setShowCountdown] = useState(false);
   const [isChanged, setIsChanged] = useState(0);
+  const [isBooked, setisBooked] = useState(false);
 
   //style
   const buttonStyleDisabled = "bg-gray-500 w-full py-3 cursor-not-allowed";
   const buttonStyleEnabled =
     "bg-[#4E7BEE] w-full py-3 hover:bg-[#1E29A8] active:[#0C1580]";
-  const seatStyle = "max-sm:w-full max-sm:h-auto w-10 h-10";
+  const seatStyle = "max-sm:w-full max-sm:h-auto w-10 h-10 max-sm:max-w-12";
 
   // Animate the loading text
   useEffect(() => {
@@ -132,7 +133,7 @@ const SeatSelectionPage = () => {
         setSelectedSeats(validSelectedSeats);
 
         // Render toast notification for removed seats
-        if (removedSeats.length > 0) {
+        if (removedSeats.length > 0 && !isBooked) {
           toast(
             <div>
               <strong>Seats are booked by other.</strong>
@@ -214,6 +215,7 @@ const SeatSelectionPage = () => {
       // Ensure JWT interceptor is active
       jwtInterceptor();
 
+      setisBooked(true);
       // POST request to the confirm booking API
       const response = await axios.post("/api/booking/confirm-booking", data);
 
@@ -505,7 +507,9 @@ const SeatSelectionPage = () => {
                                     : "text-green-500"
                                 }
                               >
-                                {seat.booking_status}
+                                {seat.booking_status === "Locked"
+                                  ? "Reserved"
+                                  : seat.booking_status}
                               </span>
                               <p className="text-yellow-500">
                                 {seat.booking_status === "Locked"
@@ -684,7 +688,7 @@ const SeatSelectionPage = () => {
                           </button>
 
                           <div
-                            className={`absolute top-full left-1/2 transform -translate-x-1/2 w-40 p-2 bg-[#21263F] text-white rounded-lg shadow-lg z-50 transition-opacity duration-200  ${
+                            className={`absolute top-full left-1/3 transform -translate-x-1/2 w-[109px] p-2 bg-[#21263F] text-white rounded-lg shadow-lg z-50 transition-opacity duration-200  ${
                               hoveredSeat?.seat_id === seat.seat_id
                                 ? "opacity-100 scale-100 visible"
                                 : "opacity-0  invisible"
@@ -706,7 +710,9 @@ const SeatSelectionPage = () => {
                                     : "text-green-500"
                                 }
                               >
-                                {seat.booking_status}
+                                {seat.booking_status === "Locked"
+                                  ? "Reserved"
+                                  : seat.booking_status}
                               </span>
                               <p className="text-yellow-500">
                                 {seat.booking_status === "Locked"
@@ -944,8 +950,8 @@ const SeatSelectionPage = () => {
               </div>
             </div>
             <button
-              className={`${
-                selectedSeats.length > 0
+              className={` flex gap-2 justify-center ${
+                selectedSeats.length > 0 && !isBooked
                   ? buttonStyleEnabled
                   : buttonStyleDisabled
               }  text-white ${
@@ -953,16 +959,20 @@ const SeatSelectionPage = () => {
                   ? `border-t border-gray-700 pt-4 `
                   : "hidden"
               }`}
-              disabled={selectedSeats.length === 0}
+              disabled={selectedSeats.length === 0 || isBooked}
               onClick={handleSubmit}
             >
-              Next
+              {isBooked && (
+                <div className="w-6 h-6 border-4 border-grey-500 border-solid rounded-full border-t-transparent animate-spin"></div>
+              )}
+
+              <span>Next</span>
             </button>
           </div>
         </div>
       </div>
 
-      <Toaster />
+      {!isBooked && <Toaster />}
     </div>
   );
 };

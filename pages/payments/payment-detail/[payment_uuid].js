@@ -86,7 +86,11 @@ export default function BookingSuccess() {
             </div>
             <div className="flex gap-2">
               <p className="w-[130px]">Payment method</p>
-              <p className="text-white font-bold">Credit card</p>
+              <p className="text-white font-bold">
+                {currentPayment?.payment_method === "card"
+                  ? "Credit card"
+                  : "QR Code"}
+              </p>
             </div>
             <div className="flex gap-2">
               <p className="w-[130px]">Total</p>
@@ -102,9 +106,14 @@ export default function BookingSuccess() {
               Back to home
             </Button>
           </Link>
-          <Button className="bg-[#4E7BEE] md:px-10 md:w-[185px] w-[164px] px-5 ">
-            Booking detail
-          </Button>
+
+          <Link
+            href={{ pathname: "/profile", query: { view: "booking-history" } }}
+          >
+            <Button className="bg-[#4E7BEE] md:px-10 md:w-[185px] w-[164px] px-5 ">
+              Booking detail
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

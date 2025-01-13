@@ -5,8 +5,12 @@
       "destination": "/api/:path*"
     },
     {
-      "source": "/page/payments/payment-detail/:payment_uuid",
-      "destination": "/page/payments/payment-detail/[payment_uuid].js"
+      "source": "/pages/payments/payment-detail/:payment_uuid",
+      "destination": "/page/payments/payment-detail"
+    },
+    {
+      "source": "/pages/sharing/:booking_uuid",
+      "destination": "/sharing"
     },
     {
       "source": "/(.*)",

@@ -1,16 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import { usePayment } from "@/hooks/usePayment";
-import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogCloseTrigger,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogRoot,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useBooking } from "@/hooks/useBooking";
 
 export function ConfirmDialog({ isOpen, onClose, handleSubmit }) {
@@ -19,15 +9,22 @@ export function ConfirmDialog({ isOpen, onClose, handleSubmit }) {
   const currentPayment = payment[0];
 
   return (
-    <DialogRoot open={isOpen} onOpenChange={onClose} placement="center">
-      <DialogContent className="bg-[#21263F] flex gap-0 justify-center items-center w-[343px] h-[174px] border border-[#565F7E]">
-        <DialogHeader>
-          <DialogTitle className="text-white text-xl font-bold">
-            Confirm booking
-          </DialogTitle>
-          <DialogCloseTrigger className="text-[#C8CEDD] mt-2">
+    <div
+      className={`fixed inset-0 flex items-center justify-center ${
+        isOpen ? "block" : "hidden"
+      }`}
+    >
+      <div className="bg-[#21263F] px-6 rounded-lg shadow-lg border border-[#565F7E] w-[343px] h-[174px] flex flex-col justify-center items-center">
+        <div className="flex w-full justify-between items-center">
+          <div className="w-full ml-7">
+            <h1 className="text-white text-xl font-bold text-center">
+              Confirm booking
+            </h1>
+          </div>
+          <div className="flex w-6">
             <svg
-              className="h-6 w-6"
+              className="h-6 w-6 cursor-pointer"
+              onClick={onClose}
               stroke="currentColor"
               fill="none"
               strokeWidth="1"
@@ -39,21 +36,18 @@ export function ConfirmDialog({ isOpen, onClose, handleSubmit }) {
               <path d="M18 6 6 18"></path>
               <path d="m6 6 12 12"></path>
             </svg>
-          </DialogCloseTrigger>
-        </DialogHeader>
-        <DialogBody className="-mt-1">
-          <p className="text-[#BAB9BD]">Confirm booking and payment?</p>
-        </DialogBody>
-        <DialogFooter className="-mt-4 mb-3">
-          <DialogActionTrigger asChild>
-            <Button
-              variant="outline"
-              className="text-white px-10 border border-[#8B93B0] font-bold"
-            >
-              Cancel
-            </Button>
-          </DialogActionTrigger>
+          </div>
+        </div>
+        <p className="mt-4 text-[#BAB9BD] text-sm">Confirm booking and payment?</p>
+        <div className="mt-4 flex justify-center gap-4">
           <Button
+            className="text-white px-10 border h-11 border-[#8B93B0] font-bold hover:bg-gray-700"
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="text-white bg-[#4E7BEE] h-11 px-10 font-bold hover:bg-blue-600"
             onClick={(e) => {
               handleSubmit(e);
               onClose();
@@ -63,13 +57,12 @@ export function ConfirmDialog({ isOpen, onClose, handleSubmit }) {
                 );
               }
             }}
-            className="text-white bg-[#4E7BEE] px-10 font-bold"
           >
             Confirm
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </DialogRoot>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -78,15 +71,22 @@ export function ExpiredDialog({ isOpen, onClose, setIsTimeout }) {
   const { booking } = useBooking();
 
   return (
-    <DialogRoot open={isOpen} onOpenChange={onClose} placement="center">
-      <DialogContent className="bg-[#21263F] flex gap-0 justify-center items-center w-[360px] h-[174px] border border-[#565F7E]">
-        <DialogHeader>
-          <DialogTitle className="text-white text-xl font-bold">
-            Booking expired
-          </DialogTitle>
-          <DialogCloseTrigger className="text-[#C8CEDD]">
+    <div
+      className={`fixed inset-0 flex items-center justify-center ${
+        isOpen ? "block" : "hidden"
+      }`}
+    >
+      <div className="bg-[#21263F] px-4 rounded-lg shadow-lg border border-[#565F7E] w-[360px] h-[174px] flex flex-col justify-center items-center">
+        <div className="flex w-full justify-between items-center">
+          <div className="w-full ml-7">
+            <h1 className="text-white text-xl font-bold text-center">
+              Booking expired
+            </h1>
+          </div>
+          <div className="flex w-6">
             <svg
-              className="h-6 w-6"
+              className="h-6 w-6 cursor-pointer"
+              onClick={onClose}
               stroke="currentColor"
               fill="none"
               strokeWidth="1"
@@ -98,29 +98,24 @@ export function ExpiredDialog({ isOpen, onClose, setIsTimeout }) {
               <path d="M18 6 6 18"></path>
               <path d="m6 6 12 12"></path>
             </svg>
-          </DialogCloseTrigger>
-        </DialogHeader>
-        <DialogBody className="-mt-1 w-full px-4">
-          <p className="text-[#BAB9BD] text-center w-[330px] text-sm">
-            You did not complete the checkout process in time,
-            <br /> please start again
-          </p>
-        </DialogBody>
-        <DialogFooter className="-mt-4 mb-3">
-          <DialogActionTrigger asChild>
-            <Button
-              onClick={() => {
-                setIsTimeout(false);
-                router.push(`/booking/${booking.show_id}`);
-              }}
-              variant="outline"
-              className="text-white px-10 border border-[#8B93B0] font-bold bg-[#4E7BEE] w-full"
-            >
-              OK
-            </Button>
-          </DialogActionTrigger>
-        </DialogFooter>
-      </DialogContent>
-    </DialogRoot>
+          </div>
+        </div>
+        <p className="mt-4 text-[#BAB9BD] text-sm text-center">
+          You did not complete the checkout process in time,
+          <br /> please start again.
+        </p>
+        <div className="mt-4 flex justify-center gap-4">
+          <Button
+            className="text-white px-10 border border-[#8B93B0] font-bold bg-[#4E7BEE] w-full"
+            onClick={() => {
+              setIsTimeout(false);
+              router.push(`/booking/${booking.show_id}`);
+            }}
+          >
+            OK
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }

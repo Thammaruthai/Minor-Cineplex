@@ -6,7 +6,9 @@ export function useFilter() {
   const router = useRouter();
   const { movie, language, genre, city, date, feature } = router.query;
   const [results, setResults] = useState([]);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -23,11 +25,12 @@ export function useFilter() {
           movie || ""
         }&language=${language || ""}&genre=${genre || ""}&city=${
           city || ""
-        }&date=${date || ""}&${featureParams}`;
+        }&date=${date || ""}&${featureParams}&page=${page}&limit=3`;
 
         const response = await axios.get(queryString);
         setResults(response.data.results);
-
+        setTotalPages(response.data.totalPages);
+        
       } catch (error) {
         console.log(error);
       } finally {
@@ -36,7 +39,16 @@ export function useFilter() {
     };
 
     if (router.isReady) fetchResults();
-  }, [router.isReady, movie, language, genre, city, date, feature]);
+  }, [
+    router.isReady,
+    movie,
+    language,
+    genre,
+    city,
+    date,
+    feature,
+    page,
+  ]);
 
   return {
     results,
@@ -47,7 +59,10 @@ export function useFilter() {
     city,
     date,
     feature,
+    page,
+    totalPages,
     setResults,
     setLoading,
+    setPage,
   };
 }

@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { formatDateToLocal } from "@/utils/date";
 
-export default function FilterBar() {
+export default function FilterBar({ setPage }) {
   const [movies, setMovies] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [genres, setGenres] = useState([]);
@@ -75,6 +75,7 @@ export default function FilterBar() {
       city: selectedFilters.city || "",
       date: formatDateToLocal(filterDate),
     };
+    setPage(1);
 
     const queryParams = new URLSearchParams(filters);
 
@@ -138,13 +139,13 @@ export default function FilterBar() {
   };
 
   return (
-    <div className="bg-[#070C1B] gap-6 rounded-2xl shadow-lg lg:h-[300px] w-full flex flex-col justify-center items-center -mt-20 relative z-10">
+    <div className="bg-[#070C1B] gap-6 rounded-2xl shadow-lg xl:h-[300px] w-full flex flex-col justify-center items-center -mt-20 relative z-10 p-4 xl:p-0">
       <div className="rounded-lg mt-20 xl:w-[1200px]">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
+        <div className="flex flex-col xl:flex-row lg:items-center justify-between xl:w-full lg:gap-4 w-[342px] md:w-[400px] gap-3">
           {/* Movie Dropdown */}
-          <div className="mb-4 lg:mb-0 lg:flex-1 lg:max-w-[267px] relative">
+          <div className="lg:mb-0 lg:flex-1 xl:max-w-[267px] w-full relative">
             <select
-              className="w-full border border-[#565f7e] p-2 py-4 bg-[#21263f] text-[#8b93b0] rounded focus:outline-none appearance-none cursor-pointer"
+              className="w-full border border-[#565f7e] p-2 py-4 bg-[#21263f] text-white rounded focus:outline-none appearance-none cursor-pointer"
               value={selectedFilters.movie}
               onChange={(e) => handleFilterChange("movie", e.target.value)}
             >
@@ -172,10 +173,10 @@ export default function FilterBar() {
           </div>
 
           {/* Language, Genre Dropdowns */}
-          <div className="flex gap-4 mb-4 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4">
-            <div className="lg:min-w-[190.25px] relative">
+          <div className="flex gap-3 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4 w-full">
+            <div className="lg:min-w-[190.25px] w-full relative">
               <select
-                className="flex-1 p-2 appearance-none border border-[#565f7e] w-full py-4 bg-[#21263f] text-[#8b93b0] rounded focus:outline-none cursor-pointer"
+                className="flex-1 p-2 appearance-none border border-[#565f7e] w-full py-4 bg-[#21263f] text-white rounded focus:outline-none cursor-pointer"
                 value={selectedFilters.language}
                 onChange={(e) => handleFilterChange("language", e.target.value)}
               >
@@ -201,9 +202,9 @@ export default function FilterBar() {
                 />
               </svg>
             </div>
-            <div className="lg:min-w-[190.25px] relative">
+            <div className="lg:min-w-[190.25px] relative w-full">
               <select
-                className="flex-1 w-full p-2 border border-[#565f7e] py-4 lg:max-w-[197.25px] bg-[#21263f] text-[#8b93b0] rounded focus:outline-none cursor-pointer appearance-none"
+                className="flex-1 w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-white rounded focus:outline-none cursor-pointer appearance-none"
                 value={selectedFilters.genre}
                 onChange={(e) => handleFilterChange("genre", e.target.value)}
               >
@@ -232,10 +233,10 @@ export default function FilterBar() {
           </div>
 
           {/* City Dropdown and Release Date Picker */}
-          <div className="flex gap-4 mb-4 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4">
-            <div className="lg:min-w-[190.25px] relative">
+          <div className="flex gap-3 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4 w-full">
+            <div className="lg:min-w-[190.25px] relative w-[165px] md:w-full">
               <select
-                className="flex-1 p-2 border w-full border-[#565f7e] lg:max-w-[189.25px] py-4 bg-[#21263f] text-[#8b93b0] rounded focus:outline-none cursor-pointer appearance-none"
+                className="flex-1 p-2 border w-full border-[#565f7e] lg:max-w-[189.25px] py-4 bg-[#21263f] text-white rounded focus:outline-none cursor-pointer appearance-none"
                 value={selectedFilters.city}
                 onChange={(e) => handleFilterChange("city", e.target.value)}
               >
@@ -261,9 +262,9 @@ export default function FilterBar() {
                 />
               </svg>
             </div>
-            <div className="flex-1 relative z-40">
+            <div className="gap-3 flex-1 relative z-40 w-full lg:min-w-[194.25px] md:min-w-[194px]">
               <button
-                className="w-full h-[58px] px-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] rounded focus:outline-none text-start"
+                className="w-full h-[58px] px-2 border border-[#565f7e] py-4 bg-[#21263f] text-white rounded focus:outline-none text-start"
                 onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
               >
                 {filterDate ? formatDateToLocal(filterDate) : "All Date"}
@@ -271,7 +272,7 @@ export default function FilterBar() {
               {isDatePickerOpen && (
                 <div
                   ref={datePickerRef}
-                  className="absolute z-50 top-full mt-1 bg-[#21263f] text-white rounded-lg shadow-lg"
+                  className="absolute z-50 top-full right-0 md:left-0 mt-1 bg-[#21263f] text-white rounded-lg shadow-lg"
                 >
                   <ReactDatePicker
                     selected={filterDate}
@@ -294,17 +295,46 @@ export default function FilterBar() {
           </div>
 
           {/* Search Button */}
-          <div className="flex justify-center lg:flex-none lg:ml-4">
+          <div className="justify-center xl:min-w-[1200px] items-center flex xl:hidden">
+            <div className="flex items-center justify-center gap-6 text-[#C8CEDD]">
+              <Checkbox
+                checked={
+                  Array.isArray(selectedFilters.feature) &&
+                  selectedFilters.feature.includes("Wheelchair Access")
+                }
+                onCheckedChange={() => handleFeatureChange("Wheelchair Access")}
+              >
+                Wheelchair Access
+              </Checkbox>
+              <Checkbox
+                checked={
+                  Array.isArray(selectedFilters.feature) &&
+                  selectedFilters.feature.includes("Hearing Assistance")
+                }
+                onCheckedChange={() =>
+                  handleFeatureChange("Hearing Assistance")
+                }
+              >
+                Hearing Assistance
+              </Checkbox>
+            </div>
+          </div>
+          <div className="flex xl:justify-end xl:items-end justify-center lg:flex-none gap-6 xl:gap-0 items-center">
             <button
               className="w-20 h-14 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex justify-center items-center"
               onClick={handleSearch}
             >
               <img src="/img/Search_light.png" alt="search" className="h-8" />
             </button>
+            <div>
+              <p onClick={handleClear} className="underline cursor-pointer xl:hidden">
+                Clear
+              </p>
+            </div>
           </div>
         </div>
       </div>
-      <div className="flex justify-between xl:min-w-[1200px] items-center">
+      <div className="justify-between xl:min-w-[1200px] items-center hidden xl:flex">
         <div className="flex items-center justify-center gap-6 text-[#C8CEDD]">
           <Checkbox
             checked={

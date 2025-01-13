@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 export default function Filter({ onFilterApply }) {
   const [movies, setMovies] = useState([]);
@@ -83,13 +84,13 @@ export default function Filter({ onFilterApply }) {
   };
 
   return (
-    <section className="bg-[#070C1B] mx-5 rounded-2xl shadow-lg -mt-40 lg:-mt-12 lg:mx-20">
-      <div className="p-5 rounded-lg mx-auto">
+    <section className="bg-[#070C1B] rounded-[4px] shadow-lg -mt-52 w-[344px] md:w-[450px] lg:min-w-[1000px] xl:min-w-[1280px] lg:-mt-12 2xl:w-[1500px] flex justify-center items-center">
+      <div className="p-5 xl:p-10 rounded-lg mx-auto xl:h-[128px] flex flex-col justify-center w-full">
         <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
           {/* Movie Dropdown */}
-          <div className="mb-4 lg:mb-0 lg:flex-1">
+          <div className="mb-4 lg:mb-0 lg:flex-1 relative xl:max-w-[350px] lg:max-w-[250px]">
             <select
-              className="w-full border border-[#565f7e] p-2 py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none"
+              className="w-full appearance-none cursor-pointer border border-[#565f7e] p-2 py-4 bg-[#21263f] text-[#8b93b0] xl:text-xl rounded focus:outline-none"
               value={selectedFilters.movie}
               onChange={(e) => handleFilterChange("movie", e.target.value)}
             >
@@ -100,54 +101,115 @@ export default function Filter({ onFilterApply }) {
                 </option>
               ))}
             </select>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="#C8CEDD"
+              className="w-6 h-6 absolute xl:top-5 top-4 right-3 pointer-events-none"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+              />
+            </svg>
           </div>
 
           {/* Language, Genre Dropdowns */}
           <div className="flex gap-4 mb-4 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4">
-            <select
-              className="flex-1 p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none"
-              value={selectedFilters.language}
-              onChange={(e) => handleFilterChange("language", e.target.value)}
-            >
-              <option value="">Language</option>
-              {languages.map((language) => (
-                <option key={language.language_id} value={language.language}>
-                  {language.name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              className="flex-1 p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none"
-              value={selectedFilters.genre}
-              onChange={(e) => handleFilterChange("genre", e.target.value)}
-            >
-              <option value="">Genre</option>
-              {genres.map((genre) => (
-                <option key={genre.genre_id} value={genre.genre}>
-                  {genre.name}
-                </option>
-              ))}
-            </select>
+            <div className="w-full relative">
+              <select
+                className="flex-1 w-full cursor-pointer appearance-none p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] xl:text-xl rounded focus:outline-none"
+                value={selectedFilters.language}
+                onChange={(e) => handleFilterChange("language", e.target.value)}
+              >
+                <option value="">Language</option>
+                {languages.map((language) => (
+                  <option key={language.language_id} value={language.language}>
+                    {language.name}
+                  </option>
+                ))}
+              </select>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="#C8CEDD"
+                className="w-6 h-6 absolute xl:top-5 top-4 right-3 pointer-events-none"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
+              </svg>
+            </div>
+            <div className="w-full relative">
+              <select
+                className="flex-1 w-full cursor-pointer appearance-none p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] xl:text-xl rounded focus:outline-none"
+                value={selectedFilters.genre}
+                onChange={(e) => handleFilterChange("genre", e.target.value)}
+              >
+                <option value="">Genre</option>
+                {genres.map((genre) => (
+                  <option key={genre.genre_id} value={genre.genre}>
+                    {genre.name}
+                  </option>
+                ))}
+              </select>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="#C8CEDD"
+                className="w-6 h-6 absolute xl:top-5 top-4 right-3 pointer-events-none"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
+              </svg>
+            </div>
           </div>
 
           {/* City Dropdown and Release Date Picker */}
           <div className="flex gap-4 mb-4 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4">
-            <select
-              className="flex-1 p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none"
-              value={selectedFilters.city}
-              onChange={(e) => handleFilterChange("city", e.target.value)}
-            >
-              <option value="">City</option>
-              {cities.map((city) => (
-                <option key={city.city_id} value={city.name}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
+            <div className="2xl:min-w-[221px] min-w-[144px] lg:min-w-[133px] md:min-w-[197px] relative">
+              <select
+                className="flex-1 w-full cursor-pointer appearance-none p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] xl:text-xl rounded focus:outline-none"
+                value={selectedFilters.city}
+                onChange={(e) => handleFilterChange("city", e.target.value)}
+              >
+                <option value="">City</option>
+                {cities.map((city) => (
+                  <option key={city.city_id} value={city.name}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="#C8CEDD"
+                className="w-6 h-6 absolute xl:top-5 top-4 right-3 pointer-events-none"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
+              </svg>
+            </div>
             <div className="flex-1 relative z-0">
               <select
-                className="absolute w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] text-xl rounded focus:outline-none appearance-none pr-10"
+                className="absolute w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] xl:text-xl lg:text-[15px] rounded focus:outline-none appearance-none pr-10"
                 value={
                   releaseDate ? releaseDate.toISOString().split("T")[0] : ""
                 }
@@ -161,13 +223,13 @@ export default function Filter({ onFilterApply }) {
                         month: "short",
                         year: "numeric",
                       })
-                    : "Release Date"}
+                    : "All Date"}
                 </option>
               </select>
               {isDatePickerOpen && (
                 <div
                   ref={datePickerRef}
-                  className="absolute top-full mt-2 z-50 bg-[#21263f] text-white rounded-lg shadow-lg"
+                  className="absolute top-full right-0 md:left-0 mt-2 z-50 bg-[#21263f] text-white rounded-lg shadow-lg"
                 >
                   <ReactDatePicker
                     selected={releaseDate}
@@ -179,6 +241,13 @@ export default function Filter({ onFilterApply }) {
                   />
                 </div>
               )}
+              <Image
+                src="/img/Date_today_light.png"
+                width={24}
+                height={24}
+                alt="Calendar"
+                className="z-40 absolute xl:top-5 top-4 right-3 pointer-events-none"
+              />
             </div>
           </div>
 
