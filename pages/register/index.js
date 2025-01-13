@@ -4,13 +4,13 @@ import Link from "next/link";
 import Head from "next/head";
 
 const inputStyle =
-  "border border-gray-200 rounded bg-[#21263F] py-3 pl-4 placeholder-[#8B93B0]";
+  "border border-[#565F7E] rounded bg-[#21263F] py-3 pl-4 placeholder-[#8B93B0]";
 const inputErrorStyle =
   "border border-[#E5364B] rounded bg-[#21263F] py-3 pl-4 placeholder-[#8B93B0]";
 const labelStyle = "text-[#C8CEDD]";
 const buttonStyleEnabled =
-  "bg-[#4E7BEE] w-full py-3 hover:bg-[#1E29A8] active:[#0C1580]"; // Enabled button style
-const buttonStyleDisabled = "bg-gray-500 w-full py-3 cursor-not-allowed"; // Disabled button style
+  "bg-[#4E7BEE] w-full py-3 hover:bg-[#1E29A8] rounded active:[#0C1580]"; // Enabled button style
+const buttonStyleDisabled = "bg-[#4E7BEE] opacity-40 w-full rounded py-3 cursor-not-allowed"; // Disabled button style
 const inputFieldStyle = "flex flex-col gap-1";
 
 export default function Register() {
@@ -143,7 +143,7 @@ export default function Register() {
 
   return (
     <>
-      <div className="w-full flex flex-col h-screen items-center justify-center min-h-[500px] min-w-[300px] max-sm:justify-start max-sm:pt-8">
+      <div className="w-full flex flex-col items-center mt-16 justify-center min-h-[500px] min-w-[300px] max-sm:justify-start max-sm:pt-8">
         <div className="container w-[380px] text-white rounded-lg max-sm:w-11/12">
           <h1 className="mb-10 text-4xl text-center font-bold h-11 ">
             Register
@@ -245,7 +245,7 @@ export default function Register() {
                 <p className="text-[#8B93B0]">Already have an account?</p>
                 <Link
                   href="/login"
-                  className="underline underline-offset-1 text-white hover:text-sky-700"
+                  className="underline underline-offset-1 text-white hover:text-sky-700 font-bold"
                 >
                   Login
                 </Link>

@@ -25,11 +25,6 @@ function SearchResults() {
     useFilter();
   const [showMovieDetail, setShowMovieDetail] = useState({});
 
-  useEffect(() => {
-    console.log("Updated results:", results);
-    console.log("Updated totalPages:", totalPages);
-  }, [results]);
-
   const [isShowHall, setIsShowHall] = useState(() => {
     const initialState = {};
     results?.forEach((show) => {
@@ -169,6 +164,10 @@ function SearchResults() {
 
               const processedMovies = processRelatedMovies(relatedMovies);
 
+              const cinemaId = results.filter(
+                (result) => result.cinema_name === cinema_name
+              );
+
               return relatedMovies.length > 0 ? (
                 <div
                   key={cinema_name}
@@ -181,17 +180,19 @@ function SearchResults() {
                     <SelectTrigger icon={null}>
                       <div className="flex md:justify-between items-start justify-center md:items-center w-full">
                         <div className="md:flex-row flex flex-col md:items-center gap-5 w-full">
-                          <div className="flex items-center gap-5">
-                            <Image
-                              src="/icon.png"
-                              width={44}
-                              height={44}
-                              alt="Icon"
-                            />
-                            <h1 className="text-2xl font-bold">
-                              {cinema_name}
-                            </h1>
-                          </div>
+                          <Link href={`/cinemas/${cinemaId[0].cinema_id}`}>
+                            <div className="flex items-center gap-5">
+                              <Image
+                                src="/icon.png"
+                                width={44}
+                                height={44}
+                                alt="Icon"
+                              />
+                              <h1 className="text-2xl font-bold">
+                                {cinema_name}
+                              </h1>
+                            </div>
+                          </Link>
                           {results
                             .filter(
                               (result) =>

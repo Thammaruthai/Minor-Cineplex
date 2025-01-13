@@ -56,11 +56,13 @@ export default function SharingPage() {
           className={`relative bg-[#070C1B] shadow-lg  w-[691px] z-30 rounded-lg  animate-fadeIn cursor-default transition-opacity duration-300 max-sm:w-11/12 overflow-y-auto max-h-screen `}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex justify-center items-center h-[50px] px-6 py-3 ">
-            <span className="text-white">Booking Detail</span>
+          <div className="flex justify-center items-center h-[50px] px-6 pt-4">
+            <span className="text-white text-xl font-bold">Booking Detail</span>
+            
           </div>
           <div className="bg-[#070C1B] p-6 flex flex-col gap-6 max-sm:p-4 max-sm:gap-4">
             {/* Modal Movie Poster */}
+            <div className="w-full h-[1px] bg-[#2D3748] "></div>
             <div className="flex items-start gap-4 w-full ">
               <img
                 src={booking.poster}
@@ -142,8 +144,8 @@ export default function SharingPage() {
             {/* Modal Ticket Info */}
             <div className="flex justify-between items-center w-full ">
               <div className="flex gap-6 items-center max-sm:w-full">
-                <div className="bg-[#21263F] flex items-center justify-center rounded px-4 py-3 h-12 min-w-[84px]">
-                  <p className="text-sm font-bold">
+                <div className="bg-[#21263F] flex items-center justify-center rounded md:px-4 py-3 h-12 min-w-[84px]">
+                  <p className="text-sm font-bold text-white">
                     {booking.seats.length}{" "}
                     {booking.seats.length > 1 ? "Tickets" : "Ticket"}
                   </p>
@@ -163,7 +165,7 @@ export default function SharingPage() {
           </div>
 
           <div
-            className="flex flex-row justify-center items-center bg-[#4E7BEE] p-4 w-full text-base max-sm:flex-col max-sm:p-4 max-sm:items-start max-sm:gap-6 hover:bg-[#1E29A8] cursor-pointer"
+            className="flex flex-row justify-center items-center bg-[#4E7BEE] text-white p-4 w-full text-base max-sm:flex-col max-sm:p-4 max-sm:gap-6 hover:bg-[#1E29A8] cursor-pointer"
             onClick={() => handleBookingnow(booking.show_id)}
           >
             Book Now

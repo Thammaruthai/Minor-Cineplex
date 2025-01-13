@@ -195,10 +195,11 @@ export default function LoginPage() {
                   }}
                   variant="filled"
                   bg="#21263F"
+                  height="48px"
                   className={
                     error
-                      ? "text-white border border-red-500 px-3 animate-shake"
-                      : "text-white border border-[#565F7E] px-3"
+                      ? "text-white border border-red-500 px-3 pl-4 animate-shake py-3"
+                      : "text-white border border-[#565F7E] px-3 pl-4"
                   }
                   key={shakeKey}
                 />
@@ -220,10 +221,11 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   variant="filled"
                   bg="#21263F"
+                  height="48px"
                   className={
                     error
-                      ? "text-white border border-red-500 px-3 animate-shake"
-                      : "text-white border border-[#565F7E] px-3"
+                      ? "text-white border border-red-500 px-3 pl-4 animate-shake"
+                      : "text-white border border-[#565F7E] px-3 pl-4"
                   }
                   key={shakeKey}
                 />
@@ -243,7 +245,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleForgotPassword}
-              className=" text-white hover:underline font-bold"
+              className=" text-white hover:underline font-bold underline"
             >
               Forget password?
             </button>
@@ -266,7 +268,7 @@ export default function LoginPage() {
             Don&apos;t have any account?{" "}
             <Link
               href="/register"
-              className="text-white hover:underline font-bold"
+              className="text-white hover:underline font-bold underline"
             >
               Register
             </Link>

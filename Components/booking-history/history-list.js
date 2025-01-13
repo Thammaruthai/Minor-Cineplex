@@ -177,6 +177,15 @@ const BookingHistory = () => {
     return <LoadingPage />;
   }
 
+  const sortSeats = (seats) => {
+    if (!Array.isArray(seats)) return "";
+    return seats
+      .sort((a, b) => {
+        return a.localeCompare(b, undefined, { numeric: true });
+      })
+      .join(", ");
+  };
+
   return (
     <div className="p-6 text-[#C8CEDD] rounded-lg font-robotoCondensed max-sm:p-0">
       <h2 className="text-2xl font-bold mb-6 max-sm:p-4 max-sm:text-4xl">
@@ -222,7 +231,7 @@ const BookingHistory = () => {
                         alt="Calendar icon"
                         className="w-4 h-4"
                       />
-                      <p>{formatedDate(booking.booking_date)}</p>
+                      <p>{formatedDate(booking.show_date_time)}</p>
                     </div>
                     <div className="flex gap-3 items-center">
                       <Image
@@ -285,18 +294,18 @@ const BookingHistory = () => {
                     <p className="max-w-[350px] text-[#C8CEDD]">
                       {booking.seats.length > 12
                         ? `${booking.seats.slice(0, 12).join(", ")}, ...`
-                        : booking.seats.join(", ")}
+                        : sortSeats(booking.seats)}
                     </p>
                   </div>
                   <div className="flex gap-2 justify-between">
                     <p className="text-[#8B93B0]">Payment method: </p>
                     <p className="max-w-[350px] text-[#C8CEDD]">
-                      {booking.payment_method === "card"
+                      {(booking.payment_method === "card" && booking.payment_status === "succeeded")
                         ? "Credit Card"
                         : booking.payment_method === "QR Code"
                         ? "QR Code"
-                        : booking.booking_status === "Active" &&
-                          booking.payment_status === null
+                        : booking.booking_status === "Active" ||
+                          booking.payment_status === "Pending"
                         ? "Waiting for payment"
                         : booking.booking_status === "Cancelled" &&
                           booking.payment_status === null
@@ -319,10 +328,10 @@ const BookingHistory = () => {
                       new Date(booking.show_date_time).getTime() + 0 >
                         Date.now()
                     ? "bg-[#00A372] text-white"
-                    : booking.booking_status === "Active" &&
-                      booking.payment_status === null
+                    : booking.booking_status === "Active" ||
+                      booking.payment_status === "Pending"
                     ? "bg-orange-600 text-white"
-                    : booking.booking_status === "Cancelled" &&
+                    : booking.booking_status === "Cancelled" ||
                       booking.payment_status === null
                     ? "bg-[#565F7E]"
                     : "bg-[#565F7E]"
@@ -336,10 +345,10 @@ const BookingHistory = () => {
                   : booking.payment_status === "succeeded" &&
                     new Date(booking.show_date_time).getTime() + 0 > Date.now()
                   ? "Paid"
-                  : booking.booking_status === "Active" &&
-                    booking.payment_status === null
+                  : booking.booking_status === "Active" ||
+                    booking.payment_status === "Pending"
                   ? "Waiting for payment"
-                  : booking.booking_status === "Cancelled" &&
+                  : booking.booking_status === "Cancelled" ||
                     booking.payment_status === null
                   ? "Expired"
                   : "Cancelled"}
@@ -359,10 +368,10 @@ const BookingHistory = () => {
                       new Date(booking.show_date_time).getTime() + 0 >
                         Date.now()
                     ? "bg-[#00A372] text-white"
-                    : booking.booking_status === "Active" &&
-                      booking.payment_status === null
+                    : booking.booking_status === "Active" ||
+                      booking.payment_status === "Pending"
                     ? "bg-orange-600 text-white"
-                    : booking.booking_status === "Cancelled" &&
+                    : booking.booking_status === "Cancelled" ||
                       booking.payment_status === null
                     ? "bg-[#565F7E]"
                     : "bg-[#565F7E]"
@@ -376,10 +385,10 @@ const BookingHistory = () => {
                   : booking.payment_status === "succeeded" &&
                     new Date(booking.show_date_time).getTime() + 0 > Date.now()
                   ? "Paid"
-                  : booking.booking_status === "Active" &&
-                    booking.payment_status === null
+                  : booking.booking_status === "Active" ||
+                    booking.payment_status === "Pending"
                   ? "Waiting for payment"
-                  : booking.booking_status === "Cancelled" &&
+                  : booking.booking_status === "Cancelled" ||
                     booking.payment_status === null
                   ? "Expired"
                   : "Cancelled"}
@@ -495,7 +504,7 @@ const BookingHistory = () => {
                                 alt="Calendar icon"
                                 className="w-4 h-4"
                               />
-                              <p>{formatedDate(booking.booking_date)}</p>
+                              <p>{formatedDate(booking.show_date_time)}</p>
                             </div>
                             <div className="flex gap-3 items-center">
                               <Image
@@ -569,8 +578,8 @@ const BookingHistory = () => {
                                 ? "Credit Card"
                                 : booking.payment_method === "QR Code"
                                 ? "QR Code"
-                                : booking.booking_status === "Active" &&
-                                  booking.payment_status === null
+                                : booking.booking_status === "Active" ||
+                                  booking.payment_status === "Pending"
                                 ? "Waiting for payment"
                                 : booking.booking_status === "Cancelled" &&
                                   booking.payment_status === null
@@ -593,8 +602,8 @@ const BookingHistory = () => {
                               new Date(booking.show_date_time).getTime() + 0 >
                                 Date.now()
                             ? "bg-[#00A372] text-white"
-                            : booking.booking_status === "Active" &&
-                              booking.payment_status === null
+                            : booking.booking_status === "Active" ||
+                              booking.payment_status === "Pending"
                             ? "bg-orange-600 text-white"
                             : booking.booking_status === "Cancelled" &&
                               booking.payment_status === null
@@ -612,8 +621,8 @@ const BookingHistory = () => {
                             new Date(booking.show_date_time).getTime() + 0 >
                               Date.now()
                           ? "Paid"
-                          : booking.booking_status === "Active" &&
-                            booking.payment_status === null
+                          : booking.booking_status === "Active" ||
+                            booking.payment_status === "Pending"
                           ? "Waiting for payment"
                           : booking.booking_status === "Cancelled" &&
                             booking.payment_status === null
@@ -636,8 +645,8 @@ const BookingHistory = () => {
                                 24 * 60 * 60 * 1000 >
                                 Date.now()
                             ? "bg-[#00A372] text-white"
-                            : booking.booking_status === "Active" &&
-                              booking.payment_status === null
+                            : booking.booking_status === "Active" ||
+                              booking.payment_status === "Pending"
                             ? "bg-orange-600 text-white"
                             : booking.booking_status === "Cancelled" &&
                               booking.payment_status === null
@@ -655,8 +664,8 @@ const BookingHistory = () => {
                             new Date(booking.show_date_time).getTime() + 0 >
                               Date.now()
                           ? "Paid"
-                          : booking.booking_status === "Active" &&
-                            booking.payment_status === null
+                          : booking.booking_status === "Active" ||
+                            booking.payment_status === "Pending"
                           ? "Waiting for payment"
                           : booking.booking_status === "Cancelled" &&
                             booking.payment_status === null
@@ -675,8 +684,8 @@ const BookingHistory = () => {
                             ? "Credit Card"
                             : booking.payment_method === "QR Code"
                             ? "QR Code"
-                            : booking.booking_status === "Active" &&
-                              booking.payment_status === null
+                            : booking.booking_status === "Active" ||
+                              booking.payment_status === "Pending"
                             ? "Waiting for payment"
                             : booking.booking_status === "Cancelled" &&
                               booking.payment_status === null
@@ -705,8 +714,8 @@ const BookingHistory = () => {
                       </div>
                     </div>
                     <div className="flex flex-col gap-4">
-                      {booking.booking_status === "Active" &&
-                        booking.payment_status === null && (
+                      {(booking.booking_status === "Active" ||
+                        booking.payment_status === "Pending") && (
                           <button
                             className="bg-[#4E7BEE] text-white rounded-lg w-[179px] h-[48px] border border-[#8B93B0] hover:bg-[#1E29A8]  "
                             onClick={() =>
@@ -731,8 +740,8 @@ const BookingHistory = () => {
                               new Date(booking.show_date_time).getTime() + 0 >
                                 Date.now()
                             ? false
-                            : booking.booking_status === "Active" &&
-                              booking.payment_status === null
+                            : booking.booking_status === "Active" ||
+                              booking.payment_status === "Pending"
                             ? true
                             : booking.booking_status === "Cancelled" &&
                               booking.payment_status === null
@@ -923,7 +932,7 @@ const BookingHistory = () => {
                         {formatedDate(booking.show_date_time)}, Refunds will be
                         done according to
                         <span
-                          className="text-sm text-[#C8CEDD] cursor-pointer underline font-normal ml-1 cursor-pointer"
+                          className="text-sm text-[#C8CEDD] cursor-pointer underline font-normal ml-1"
                           onClick={() => setOpenCalcelPolicy(true)}
                         >
                           Cancellation Policy

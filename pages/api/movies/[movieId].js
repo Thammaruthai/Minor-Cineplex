@@ -13,8 +13,8 @@ export default async function handler(req, res) {
       const cinema = req.query.cinema || "";
       let query = `
         SELECT 
-          show_id, 
-          show_date_time, 
+          show_id,
+          shows.show_date_time,
           halls.name AS hall_name, 
           halls.hall_id, 
           movies.title, 

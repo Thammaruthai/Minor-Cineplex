@@ -12,7 +12,7 @@ export default async function handler(req, res) {
       let query = `
         SELECT 
           show_id, 
-          show_date_time, 
+          shows.show_date_time, 
           halls.name AS hall_name, 
           movies.movie_id,
           movies.title, 
