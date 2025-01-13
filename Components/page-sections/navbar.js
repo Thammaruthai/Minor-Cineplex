@@ -99,7 +99,7 @@ export default function Navbar() {
         {/* Mobile Menu Button */}
         <div
           ref={hamburgerMenuRef}
-          className="rounded-sm border-none flex items-center justify-center mt-2 active:scale-95 transition-transform duration-150 lg:hidden z-[60]"
+          className="rounded-sm border-none flex items-center justify-center mt-2 active:scale-95 transition-transform duration-150 md:hidden z-[60]"
           onClick={toggleMobileMenu}
         >
           <img
@@ -110,7 +110,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Menu */}
-        <div className="hidden lg:flex space-x-4 lg:items-center z-50">
+        <div className="hidden md:flex space-x-4 lg:items-center z-50">
           {!isLoggedIn ? (
             <>
               <Link href="/login">
@@ -144,7 +144,11 @@ export default function Navbar() {
               {/* Dropdown Menu for Desktop */}
               {showDropdown && (
                 <div className="absolute right-0 mt-3 h-44 w-[182px] bg-[#21263f] rounded shadow-lg z-50">
-                  <DropdownMenu toggleLogin={handleLogout} />
+                  <DropdownMenu
+                    toggleLogin={handleLogout}
+                    setShowDropdown={setShowDropdown}
+                    showDropdown={showDropdown}
+                  />
                 </div>
               )}
             </div>
@@ -156,7 +160,7 @@ export default function Navbar() {
       {showMobileMenu && (
         <div
           ref={mobileMenuRef} // ใช้ ref เพื่อตรวจจับการคลิกภายนอก
-          className="absolute z-[100] w-screen top-[64px] sm:hidden lg:hidden bg-[#21263f] border border-[#21263f] bg-opacity-5 backdrop-blur-lg flex flex-col px-5"
+          className="absolute z-[100] w-screen top-[64px] md:hidden bg-[#21263f] border border-[#21263f] bg-opacity-5 backdrop-blur-lg flex flex-col px-5"
         >
           {!isLoggedIn ? (
             <div className="flex flex-col items-center">

@@ -932,7 +932,7 @@ const BookingHistory = () => {
                         {formatedDate(booking.show_date_time)}, Refunds will be
                         done according to
                         <span
-                          className="text-sm text-[#C8CEDD] cursor-pointer underline font-normal ml-1 cursor-pointer"
+                          className="text-sm text-[#C8CEDD] cursor-pointer underline font-normal ml-1"
                           onClick={() => setOpenCalcelPolicy(true)}
                         >
                           Cancellation Policy

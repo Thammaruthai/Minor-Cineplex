@@ -84,7 +84,7 @@ export default function Filter({ onFilterApply }) {
   };
 
   return (
-    <section className="bg-[#070C1B] rounded-[4px] shadow-lg -mt-52 w-[344px] md:w-[450px] lg:min-w-[1000px] xl:min-w-[1280px] lg:-mt-12 2xl:w-[1500px] flex justify-center items-center">
+    <section className="bg-[#070C1B] rounded-[4px] shadow-lg -mt-52 w-full md:min-w-[550px] lg:min-w-[1000px] xl:min-w-[1280px] lg:-mt-12 2xl:w-[1500px] flex justify-center items-center">
       <div className="p-5 xl:p-10 rounded-lg mx-auto xl:h-[128px] flex flex-col justify-center w-full">
         <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
           {/* Movie Dropdown */}
@@ -179,7 +179,7 @@ export default function Filter({ onFilterApply }) {
 
           {/* City Dropdown and Release Date Picker */}
           <div className="flex gap-4 mb-4 lg:mb-0 lg:flex-row lg:flex-1 lg:gap-4">
-            <div className="2xl:min-w-[221px] min-w-[144px] lg:min-w-[133px] md:min-w-[197px] relative">
+            <div className="w-full relative">
               <select
                 className="flex-1 w-full cursor-pointer appearance-none p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] xl:text-xl rounded focus:outline-none"
                 value={selectedFilters.city}
@@ -207,7 +207,7 @@ export default function Filter({ onFilterApply }) {
                 />
               </svg>
             </div>
-            <div className="flex-1 relative z-0">
+            <div className="relative z-0 w-full">
               <select
                 className="absolute w-full p-2 border border-[#565f7e] py-4 bg-[#21263f] text-[#8b93b0] xl:text-xl lg:text-[15px] rounded focus:outline-none appearance-none pr-10"
                 value={
