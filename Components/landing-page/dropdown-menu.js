@@ -44,40 +44,37 @@ export default function DropdownMenu({
       </div>
 
       {/* เมนูใน Dropdown */}
-      <div
-        className="flex items-center mt-3 py-2 md:my-1 gap-2 cursor-pointer hover:bg-gray-700 mb-5"
-        onClick={handleItemClick}
-      >
-        <Image
-          src="/img/Booking history.png"
-          className="w-5 h-5"
-          width={0}
-          height={0}
-          alt="Booking"
-        />
-        <Link
-          href={{ pathname: "/profile", query: { view: "booking-history" } }}
+      <Link href={{ pathname: "/profile", query: { view: "booking-history" } }}>
+        <div
+          className="flex items-center mt-3 py-2 lg:my-1 gap-2 cursor-pointer hover:bg-gray-700 mb-5"
+          onClick={handleItemClick}
         >
+          <Image
+            src="/img/Booking history.png"
+            className="w-5 h-5"
+            width={0}
+            height={0}
+            alt="Booking"
+          />
           <p className="text-[#c8cedd] text-sm font-normal">Booking History</p>
-        </Link>
-      </div>
+        </div>
+      </Link>
+      <Link href="/profile">
+        <div
+          className="flex items-center py-2 lg:my-0 gap-2 cursor-pointer hover:bg-gray-700 mb-5"
+          onClick={handleItemClick}
+        >
+          <Image
+            src="/img/profile.png"
+            className="w-5 h-5"
+            alt="Profile"
+            width={0}
+            height={0}
+          />
 
-      <div
-        className="flex items-center py-2 md:my-0 gap-2 cursor-pointer hover:bg-gray-700 mb-5"
-        onClick={handleItemClick}
-      >
-        <Image
-          src="/img/profile.png"
-          className="w-5 h-5"
-          alt="Profile"
-          width={0}
-          height={0}
-        />
-        <Link href="/profile">
           <p className="text-[#c8cedd] text-sm font-normal">Profile</p>
-        </Link>
-      </div>
-
+        </div>
+      </Link>
       <Link href={{ pathname: "/profile", query: { view: "reset-password" } }}>
         <div
           className="flex items-center pt-2 pb-2 md:pb-2 gap-2 cursor-pointer hover:bg-gray-700 mb-3"
