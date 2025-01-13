@@ -21,7 +21,9 @@ export default function Home() {
           backgroundBlendMode: "darken",
         }}
       ></div>
+      <div className="w-full p-4 flex justify-center items-center">
       <Filter onFilterApply={(movies) => setFilteredMovies(movies)} />
+      </div>
       <div className="flex flex-col p-4 md:p-8 2xl:p-0 max-w-[1500px] md:w-full">
         <MoviesCard />
         <MoviesAffiliate />
