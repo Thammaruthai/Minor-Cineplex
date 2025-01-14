@@ -44,6 +44,15 @@ export default async function handler(req, res) {
           );
 
           if (existingPendingPayment) {
+            if (existingPendingPayment.payment_amount !== amount / 100) {
+
+              await connectionPool.query(
+                `UPDATE payments SET payment_amount = $1 WHERE payment_id = $2`,
+                [amount / 100, existingPendingPayment.payment_id]
+              );
+              existingPendingPayment.payment_amount = amount / 100; 
+            
+            }
             return res.status(200).json({
               message: "Pending payment already exists.",
               paymentDetails: existingPendingPayment,

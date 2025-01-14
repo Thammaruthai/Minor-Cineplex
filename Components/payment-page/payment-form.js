@@ -211,7 +211,7 @@ function PaymentForm({
         payment_method: selectedMethod,
       });
 
-      if (response.status === 201) {
+      if (response.status === 201 || response.status === 200) {
         setPaymentDetails(response.data.paymentDetails);
         setIsOpenToastErr(false);
       }
