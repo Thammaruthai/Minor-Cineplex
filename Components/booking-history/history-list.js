@@ -416,7 +416,7 @@ const BookingHistory = () => {
                 >
                   <div className="flex justify-between items-center h-[50px] px-6 py-3 ">
                     <div className="text-xl font-bold w-[64px]"></div>
-                    <span className="text-white">Booking Deatail</span>
+                    <span className="text-white">Booking Detail</span>
 
                     <div className="flex gap-4 w-[64px]">
                       <button
