@@ -52,7 +52,7 @@ Install Minor-Cineplex using one of the following methods:
 
 1. Clone the Minor-Cineplex repository:
 ```sh
-❯ git clone https://github.com/NukTD/Minor-Cineplex
+❯ git clone https://github.com/Thammaruthai/Minor-Cineplex.git
 ```
 
 2. Navigate to the project directory:
